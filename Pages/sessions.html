@@ -2535,7 +2535,7 @@ REST SPACE
 <button class="player-btn">
 <i data-lucide="skip-back"></i>
 </button>
-<button class="player-btn big" onclick="toggleTimer()">
+<button class="player-btn big" onclick="toggleBottomAudio()" title="Play / stop music only">
 <i data-lucide="play" id="playerPlayIcon"></i>
 </button>
 <button class="player-btn">
@@ -2621,9 +2621,10 @@ const MAX_ACTIVE_AUDIOS = 5;
     A single YouTube player cannot loop perfectly gapless because many Shorts have
     a silent tail or YouTube pauses briefly when seekTo(0) happens.
 
-    This version creates 2 hidden YouTube players for every audio.
-    When player A is close to the end, player B starts before A finishes.
-    Then A fades out, B fades in, and A resets silently for the next loop.
+    IMPORTANT PERFORMANCE FIX:
+    We only create the 2 hidden YouTube players for the audios that are actually
+    selected by the user. Before, the page created 2 players for EVERY possible
+    audio source, which could mean 30+ hidden YouTube iframes and slow loading.
 */
 const PRELOAD_NEXT_BEFORE_END = 3.4;
 const CROSSFADE_MS = 450;
@@ -2925,6 +2926,45 @@ function onYouTubeIframeAPIReady(){
     buildEndingSoundPlayers();
 }
 
+function destroyPlayersForAudio(key){
+    clearLoopTimer(key);
+    isCrossfading[key] = false;
+
+    const players = youtubePlayers[key] || [];
+
+    players.forEach((player,slot) => {
+        if(player && typeof player.destroy === "function"){
+            try{
+                player.destroy();
+            }catch(error){}
+        }
+
+        const div = document.getElementById("yt_" + key + "_" + slot);
+        if(div && div.parentNode){
+            div.parentNode.removeChild(div);
+        }
+    });
+
+    delete youtubePlayers[key];
+    delete youtubeReady[key];
+    delete activePlayerSlot[key];
+    delete isCrossfading[key];
+}
+
+function destroyYouTubePlayers(){
+    clearAllLoopTimers();
+
+    Object.keys(youtubePlayers).forEach(key => {
+        destroyPlayersForAudio(key);
+    });
+
+    youtubePlayers = {};
+    youtubeReady = {};
+    activePlayerSlot = {};
+    loopTimers = {};
+    isCrossfading = {};
+}
+
 function buildYouTubePlayers(){
     const holder = document.getElementById("youtubePlayers");
 
@@ -2932,9 +2972,29 @@ function buildYouTubePlayers(){
         return;
     }
 
-    holder.innerHTML = "";
+    const selectedKeys = new Set(state.selectedAudios || []);
 
-    AUDIO_SOURCES.forEach(source => {
+    /*
+        IMPORTANT: do NOT destroy and rebuild every selected player on every
+        audio change. That was causing the currently playing sounds to reload
+        and made switching audio feel slow. Now we keep already-created players
+        alive, remove only unselected ones, and create only the new missing ones.
+    */
+    Object.keys(youtubePlayers).forEach(key => {
+        if(!selectedKeys.has(key)){
+            destroyPlayersForAudio(key);
+        }
+    });
+
+    const selectedSources = state.selectedAudios
+        .map(key => AUDIO_SOURCES.find(source => source.key === key))
+        .filter(Boolean);
+
+    selectedSources.forEach(source => {
+        if(youtubePlayers[source.key]){
+            return;
+        }
+
         youtubePlayers[source.key] = [];
         youtubeReady[source.key] = [false,false];
         activePlayerSlot[source.key] = 0;
@@ -2968,7 +3028,11 @@ function buildYouTubePlayers(){
                             youtubePlayers[source.key][slot].mute();
                         }catch(error){}
 
-                        if(pendingPlay && state.running && state.selectedAudios.includes(source.key)){
+                        if(
+                            pendingPlay &&
+                            state.selectedAudios.includes(source.key) &&
+                            (state.running || window.audioTestMode || window.bottomAudioPlaying)
+                        ){
                             playAudioKey(source.key);
                         }
                     },
@@ -3075,7 +3139,7 @@ function scheduleDualLoop(key){
 
     loopTimers[key] = setInterval(() => {
         if(
-            !state.running ||
+            !(state.running || window.bottomAudioPlaying || window.audioTestMode) ||
             !state.audioLoop ||
             !state.selectedAudios.includes(key) ||
             isCrossfading[key]
@@ -3463,12 +3527,15 @@ function quickSelectAudio(key){
     }
 
     saveState();
+    buildYouTubePlayers();
     updateTimerUI();
 
-    if(state.running){
+    if(state.running || window.audioTestMode || window.bottomAudioPlaying){
         timerMuted = false;
         stopEndingSound();
+        window.bottomAudioPlaying = true;
         playSelectedAudios();
+        updateBottomAudioButton();
     }
 }
 
@@ -3479,12 +3546,15 @@ function openAudioModal(){
 
 function closeAudioModal(){
     document.getElementById("audioModal").classList.remove("active");
+    buildYouTubePlayers();
     updateTimerUI();
 
-    if(state.running){
+    if(state.running || window.audioTestMode || window.bottomAudioPlaying){
         timerMuted = false;
         stopEndingSound();
+        window.bottomAudioPlaying = true;
         playSelectedAudios();
+        updateBottomAudioButton();
     }
 }
 
@@ -3502,13 +3572,16 @@ function toggleAudioFromModal(key){
     }
 
     saveState();
+    buildYouTubePlayers();
     renderAudioPicker();
     syncAudioUI();
 
-    if(state.running){
+    if(state.running || window.audioTestMode || window.bottomAudioPlaying){
         timerMuted = false;
         stopEndingSound();
+        window.bottomAudioPlaying = true;
         playSelectedAudios();
+        updateBottomAudioButton();
     }
 }
 
@@ -3517,8 +3590,12 @@ function clearAudioSelection(){
     state.selectedAudios = [];
 
     saveState();
+    buildYouTubePlayers();
     renderAudioPicker();
     syncAudioUI();
+    window.bottomAudioPlaying = false;
+    window.audioTestMode = false;
+    updateBottomAudioButton();
 }
 
 function setSingleAudioVolume(key,value,shouldSave = true){
@@ -3569,6 +3646,14 @@ function playSelectedAudios(){
         return;
     }
 
+    if(
+        window.YT &&
+        YT.Player &&
+        state.selectedAudios.some(key => !youtubePlayers[key])
+    ){
+        buildYouTubePlayers();
+    }
+
     pendingPlay = true;
 
     let started = 0;
@@ -3582,7 +3667,7 @@ function playSelectedAudios(){
     if(started){
         showToast("Audio started.");
     }else{
-        showToast("Audio is loading. Try again in a second.");
+        showToast("New audio is loading from YouTube. It will start when ready.");
     }
 }
 
@@ -3594,7 +3679,7 @@ function toggleAudioLoop(enabled){
     state.audioLoop = enabled;
     saveState();
 
-    if(enabled && state.running){
+    if(enabled && (state.running || window.bottomAudioPlaying || window.audioTestMode)){
         state.selectedAudios.forEach(key => scheduleDualLoop(key));
     }else{
         clearAllLoopTimers();
@@ -3787,17 +3872,16 @@ function updateTimerUI(){
     updateNotesCount(false);
 
     const btn = document.getElementById("startPauseBtn");
-    const icon = document.getElementById("playerPlayIcon");
 
     if(state.running){
         btn.innerHTML = `<i data-lucide="pause"></i> Pause`;
-        icon.setAttribute("data-lucide","pause");
         document.getElementById("sessionStatusText").textContent = "Running";
     }else{
         btn.innerHTML = `<i data-lucide="play"></i> Start`;
-        icon.setAttribute("data-lucide","play");
         document.getElementById("sessionStatusText").textContent = "Ready";
     }
+
+    updateBottomAudioButton(false);
 
     setMasterVolume(state.masterVolume || 70);
     syncAudioUI();
@@ -3808,12 +3892,77 @@ function updateTimerUI(){
     lucide.createIcons();
 }
 
+
+/* ===== BOTTOM PLAYER BAR: MUSIC ONLY ===== */
+
+window.bottomAudioPlaying = false;
+
+function updateBottomAudioButton(shouldCreateIcons = true){
+    const icon = document.getElementById("playerPlayIcon");
+
+    if(!icon){
+        return;
+    }
+
+    icon.setAttribute("data-lucide", window.bottomAudioPlaying ? "pause" : "play");
+
+    if(shouldCreateIcons && window.lucide && typeof lucide.createIcons === "function"){
+        lucide.createIcons();
+    }
+}
+
+function toggleBottomAudio(){
+    /*
+        This bottom player button controls MUSIC ONLY.
+        It must never pause, start, reset, or complete the timer.
+    */
+    if(window.bottomAudioPlaying){
+        window.bottomAudioPlaying = false;
+        window.audioTestMode = false;
+
+        try{
+            pauseAllAudios();
+        }catch(error){}
+
+        updateBottomAudioButton();
+        showToast("Music stopped. Timer kept running.");
+        return;
+    }
+
+    if(!state.selectedAudios || !state.selectedAudios.length){
+        showToast("Choose an audio source first.");
+        return;
+    }
+
+    window.bottomAudioPlaying = true;
+
+    try{
+        buildYouTubePlayers();
+        playSelectedAudios();
+    }catch(error){
+        showToast("Audio is loading. Try again in a second.");
+    }
+
+    updateBottomAudioButton();
+}
+
 function toggleTimer(){
+    /*
+        If the last session finished, remaining is 0.
+        Starting again must reset the timer first, otherwise it instantly
+        completes on the first tick and stops all audio.
+    */
+    if(!state.running && (!state.remaining || state.remaining <= 0)){
+        state.remaining = state.duration * 60;
+    }
+
     state.running = !state.running;
 
     if(state.running){
         timerMuted = false;
         stopEndingSound();
+        window.bottomAudioPlaying = true;
+        updateBottomAudioButton(false);
         playSelectedAudios();
 
         clearInterval(timerInterval);
@@ -3826,7 +3975,7 @@ function toggleTimer(){
                 state.running = false;
 
                 clearInterval(timerInterval);
-                stopAllAudios();
+                /* Music is independent from the timer, so it keeps playing when the timer finishes. */
                 playEndingSoundTwice();
 
                 showToast("Session complete.");
@@ -3837,7 +3986,7 @@ function toggleTimer(){
         },1000);
     }else{
         clearInterval(timerInterval);
-        pauseAllAudios();
+        /* Music is independent from the timer, so pausing the timer does not stop audio. */
     }
 
     saveState();
@@ -3848,7 +3997,7 @@ function resetTimer(){
     state.running = false;
 
     clearInterval(timerInterval);
-    stopAllAudios();
+    /* Reset only resets the timer. Use the bottom player button to stop music. */
     stopEndingSound();
 
     state.remaining = state.duration * 60;
@@ -3862,7 +4011,7 @@ function completeSession(){
     state.running = false;
 
     clearInterval(timerInterval);
-    stopAllAudios();
+    /* Completing the timer does not stop music. Use the bottom player button to stop music. */
     stopEndingSound();
 
     state.remaining = 0;
@@ -3878,7 +4027,7 @@ function setDuration(minutes){
     state.running = false;
 
     clearInterval(timerInterval);
-    pauseAllAudios();
+    /* Changing duration only changes the timer. Music keeps its own state. */
     stopEndingSound();
 
     document.querySelectorAll(".preset").forEach(btn => {
@@ -4064,10 +4213,15 @@ function loadSavedSession(type,index){
     state.notes = item.notes || "";
 
     clearInterval(timerInterval);
-    stopAllAudios();
     stopEndingSound();
 
     saveState();
+    buildYouTubePlayers();
+
+    if(window.bottomAudioPlaying || window.audioTestMode){
+        playSelectedAudios();
+    }
+
     updateTimerUI();
     showToast("Session loaded.");
 }
@@ -4121,7 +4275,6 @@ function saveModalChanges(){
     state.running = false;
 
     clearInterval(timerInterval);
-    stopAllAudios();
     stopEndingSound();
 
     if(modalMode === "save"){
