@@ -7,8 +7,9 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
-    /* MOBILE FIXES */
+/* MOBILE FIXES */
 @media (max-width: 768px){
 
 .top{
@@ -36,13 +37,15 @@ font-size:12px;
 width:220px;
 height:180px;
 }
+
 .menu{
 gap:30px;
 flex-direction:column;
 }
 
 }
-    .close-btn{
+
+.close-btn{
 background:#222;
 border:none;
 color:white;
@@ -55,6 +58,7 @@ font-size:14px;
 .close-btn:hover{
 background:#444;
 }
+
 #onlineCount{
 position:fixed;
 bottom:20px;
@@ -67,24 +71,21 @@ z-index:100;
 font-size:14px;
 backdrop-filter:blur(10px);
 }
+
 #hitCounter{
 position:fixed;
-bottom:58px; /* closer to online players */
+bottom:58px;
 right:20px;
-
 background:rgba(20,25,35,0.9);
 padding:8px 14px;
-
 border-radius:12px;
 border:1px solid rgba(255,255,255,0.1);
-
 z-index:100;
-
-font-size:14px; /* same size as online players */
+font-size:14px;
 font-weight:600;
-
 backdrop-filter:blur(10px);
 }
+
 #announcementScreen{
 position:fixed;
 top:50%;
@@ -123,6 +124,7 @@ opacity:1;
 transform:translate(-50%,-50%) scale(1);
 }
 }
+
 #profileScreen{
 position:fixed;
 top:50%;
@@ -138,6 +140,7 @@ width:450px;
 max-width:90%;
 box-shadow:0 0 50px rgba(0,0,0,0.7);
 }
+
 #authScreen{
 position:fixed;
 inset:0;
@@ -146,7 +149,6 @@ flex-direction:column;
 align-items:center;
 justify-content:center;
 gap:15px;
-
 background:radial-gradient(circle at center,#111827,#020617);
 z-index:2000;
 }
@@ -155,6 +157,7 @@ z-index:2000;
 font-size:28px;
 margin-bottom:10px;
 }
+
 .small-btn{
 width:260px;
 padding:8px;
@@ -166,6 +169,7 @@ opacity:0.8;
 opacity:1;
 transform:scale(1.03);
 }
+
 #authScreen input{
 width:250px;
 padding:12px;
@@ -191,21 +195,26 @@ transition:0.25s;
 transform:scale(1.05);
 box-shadow:0 0 15px #667eea;
 }
+
 #profileStats{
 margin-top:15px;
 line-height:1.6;
 }
+
 #profileScreen button:hover{
 background:var(--accent-blue);
 color:white;
 }
+
 #profileScreen.show{
 display:block;
 }
-    #profileBtn{
+
+#profileBtn{
 margin-right:70px;
 }
-    #yourRank{
+
+#yourRank{
 position:fixed;
 bottom:100px;
 left:50%;
@@ -218,6 +227,7 @@ opacity:0;
 transition:0.3s;
 z-index:50;
 }
+
 #profileBox{
 position:fixed;
 right:20px;
@@ -235,11 +245,13 @@ z-index:50;
 opacity:1;
 transform:translateY(-10px);
 }
+
 #yourRank.show{
 opacity:1;
 transform:translateX(-50%) translateY(-10px);
 }
-    #finalScore{
+
+#finalScore{
 position:fixed;
 top:50%;
 left:50%;
@@ -255,9 +267,11 @@ transition:0.5s;
 opacity:1;
 transform:translate(-50%,-50%) scale(1.1);
 }
-    #rankPopup{
+
+#rankPopup{
 text-shadow: 0 0 10px currentColor;
 }
+
 .lb-row{
 display:flex;
 justify-content:space-between;
@@ -284,16 +298,20 @@ text-shadow:0 0 6px #c0c0c0;
 color:#cd7f32;
 text-shadow:0 0 6px #cd7f32;
 }
+
 .lb-item span{
 text-shadow: 0 0 6px currentColor;
 }
+
 .lb-item.rank-1 span{
 font-weight:bold;
 font-size:16px;
 }
+
 .lb-item {
 animation: slideIn 0.4s ease;
 }
+
 @keyframes glow {
 0% { text-shadow:0 0 5px currentColor; }
 50% { text-shadow:0 0 20px currentColor; }
@@ -303,6 +321,7 @@ animation: slideIn 0.4s ease;
 .rank-1 .lb-name{
 animation:glow 2s infinite;
 }
+
 @keyframes slideIn {
 from {
     opacity:0;
@@ -313,11 +332,13 @@ to {
     transform:translateY(0);
 }
 }
+
 .lb-item.rank-1 {
 background:rgba(255,215,0,0.08);
 border:1px solid gold;
 }
-    #rankPopup{
+
+#rankPopup{
 position:fixed;
 top:20px;
 left:50%;
@@ -337,6 +358,7 @@ z-index:50;
 opacity:1;
 transform:translateX(-50%) translateY(10px);
 }
+
 #gameUI{
 position:fixed;
 top:80px;
@@ -347,18 +369,21 @@ flex-direction:column;
 gap:10px;
 font-size:18px;
 }
+
 #gameUI div{
 background:rgba(20,25,35,0.85);
 padding:8px 12px;
 border-radius:10px;
 border:1px solid rgba(255,255,255,0.1);
 }
+
 #gameTimer, #gameScore{
 background:var(--bg-card);
 padding:10px 15px;
 border-radius:10px;
 border:1px solid var(--border-color);
 }
+
 #leaderboard{
 position:fixed;
 bottom:20px;
@@ -421,6 +446,7 @@ color:white;
 .rank-1{color:gold;}
 .rank-2{color:silver;}
 .rank-3{color:#cd7f32;}
+
 #gameCanvas{
 position:fixed;
 top:0;
@@ -430,6 +456,7 @@ height:100%;
 z-index:1;
 pointer-events:auto;
 }
+
 .rank-1 {
 color: gold;
 text-shadow: 0 0 10px gold, 0 0 20px gold;
@@ -440,6 +467,7 @@ animation: glow 1.5s infinite alternate;
 from { text-shadow: 0 0 5px gold; }
 to { text-shadow: 0 0 20px gold, 0 0 30px orange; }
 }
+
 .score {
 font-weight: bold;
 transition: transform 0.3s ease;
@@ -449,6 +477,7 @@ transition: transform 0.3s ease;
 transform: scale(1.2);
 color: var(--accent-blue);
 }
+
 :root {
     --bg-primary: #0d1117;
     --bg-card: #161b22;
@@ -463,6 +492,7 @@ color: var(--accent-blue);
     --bg-primary: #0d1117;
     --bg-card: #161b22;
 }
+
 .theme-darkblue {
     --bg-primary: #0a1628;
     --bg-card: #111c33;
@@ -482,6 +512,7 @@ color: var(--accent-blue);
     --bg-primary: #1e120e;
     --bg-card: #2a1a14;
 }
+
 .theme-white {
     --bg-primary: #f5f7fa;
     --bg-card: #ffffff;
@@ -489,97 +520,78 @@ color: var(--accent-blue);
     --text-secondary: #555;
     --border-color: rgba(0,0,0,0.1);
 }
+
 body {
     margin: 0;
     font-family: Inter, sans-serif;
-
     background: var(--bg-primary);
     color: var(--text-primary);
-
     transition: all 0.4s ease;
     overflow: hidden;
-
     position: relative;
 }
 
-/* 🔥 DEPTH + LIGHT EFFECT */
+/* DEPTH + LIGHT EFFECT */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
-
     background:
         radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05), transparent 50%),
         radial-gradient(circle at 80% 70%, rgba(0,0,0,0.4), transparent 60%),
         linear-gradient(120deg, transparent 40%, rgba(0,0,0,0.4));
-
     pointer-events: none;
     z-index: 0;
 }
 
-/* 🔥 GRID LINES (PRO LOOK) */
+/* GRID LINES */
 body::after {
     content: "";
     position: fixed;
     inset: 0;
-
     background-image: 
         linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-
     background-size: 40px 40px;
-
     pointer-events: none;
     z-index: 0;
 }
 
-/* ✅ LIGHT MODE FIX */
+/* LIGHT MODE FIX */
 .theme-white body::after {
     background-image: 
         linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
 }
+
 @keyframes move{
 0%{transform:translate(-20%,-20%)}
 100%{transform:translate(20%,20%)}
 }
+
 .sidebar{
 position:fixed;
 left:0;
 top:0;
-
 width:170px;
 height:100%;
-
 border-right:1px solid var(--border-color);
-
 display:flex;
 flex-direction:column;
-
 padding:20px 14px;
-
 backdrop-filter:blur(12px);
-
 z-index:3;
 }
 
 .sidebar-item{
-
 height:58px;
-
 display:flex;
 align-items:center;
-
 padding:0 18px;
-
 border-radius:16px;
-
 margin:10px 0;
-
 cursor:pointer;
-
 color:#9ca3af;
-
 transition:0.25s;
 }
 
@@ -591,7 +603,6 @@ transform:translateX(4px);
 .sidebar-item.active{
 background:var(--accent-blue);
 color:white;
-
 box-shadow:0 0 18px rgba(102,126,234,0.45);
 }
 
@@ -610,6 +621,28 @@ letter-spacing:0.3px;
 .premium-side{
 opacity:0.75;
 border:1px solid rgba(255,70,70,0.15);
+}
+
+/* MAINTENANCE SIDEBAR */
+.sidebar-item.maintenance-side{
+opacity:0.55;
+cursor:not-allowed;
+position:relative;
+border:1px solid rgba(255,170,0,0.12);
+}
+
+.sidebar-item.maintenance-side:hover{
+background:rgba(255,170,0,0.08);
+transform:translateX(2px);
+}
+
+.sidebar-item.maintenance-side::after{
+content:"BUILDING";
+font-size:8px;
+font-weight:800;
+color:#ffaa00;
+margin-left:auto;
+letter-spacing:0.5px;
 }
 
 /* HEADER */
@@ -632,6 +665,7 @@ flex-direction:column;
 gap:12px;
 z-index:50;
 }
+
 /* blur + dark overlay */
 body.panel-open::before{
 content:"";
@@ -641,6 +675,7 @@ backdrop-filter:blur(8px);
 background:rgba(0,0,0,0.4);
 z-index:999;
 }
+
 .settings{
 width:50px;
 height:50px;
@@ -653,6 +688,7 @@ border:1px solid rgba(255,255,255,0.1);
 cursor:pointer;
 transition:0.2s;
 }
+
 .authPopup{
 position:fixed;
 top:50%;
@@ -665,7 +701,6 @@ border:1px solid rgba(255,255,255,0.1);
 z-index:3000;
 text-align:center;
 width:320px;
-
 opacity:0;
 transition:0.3s;
 }
@@ -674,9 +709,11 @@ transition:0.3s;
 opacity:1;
 transform:translate(-50%,-50%) scale(1);
 }
+
 .settings:hover{
 background:rgba(50,80,200,0.4);
 }
+
 .container{
 z-index: 2;
 margin-left:170px;
@@ -692,7 +729,8 @@ gap:100px;
 }
 
 .card{
-width:280px;height:240px;
+width:280px;
+height:240px;
 background:var(--bg-card);
 border:1px solid var(--border-color);
 border-radius:28px;
@@ -713,13 +751,15 @@ box-shadow:0 0 30px var(--accent-blue);
 }
 
 .card i{
-width:90px;height:90px;
+width:90px;
+height:90px;
 margin-bottom:20px;
 }
 
 .card span{
 font-size:1.4rem;
 }
+
 .beta-card{
 overflow:hidden;
 }
@@ -744,22 +784,69 @@ z-index:2;
 color:#ffaa00;
 filter:drop-shadow(0 0 10px rgba(255,170,0,0.45));
 }
+
+/* MAINTENANCE CARDS */
+.maintenance-card{
+cursor:not-allowed;
+opacity:0.72;
+filter:saturate(0.65);
+overflow:hidden;
+}
+
+.maintenance-card::before{
+content:"UNDER MAINTENANCE";
+position:absolute;
+top:18px;
+right:18px;
+font-size:10px;
+font-weight:800;
+letter-spacing:1px;
+padding:6px 10px;
+border-radius:999px;
+background:rgba(255,170,0,0.14);
+border:1px solid rgba(255,170,0,0.35);
+color:#ffaa00;
+z-index:3;
+}
+
+.maintenance-card::after{
+content:"Still building";
+position:absolute;
+bottom:18px;
+left:50%;
+transform:translateX(-50%);
+font-size:12px;
+font-weight:700;
+color:#ffaa00;
+background:rgba(255,170,0,0.10);
+border:1px solid rgba(255,170,0,0.22);
+padding:7px 12px;
+border-radius:999px;
+z-index:3;
+}
+
+.maintenance-card:hover{
+transform:translateY(-8px) scale(1.02);
+box-shadow:0 0 25px rgba(255,170,0,0.14);
+}
+
+.maintenance-card i,
+.maintenance-card span{
+opacity:0.55;
+}
+
 .premium-card{
 position:relative;
 overflow:hidden;
-
 background:
 linear-gradient(
 145deg,
 rgba(18,22,30,0.96),
 rgba(10,12,18,0.98)
 );
-
 border:1px solid rgba(255,255,255,0.06);
-
 opacity:0.82;
 filter:saturate(0.7);
-
 cursor:not-allowed;
 }
 
@@ -767,7 +854,6 @@ cursor:not-allowed;
 content:"";
 position:absolute;
 inset:0;
-
 background:
 repeating-linear-gradient(
 45deg,
@@ -776,7 +862,6 @@ rgba(255,255,255,0.02) 2px,
 transparent 2px,
 transparent 12px
 );
-
 pointer-events:none;
 }
 
@@ -798,19 +883,13 @@ box-shadow:
 position:absolute;
 top:18px;
 right:18px;
-
 font-size:10px;
 font-weight:700;
-
 padding:6px 10px;
-
 border-radius:999px;
-
 background:rgba(255,70,70,0.12);
 border:1px solid rgba(255,70,70,0.25);
-
 color:#ff7b7b;
-
 letter-spacing:1px;
 }
 
@@ -818,21 +897,14 @@ letter-spacing:1px;
 position:absolute;
 bottom:18px;
 right:18px;
-
 font-size:9px;
 font-weight:700;
-
 padding:5px 8px;
-
 border-radius:999px;
-
 background:rgba(0,255,180,0.08);
 border:1px solid rgba(0,255,180,0.18);
-
 color:#00ffcc;
-
 letter-spacing:1px;
-
 opacity:0.75;
 }
 
@@ -849,15 +921,12 @@ opacity:0.8;
 position:absolute;
 top:50%;
 left:50%;
-
 transform:translate(-50%,-50%);
-
 font-size:58px;
-
 opacity:0.08;
-
 pointer-events:none;
 }
+
 .panel{
 position:fixed;
 top:0;
@@ -867,12 +936,9 @@ height:100%;
 background:linear-gradient(180deg,#0f141d,#0b0f17);
 padding:20px;
 z-index:1000;
-
 transform:translateX(100%);
 opacity:0;
 pointer-events:none;
-
-/* 🔥 improved animation */
 transition:
     transform 0.35s cubic-bezier(.2,.8,.2,1),
     opacity 0.25s ease;
@@ -897,8 +963,10 @@ body.panel-open canvas{
 opacity:0.3;
 pointer-events:none;
 }
+
 .page{display:none;}
 .page.active{display:block;}
+
 .page{
 padding:10px 0;
 }
@@ -909,16 +977,15 @@ margin-bottom:10px;
 font-size:18px;
 opacity:0.8;
 }
+
 .option{
 padding:14px;
 border-radius:12px;
 margin-top:10px;
 cursor:pointer;
 text-align:left;
-
 background:rgba(255,255,255,0.03);
 border:1px solid rgba(255,255,255,0.05);
-
 transition:0.25s;
 }
 
@@ -927,17 +994,23 @@ background:rgba(102,126,234,0.15);
 border-color:var(--accent-blue);
 transform:translateX(5px);
 }
+
 /* LOCKED */
 .locked{
 opacity:0.4;
 pointer-events:none;
 }
-.locked::after{content:" 🔒";}
+
+.locked::after{
+content:" 🔒";
+}
+
 .divider{
 height:1px;
 background:rgba(255,255,255,0.05);
 margin:15px 0;
 }
+
 /* THEMES */
 .theme-box{
 display:flex;
@@ -950,13 +1023,16 @@ cursor:pointer;
 border-radius:10px;
 transition:0.25s;
 }
+
 .theme-box:hover{
 transform:scale(1.05);
 box-shadow:0 0 15px var(--accent-blue);
 }
 
 .color{
-width:22px;height:22px;border-radius:50%;
+width:22px;
+height:22px;
+border-radius:50%;
 }
 
 /* INPUT */
@@ -969,169 +1045,153 @@ background:var(--bg-card);
 color:var(--text-primary);
 margin-top:10px;
 }
+
 .toast{
 position:fixed;
-
 bottom:58px;
 right:20px;
-
 background:rgba(20,25,35,0.92);
-
 padding:8px 14px;
-
 border-radius:12px;
-
 border:1px solid rgba(255,255,255,0.1);
-
 backdrop-filter:blur(10px);
-
 font-size:14px;
 font-weight:600;
-
 opacity:0;
-
 transform:translateY(10px);
-
 transition:0.25s;
-
 z-index:100;
 }
+
 .toast.show{
 opacity:1;
 transform:translateY(-2px);
 }
+
 .card {
-    position: relative;
-    z-index: 15;
+position: relative;
+z-index: 15;
 }
 </style>
 </head>
 
+<body>
+
 <div id="authScreen">
 <div id="loginBox" class="authPopup show">
     <h2>Welcome</h2>
-
     <button onclick="loginGoogle()">Continue with Google</button>
 </div>
-    <!-- USERNAME SETUP -->
-    <div id="usernameSetup" class="authPopup" style="display:none;">
-        <h2>Create Username</h2>
-        <input id="newUsername" placeholder="Enter username" class="input">
-        <button onclick="saveUsername()">Continue</button>
-    </div>
+
+<div id="usernameSetup" class="authPopup" style="display:none;">
+    <h2>Create Username</h2>
+    <input id="newUsername" placeholder="Enter username" class="input">
+    <button onclick="saveUsername()">Continue</button>
 </div>
+</div>
+
 <div id="leaderboard">
     <div class="lb-title">Leaderboard</div>
     <div id="scores"></div>
 </div>
+
 <div id="onlineCount">
 🟢 0 Online
 </div>
+
 <div id="rankPopup"></div>
 <div id="finalScore"></div>
 <div id="yourRank"></div>
 <div id="profileBox"></div>
+
 <div id="profileScreen">
     <div style="display:flex;justify-content:space-between;align-items:center;">
         <h2>Your Profile</h2>
         <button onclick="closeProfile()" class="close-btn">✖</button>
     </div>
-
     <div id="profileStats" style="margin-top:15px;"></div>
 </div>
+
 <div class="sidebar">
 
 <div class="sidebar-item active">
     <span class="side-text">Dashboard</span>
 </div>
-<div class="sidebar-item"
-onclick="go('Pages/gym.html')">
+
+<div class="sidebar-item maintenance-side" title="Gym is still building">
     <span class="side-text">Gym</span>
-
 </div>
 
-<div class="sidebar-item"
-onclick="go('Pages/routine.html')">
+<div class="sidebar-item" onclick="go('Pages/routine.html')">
     <span class="side-text">Routine</span>
-
 </div>
 
-<div class="sidebar-item"
-onclick="go('Pages/trading.html')">
+<div class="sidebar-item maintenance-side" title="Trading is still building">
     <span class="side-text">Trading</span>
-
 </div>
-<div class="sidebar-item premium-side"
-onclick="go('Pages/health.html')">
+
+<div class="sidebar-item premium-side" onclick="go('Pages/health.html')">
     <span class="side-text">Health</span>
-
 </div>
 
 </div>
+
 <div id="announcementScreen">
-
-<div style="display:flex;
-justify-content:space-between;
-align-items:center;">
-
+<div style="display:flex;justify-content:space-between;align-items:center;">
 <h2>📢 Updates</h2>
-
-<button onclick="closeAnnouncements()"
-class="close-btn">✖</button>
-
+<button onclick="closeAnnouncements()" class="close-btn">✖</button>
 </div>
 
 <div id="announcementContent">
-
 <h3>Version 0.1</h3>
-
 <ul>
-<li>✅NEW REDESIGN OF EVERYPAGE ON TRADING</li>
+<li>✅ NEW REDESIGN OF EVERY PAGE ON TRADING</li>
+<li>🚧 Gym and Trading are temporarily under maintenance while the public version is being built.</li>
 </ul>
 </div>
 </div>
+
 <div class="header">
 Welcome back, <span id="username"></span>
 </div>
+
 <div class="top">
 
-    <div id="profileBtn" class="settings">
+<div id="profileBtn" class="settings">
 👤
-    </div>
+</div>
 
-    <div class="settings"
-onclick="logout()">
+<div class="settings" onclick="logout()">
 🚪
-    </div>
+</div>
 
-    <div class="settings"
-onclick="openAnnouncements()">
+<div class="settings" onclick="openAnnouncements()">
 📢
-    </div>
+</div>
 
-    <div class="settings"
-onclick="togglePanel()">
-        <i data-lucide="settings"></i>
-    </div>
+<div class="settings" onclick="togglePanel()">
+    <i data-lucide="settings"></i>
+</div>
 
 </div>
+
 <div class="container">
 <div class="menu">
 
-<a href="Pages/gym.html" class="card">
+<div class="card maintenance-card" title="Gym is still building">
     <i data-lucide="dumbbell"></i>
     <span>Gym</span>
-</a>
+</div>
 
 <a href="Pages/routine.html" class="card beta-card">
     <i data-lucide="clipboard-list"></i>
     <span>Routine</span>
 </a>
 
-<a href="Pages/trading.html" class="card">
+<div class="card maintenance-card" title="Trading is still building">
     <i data-lucide="trending-up"></i>
     <span>Trading</span>
-</a>
+</div>
 
 <a href="Pages/health.html" class="card premium-card">
 
@@ -1156,7 +1216,8 @@ onclick="togglePanel()">
 
 <!-- SETTINGS -->
 <div class="panel" id="panel">
- <div class="page" id="store">
+
+<div class="page" id="store">
 <h3>Avatar Store</h3>
 
 <div class="theme-box" onclick="buyAvatar('🔥')">🔥 Fire Avatar</div>
@@ -1170,6 +1231,7 @@ onclick="togglePanel()">
 <div class="option" onclick="openStorePage()">
 🛒 Store
 </div>
+
 <h3>Settings</h3>
 <div class="option" onclick="openPage('themes')">Themes</div>
 <div class="option" onclick="openPage('name')">Change Name</div>
@@ -1184,6 +1246,7 @@ onclick="togglePanel()">
 
 <div class="page" id="themes">
 <h3>Themes</h3>
+
 <div class="theme-box" onclick="setTheme('theme-black')">
   <div class="color" style="background:#000"></div> Dark
 </div>
@@ -1207,6 +1270,7 @@ onclick="togglePanel()">
 <div class="theme-box" onclick="setTheme('theme-darkbrown')">
   <div class="color" style="background:#1e120e"></div> Brown
 </div>
+
 <div class="option" onclick="openPage('main')">Back</div>
 </div>
 
@@ -1217,7 +1281,7 @@ onclick="togglePanel()">
 </div>
 
 <div class="page" id="name">
-    <div id="nameCooldown"></div>
+<div id="nameCooldown"></div>
 <h3>Change Name</h3>
 <input id="n1" class="input" placeholder="New name">
 <input id="n2" class="input" placeholder="Confirm name">
@@ -1228,15 +1292,19 @@ onclick="togglePanel()">
 </div>
 
 <div class="toast" id="toast"></div>
+
 <canvas id="gameCanvas"></canvas>
+
 <div id="gameUI">
     <div id="gameTimer">⏱ 30</div>
     <div id="gameScore">🎯 0</div>
 </div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <script> 
 function loginGoogle(){
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -1244,42 +1312,34 @@ function loginGoogle(){
     auth.signInWithPopup(provider)
     .then(result=>{
         const user = result.user;
-        checkUsername(user); // keeps your username system
+        checkUsername(user);
     })
     .catch(err=>console.error(err));
 }
-function checkUsername(user){
 
+function checkUsername(user){
     const ref = db.collection("users").doc(user.uid);
 
     ref.get().then(doc=>{
-
-        // first login → force username
         if(!doc.exists || !doc.data().username){
-
             document.getElementById("authScreen").style.display = "flex";
-
             showUsernameSetup();
-
         } else {
-
             applyUsername(doc.data().username);
-
             document.getElementById("authScreen").style.display = "none";
         }
     });
 }
+
 function openAnnouncements(){
-document.getElementById("announcementScreen")
-.classList.add("show");
+document.getElementById("announcementScreen").classList.add("show");
 }
 
 function closeAnnouncements(){
-document.getElementById("announcementScreen")
-.classList.remove("show");
+document.getElementById("announcementScreen").classList.remove("show");
 }
-function changeName(){
 
+function changeName(){
     const n1 = document.getElementById("n1").value.trim().toLowerCase();
     const n2 = document.getElementById("n2").value.trim().toLowerCase();
 
@@ -1287,42 +1347,35 @@ function changeName(){
         toast("Names do not match");
         return;
     }
-if(n1.length < 3){
-    toast("Name too short");
-    return;
-}
 
-if(!/[a-zA-Z]/.test(n1)){
-    toast("Must contain letters");
-    return;
-}
+    if(n1.length < 3){
+        toast("Name too short");
+        return;
+    }
+
+    if(!/[a-zA-Z]/.test(n1)){
+        toast("Must contain letters");
+        return;
+    }
 
     const user = auth.currentUser;
 
     db.collection("users").doc(user.uid).get().then(doc=>{
-
         const data = doc.data();
 
         const week = 7 * 24 * 60 * 60 * 1000;
         const now = Date.now();
 
         if(data.lastNameChange && now - data.lastNameChange < week){
-
-            const days = Math.ceil(
-                (week - (now - data.lastNameChange))
-                / (1000*60*60*24)
-            );
-
+            const days = Math.ceil((week - (now - data.lastNameChange)) / (1000*60*60*24));
             toast("Wait " + days + " days");
             return;
         }
 
-        // duplicate check
         db.collection("users")
         .where("username","==",n1)
         .get()
         .then(snapshot=>{
-
            if(!snapshot.empty && snapshot.docs[0].id !== user.uid){
                 toast("Username taken");
                 return;
@@ -1332,49 +1385,38 @@ if(!/[a-zA-Z]/.test(n1)){
                 username:n1,
                 lastNameChange:now
             }).then(()=>{
-
-                
                 db.collection("leaderboard_all")
-.doc(user.uid)
-.get()
-.then(lb=>{
-
-    if(lb.exists){
-
-        db.collection("leaderboard_all")
-        .doc(user.uid)
-        .update({
-            name:n1
-        });
-
-    }
-
-});
+                .doc(user.uid)
+                .get()
+                .then(lb=>{
+                    if(lb.exists){
+                        db.collection("leaderboard_all")
+                        .doc(user.uid)
+                        .update({
+                            name:n1
+                        });
+                    }
+                });
 
                 toast("Name changed ✅");
                 applyUsername(n1);
-
                 updateNameCooldown();
             });
-
         });
-
     });
 }
+
 function showUsernameSetup(){
-
     document.getElementById("authScreen").style.display = "flex";
-
     document.getElementById("loginBox").style.display = "none";
-
     document.getElementById("usernameSetup").style.display = "block";
 
     setTimeout(()=>{
         document.getElementById("usernameSetup").classList.add("show");
     },10);
 }
-function saveUsername(){
 
+function saveUsername(){
     const username = document.getElementById("newUsername")
     .value
     .trim()
@@ -1386,169 +1428,143 @@ function saveUsername(){
         toast("Enter username");
         return;
     }
-if(username.length < 3){
-    toast("Username too short");
-    return;
-}
 
-if(!/[a-zA-Z]/.test(username)){
-    toast("Must contain letters");
-    return;
-}
+    if(username.length < 3){
+        toast("Username too short");
+        return;
+    }
+
+    if(!/[a-zA-Z]/.test(username)){
+        toast("Must contain letters");
+        return;
+    }
 
     if(!/^[a-zA-Z0-9_]+$/.test(username)){
         toast("Only letters, numbers, _");
         return;
     }
 
-    // check duplicate
     db.collection("users")
     .where("username", "==", username)
     .get()
     .then(snapshot => {
-
         if(!snapshot.empty){
             toast("Username already taken ❌");
             return;
         }
 
-        // save
         db.collection("users").doc(user.uid).set({
             username: username,
             photo: user.photoURL || "",
             email: user.email,
             createdAt: Date.now(),
             lastNameChange: 0
-}).then(()=>{
+        }).then(()=>{
+            applyUsername(username);
 
-    applyUsername(username);
+            document.getElementById("usernameSetup").classList.remove("show");
+            document.getElementById("usernameSetup").style.display = "none";
+            document.getElementById("authScreen").style.display = "none";
 
-    // close popup
-    document.getElementById("usernameSetup").classList.remove("show");
+            openProfile();
+            toast("Username created ✅");
 
-    document.getElementById("usernameSetup").style.display = "none";
-
-    document.getElementById("authScreen").style.display = "none";
-
-    // refresh profile data
-    openProfile();
-
-    toast("Username created ✅");
-
-    // force refresh page after first setup
-    setTimeout(()=>{
-        location.reload();
-    },800);
-
-});
-
+            setTimeout(()=>{
+                location.reload();
+            },800);
+        });
     });
 }
+
 function applyUsername(name){
-
     localStorage.setItem("username", name);
-
     document.getElementById("username").innerText = name;
 }
+
 function logout(){
-
-    const confirmLogout = confirm(
-        "Are you sure you want to log out?"
-    );
-
+    const confirmLogout = confirm("Are you sure you want to log out?");
     if(!confirmLogout) return;
 
     auth.signOut().then(()=>{
-
         toast("Logged out 👋");
-
     });
-
 }
+
 const firebaseConfig = {
 apiKey: "AIzaSyA7wlGw9itPf3rLzzCuFzcJyiNFHT5k6F8",   
-  authDomain: "dashboard-game-pm.firebaseapp.com",
-  projectId: "dashboard-game-pm",
-  databaseURL: "https://dashboard-game-pm-default-rtdb.europe-west1.firebasedatabase.app",
-  storageBucket: "dashboard-game-pm.firebasestorage.app",
-  messagingSenderId: "613826344552",
-  appId: "1:613826344552:web:430a4285a3e99bd0d66ddd",
-  measurementId: "G-0Y5TFZJNYJ"
+authDomain: "dashboard-game-pm.firebaseapp.com",
+projectId: "dashboard-game-pm",
+databaseURL: "https://dashboard-game-pm-default-rtdb.europe-west1.firebasedatabase.app",
+storageBucket: "dashboard-game-pm.firebasestorage.app",
+messagingSenderId: "613826344552",
+appId: "1:613826344552:web:430a4285a3e99bd0d66ddd",
+measurementId: "G-0Y5TFZJNYJ"
 };
 
 firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-    const db = firebase.firestore();
+
+const auth = firebase.auth();
+const db = firebase.firestore();
 const rtdb = firebase.database();
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
 auth.onAuthStateChanged(user=>{
-
     if(user){
-
-        const userStatusRef =
-        rtdb.ref("online/" + user.uid);
-
+        const userStatusRef = rtdb.ref("online/" + user.uid);
         userStatusRef.set(true);
-
         userStatusRef.onDisconnect().remove();
 
         checkUsername(user);
-
     } else {
-
         setTimeout(()=>{
-
             if(!auth.currentUser){
                 document.getElementById("authScreen").style.display = "flex";
             }
-
         },500);
-
     }
-
 });
 
 rtdb.ref("online").on("value",snap=>{
-
     const count = snap.numChildren();
 
     document.getElementById("onlineCount")
     .innerText = `🟢 ${count} Online`;
-
 });
+
 let previousPosition = null;
 let currentBoard = "leaderboard_all";
 const scoresDiv = document.getElementById("scores");
+
 db.collection(currentBoard)
 .orderBy("score", "desc")
 .limit(10)
 .onSnapshot(snapshot => {
-
     let newData = [];
-   snapshot.forEach(doc => {
-    newData.push({
-        id: doc.id,
-        ...doc.data()
+
+    snapshot.forEach(doc => {
+        newData.push({
+            id: doc.id,
+            ...doc.data()
+        });
     });
-});
 
     scoresDiv.style.opacity = 0;
 
     setTimeout(() => {
         scoresDiv.innerHTML = "";
         
-const username = document.getElementById("username").innerText;
+        const username = document.getElementById("username").innerText;
+
         newData.forEach((data, index) => {
-
             const rank = index + 1;
+            const firstLetter = data.name ? data.name.charAt(0).toUpperCase() : "?";
 
-const firstLetter = data.name ? data.name.charAt(0).toUpperCase() : "?";
             let highlight = data.name === username
                 ? "background:rgba(102,126,234,0.15);"
                 : "";
 
             if(data.name === username){
-
                 if(previousPosition !== null){
                     animateClimb(previousPosition, rank);
                 }
@@ -1557,9 +1573,9 @@ const firstLetter = data.name ? data.name.charAt(0).toUpperCase() : "?";
                 animateClimbVisual(rank);
             }
 
-let crown = rank === 1 ? "👑 " : "";
+            let crown = rank === 1 ? "👑 " : "";
 
-scoresDiv.innerHTML += `
+            scoresDiv.innerHTML += `
 <div class="lb-item rank-${rank}" style="${highlight}">
     <div class="lb-left">
         <div class="avatar">
@@ -1578,11 +1594,10 @@ ${data.avatar
         });
 
         scoresDiv.style.opacity = 1;
-
     }, 150);
-
 });
-    function animateClimb(oldPos, newPos){
+
+function animateClimb(oldPos, newPos){
     let steps = Math.abs(oldPos - newPos);
     let direction = oldPos > newPos ? "↑" : "↓";
 
@@ -1592,12 +1607,13 @@ ${data.avatar
         }, i * 200);
     }
 }
+
 function openStorePage(){
    window.location.href = "Pages/store.html";
 }
+
 function saveToBoard(collection, data){
-    const ref = db.collection(collection)
-.doc(auth.currentUser.uid);
+    const ref = db.collection(collection).doc(auth.currentUser.uid);
 
     ref.get().then(doc=>{
         if(!doc.exists || data.score >= doc.data().score){
@@ -1605,10 +1621,9 @@ function saveToBoard(collection, data){
         }
     });
 }
+
 function updateNameCooldown(){
-
     const el = document.getElementById("nameCooldown");
-
     const user = auth.currentUser;
 
     if(!user){
@@ -1617,34 +1632,25 @@ function updateNameCooldown(){
     }
 
     db.collection("users").doc(user.uid).get().then(doc=>{
-
         if(!doc.exists){
             el.innerText = "";
             return;
         }
 
         const data = doc.data();
-
         const week = 7 * 24 * 60 * 60 * 1000;
         const now = Date.now();
-
         let lastChange = data.lastNameChange || 0;
-
         let remaining = week - (now - lastChange);
 
         if(remaining <= 0){
-
             el.innerHTML = `
             <span style="color:#4ade80;">
                 ✅ You can change your username
             </span>
             `;
-
         } else {
-
-            const days = Math.ceil(
-                remaining / (1000 * 60 * 60 * 24)
-            );
+            const days = Math.ceil(remaining / (1000 * 60 * 60 * 24));
 
             el.innerHTML = `
             <span style="color:#facc15;">
@@ -1652,17 +1658,19 @@ function updateNameCooldown(){
             </span>
             `;
         }
-
     });
-
 }
+
 function buyAvatar(icon){
     localStorage.setItem("avatar", icon);
+
     if(maxScore > 0){
-    updateLeaderboard(maxScore);
-}
+        updateLeaderboard(maxScore);
+    }
+
     toast("Avatar equipped " + icon);
 }
+
 function startGame(){
     const user = auth.currentUser;
 
@@ -1675,12 +1683,12 @@ function startGame(){
     timeLeft = 30;
     gameActive = true;
     hits = 0;
-totalClicks = 0;
+    totalClicks = 0;
 
     document.getElementById("gameScore").innerText = "🎯 0";
     document.getElementById("gameTimer").innerText = "⏱ 30";
 
-   showHitPopup("🎮 GAME STARTED", "#667eea");
+    showHitPopup("🎮 GAME STARTED", "#667eea");
 
     timer = setInterval(()=>{
         timeLeft--;
@@ -1691,6 +1699,7 @@ totalClicks = 0;
         }
     },1000);
 }
+
 function animateClimbVisual(newRank){
     const el = document.getElementById("yourRank");
 
@@ -1700,7 +1709,6 @@ function animateClimbVisual(newRank){
     let current = previousPosition || newRank;
 
     let interval = setInterval(()=>{
-
         if(current === newRank){
             clearInterval(interval);
 
@@ -1715,88 +1723,78 @@ function animateClimbVisual(newRank){
 
         current += current > newRank ? -1 : 1;
         el.innerText = "🚀 #" + current;
-
     },120);
 }
-function endGame(){
 
+function endGame(){
     clearInterval(timer);
     gameActive = false;
 
     showFinalScore(score);
-const accuracy =
-totalClicks > 0
-? Math.floor((hits / totalClicks) * 100)
-: 0;
+
+    const accuracy =
+    totalClicks > 0
+    ? Math.floor((hits / totalClicks) * 100)
+    : 0;
+
     if(score > maxScore){
-
         maxScore = score;
-
         localStorage.setItem("maxScore", maxScore);
 
-       updateLeaderboard(score, accuracy);
-
+        updateLeaderboard(score, accuracy);
         showHighScore();
     }
 
-    // calculate real rank
     db.collection("leaderboard_all")
     .orderBy("score","desc")
     .get()
     .then(snapshot=>{
-
         let rank = 1;
 
         snapshot.forEach(doc=>{
-
             const d = doc.data();
 
             if(score < d.score){
                 rank++;
             }
-
         });
 
         showRank("#" + rank, score);
-
     });
-
 }
-function updateLeaderboard(score, accuracy){
-   const username =
-document.getElementById("username").innerText || "Anonymous";
-    const photo = localStorage.getItem("photo") || null;
 
-    const userRef =
-db.collection("leaderboard_all")
-.doc(auth.currentUser.uid);
+function updateLeaderboard(score, accuracy){
+    const username = document.getElementById("username").innerText || "Anonymous";
+
+    const userRef = db.collection("leaderboard_all").doc(auth.currentUser.uid);
 
     userRef.get().then(doc=>{
         if(!doc.exists || score > doc.data().score){
             userRef.set({
                 name: username,
-score: score,
-accuracy: accuracy,
-photo: auth.currentUser.photoURL || "",
-avatar: localStorage.getItem("avatar") || null,
-time: Date.now()
+                score: score,
+                accuracy: accuracy,
+                photo: auth.currentUser.photoURL || "",
+                avatar: localStorage.getItem("avatar") || null,
+                time: Date.now()
             });
         }
     });
 }
+
 function showHighScore(){
-const el = document.getElementById("finalScore");
+    const el = document.getElementById("finalScore");
 
+    el.innerText = "🔥 NEW HIGH SCORE!";
+    el.style.color = "#00ffcc";
 
-el.innerText = "🔥 NEW HIGH SCORE!";
-el.style.color = "#00ffcc";
+    el.classList.add("show");
 
-el.classList.add("show");
-
-setTimeout(()=>{
-    el.classList.remove("show");
-},3000);
+    setTimeout(()=>{
+        el.classList.remove("show");
+    },3000);
 }
+
 function showFinalScore(score){
     const el = document.getElementById("finalScore");
 
@@ -1809,6 +1807,7 @@ function showFinalScore(score){
         el.classList.remove("show");
     },3000);
 }
+
 function getRankColor(score){
 if(score < 3) return "#cd7f32";
 if(score < 10) return "#c0c0c0";
@@ -1817,50 +1816,56 @@ if(score < 32) return "#00e5ff";
 if(score < 40) return "#ff00ff";
 return "#ff3c3c";
 }
+
 lucide.createIcons();
+
 function showYourRank(rank){
-const el = document.getElementById("yourRank");
+    const el = document.getElementById("yourRank");
 
-el.innerText = "🏆 You are #" + rank;
-el.classList.add("show");
+    el.innerText = "🏆 You are #" + rank;
+    el.classList.add("show");
 
-setTimeout(()=>{
-    el.classList.remove("show");
-},3000);
+    setTimeout(()=>{
+        el.classList.remove("show");
+    },3000);
 }
+
 function applyTheme(){
-const theme = localStorage.getItem("theme") || "theme-black";
-document.body.className = theme;
+    const theme = localStorage.getItem("theme") || "theme-black";
+    document.body.className = theme;
 
-if(localStorage.getItem("premium")==="true"){
-document.body.classList.add("premium");
-}
+    if(localStorage.getItem("premium")==="true"){
+        document.body.classList.add("premium");
+    }
 }
 
 function setTheme(t){
-localStorage.setItem("theme",t);
-applyTheme();
-toast("Theme changed");
+    localStorage.setItem("theme",t);
+    applyTheme();
+    toast("Theme changed");
 }
 
 function unlockPremium(){
-let pass=prompt("Enter password");
-if(pass==="banks"){
-localStorage.setItem("premium",true);
-applyTheme();
-toast("Premium unlocked 🚀");
-}else toast("Wrong password");
+    let pass=prompt("Enter password");
+
+    if(pass==="banks"){
+        localStorage.setItem("premium",true);
+        applyTheme();
+        toast("Premium unlocked 🚀");
+    }else{
+        toast("Wrong password");
+    }
 }
+
 function togglePanel(){
     document.body.classList.toggle("panel-open");
 }
-function openProfile(){
 
+function openProfile(){
     const user = auth.currentUser;
     if(!user) return;
 
     db.collection("users").doc(user.uid).get().then(userDoc=>{
-
         if(!userDoc.exists) return;
 
         const u = userDoc.data();
@@ -1869,21 +1874,15 @@ function openProfile(){
         .orderBy("score","desc")
         .get()
         .then(snapshot=>{
-
             let rank = "Unranked";
             let bestScore = 0;
 
             snapshot.docs.forEach((doc,index)=>{
-
                 if(doc.id === user.uid){
-
                     rank = "#" + (index + 1);
-
                     const d = doc.data();
-
                     bestScore = d.score || 0;
                 }
-
             });
 
             const created = u.createdAt
@@ -1904,30 +1903,26 @@ function openProfile(){
 🕒 Account Created: ${created}
 `;
 
-            document.getElementById("profileScreen")
-            .classList.add("show");
-
+            document.getElementById("profileScreen").classList.add("show");
         });
-
     });
 }
+
 function openPage(id){
     if(id === "name"){
-    updateNameCooldown();
+        updateNameCooldown();
+    }
+
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
 }
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
+
 function resetAll(){
-
     if(confirm("Reset everything?")){
-
         if(confirm("This cannot be undone!")){
-
             const user = auth.currentUser;
 
             if(user){
-
                 db.collection("leaderboard_all")
                 .doc(user.uid)
                 .delete();
@@ -1937,66 +1932,60 @@ function resetAll(){
                 .delete();
 
                 auth.signOut();
-
             }
 
             localStorage.clear();
-
             location.reload();
         }
     }
 }
+
 function go(p){
-document.body.style.opacity=0;
-setTimeout(()=>location=p,200);
+    document.body.style.opacity=0;
+    setTimeout(()=>location=p,200);
 }
+
 function showRank(rank, score){
-const popup = document.getElementById("rankPopup");
+    const popup = document.getElementById("rankPopup");
 
-popup.innerText = "🏆 Rank Achieved: " + rank;
-popup.style.color = getRankColor(score);
+    popup.innerText = "🏆 Rank Achieved: " + rank;
+    popup.style.color = getRankColor(score);
 
-popup.classList.add("show");
+    popup.classList.add("show");
 
-setTimeout(()=>{
-popup.classList.remove("show");
-},5000);
+    setTimeout(()=>{
+        popup.classList.remove("show");
+    },5000);
 }
 
 function toast(msg){
-let t=document.getElementById("toast");
-t.innerText=msg;
-t.classList.add("show");
-setTimeout(()=>t.classList.remove("show"),2000);
-}
-function showHitPopup(text, color){
+    let t=document.getElementById("toast");
 
+    t.innerText=msg;
+    t.classList.add("show");
+
+    setTimeout(()=>t.classList.remove("show"),2000);
+}
+
+function showHitPopup(text, color){
     let popup = document.getElementById("hitPopup");
 
     if(!popup){
-
         popup = document.createElement("div");
-
         popup.id = "hitPopup";
 
         popup.style.position = "fixed";
         popup.style.bottom = "58px";
         popup.style.right = "20px";
-
         popup.style.background = "rgba(20,25,35,0.92)";
         popup.style.padding = "8px 14px";
-
         popup.style.borderRadius = "12px";
         popup.style.border = "1px solid rgba(255,255,255,0.1)";
-
         popup.style.backdropFilter = "blur(10px)";
         popup.style.fontSize = "14px";
         popup.style.fontWeight = "600";
-
         popup.style.zIndex = "100";
-
         popup.style.opacity = "0";
-
         popup.style.transition = "0.25s";
 
         document.body.appendChild(popup);
@@ -2004,7 +1993,6 @@ function showHitPopup(text, color){
 
     popup.innerText = text;
     popup.style.color = color;
-
     popup.style.opacity = "1";
 
     clearTimeout(popup.hideTimeout);
@@ -2013,9 +2001,12 @@ function showHitPopup(text, color){
         popup.style.opacity = "0";
     },700);
 }
+
 applyTheme();
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+
 let gameActive = false;
 let timeLeft = 30;
 let timer;
@@ -2023,27 +2014,27 @@ let score = 0;
 let maxScore = parseInt(localStorage.getItem("maxScore")) || 0; 
 let hits = 0;
 let totalClicks = 0;
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let dots = [];
 
 for(let i=0;i<25;i++){
-dots.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-vx:(Math.random()-0.5)*2,
-vy:(Math.random()-0.5)*2,
-size:10
-});
+    dots.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        vx:(Math.random()-0.5)*2,
+        vy:(Math.random()-0.5)*2,
+        size:10
+    });
 }
+
 function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    /* 🔥 DRAW LINES FIRST */
     for(let i=0;i<dots.length;i++){
         for(let j=i+1;j<dots.length;j++){
-
             let dx = dots[i].x - dots[j].x;
             let dy = dots[i].y - dots[j].y;
             let dist = Math.sqrt(dx*dx + dy*dy);
@@ -2052,15 +2043,16 @@ function draw(){
                 ctx.beginPath();
                 ctx.moveTo(dots[i].x, dots[i].y);
                 ctx.lineTo(dots[j].x, dots[j].y);
+
                 ctx.strokeStyle = document.body.classList.contains("theme-white")
                 ? "rgba(0,0,0,0.08)"
                 : "rgba(255,255,255,0.05)";
+
                 ctx.stroke();
             }
         }
     }
 
-    /* 🔥 THEN DRAW DOTS (OUTSIDE LOOP!) */
     dots.forEach(d=>{
         d.x += d.vx;
         d.y += d.vy;
@@ -2079,13 +2071,15 @@ function draw(){
 
     requestAnimationFrame(draw);
 }
-draw();
-canvas.addEventListener("click", (e) => {
 
+draw();
+
+canvas.addEventListener("click", (e) => {
     if(!gameActive){
         startGame();
         return;
     }
+
     totalClicks++;
 
     const rect = canvas.getBoundingClientRect();
@@ -2110,31 +2104,34 @@ canvas.addEventListener("click", (e) => {
             break;
         }
     }
-if(hit){   
-    hits++; 
-    score++;
 
-    document.getElementById("gameScore").innerText = "🎯 " + score;
+    if(hit){   
+        hits++; 
+        score++;
 
-    showHitPopup("🔥 HIT +1", "#00ff88");
+        document.getElementById("gameScore").innerText = "🎯 " + score;
 
-}else{
+        showHitPopup("🔥 HIT +1", "#00ff88");
+    }else{
+        score = Math.max(0, score - 1);
 
-    score = Math.max(0, score - 1);
+        document.getElementById("gameScore").innerText = "🎯 " + score;
 
-    document.getElementById("gameScore").innerText = "🎯 " + score;
-
-    showHitPopup("❌ MISS -1", "#ff4d6d");
-}
+        showHitPopup("❌ MISS -1", "#ff4d6d");
+    }
 });
+
 window.addEventListener("resize", () => {
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 });
+
 document.getElementById("profileBtn").onclick = openProfile;
+
 function closeProfile(){
     document.getElementById("profileScreen").classList.remove("show");
 }
+
 let startX = 0;
 let currentX = 0;
 let isDragging = false;
@@ -2144,7 +2141,6 @@ const panel = document.getElementById("panel");
 document.addEventListener("touchstart", e=>{
     startX = e.touches[0].clientX;
 
-    // start swipe only near right edge
     if(startX > window.innerWidth - 50){
         isDragging = true;
     }
@@ -2174,8 +2170,10 @@ document.addEventListener("touchend", ()=>{
 
     panel.style.transform = null;
 });
+
 document.addEventListener("mousedown", e=>{
     startX = e.clientX;
+
     if(startX > window.innerWidth - 50){
         isDragging = true;
     }
@@ -2185,11 +2183,12 @@ document.addEventListener("mousemove", e=>{
     if(!isDragging) return;
 
     currentX = e.clientX;
-   let diff = currentX - startX;
+    let diff = currentX - startX;
 
     if(diff < 0) diff = 0;
 
-panel.style.transform = `translateX(${Math.max(-320, Math.min(0, diff))}px)`;});
+    panel.style.transform = `translateX(${Math.max(-320, Math.min(0, diff))}px)`;
+});
 
 document.addEventListener("mouseup", ()=>{
     if(!isDragging) return;
@@ -2204,10 +2203,10 @@ document.addEventListener("mouseup", ()=>{
 
     panel.style.transform = null;
 });
-
 </script>
-<script type="module"
-src="Scripts/app.js"></script>
+
+<script type="module" src="Scripts/app.js"></script>
 <script src="Scripts/auth-ui.js"></script>
+
 </body>
 </html>
