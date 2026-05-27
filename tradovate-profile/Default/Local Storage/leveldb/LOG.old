@@ -1,0 +1,32 @@
+2026/05/19-17:08:23.662 250 Reusing MANIFEST C:\Users\eddwi\Desktop\journal\tradovate-profile\Default\Local Storage\leveldb/MANIFEST-000001
+2026/05/19-17:08:23.672 250 Recovering log #45
+2026/05/19-17:08:23.672 250 Level-0 table #49: started
+2026/05/19-17:08:23.683 250 Level-0 table #49: 23235 bytes OK
+2026/05/19-17:08:23.694 250 Delete type=0 #45
+2026/05/19-17:20:42.668 2f20 Level-0 table #52: started
+2026/05/19-17:20:42.675 2f20 Level-0 table #52: 20187 bytes OK
+2026/05/19-17:20:42.677 2f20 Delete type=0 #50
+2026/05/19-17:21:20.385 2f20 Level-0 table #54: started
+2026/05/19-17:21:20.391 2f20 Level-0 table #54: 20088 bytes OK
+2026/05/19-17:21:20.392 2f20 Delete type=0 #51
+2026/05/19-17:21:36.215 2f20 Level-0 table #56: started
+2026/05/19-17:21:36.224 2f20 Level-0 table #56: 20254 bytes OK
+2026/05/19-17:21:36.226 2f20 Delete type=0 #53
+2026/05/19-17:21:36.227 2f20 Compacting 4@0 + 1@1 files
+2026/05/19-17:21:36.233 2f20 Generated table #57@0: 10 keys, 8464 bytes
+2026/05/19-17:21:36.234 2f20 Compacted 4@0 + 1@1 files => 8464 bytes
+2026/05/19-17:21:36.236 2f20 compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/05/19-17:21:36.237 2f20 Delete type=2 #47
+2026/05/19-17:21:36.237 2f20 Delete type=2 #49
+2026/05/19-17:21:36.237 2f20 Delete type=2 #52
+2026/05/19-17:21:36.237 2f20 Delete type=2 #54
+2026/05/19-17:21:36.237 2f20 Delete type=2 #56
+2026/05/19-17:22:53.352 2f20 Level-0 table #59: started
+2026/05/19-17:22:53.359 2f20 Level-0 table #59: 17204 bytes OK
+2026/05/19-17:22:53.360 2f20 Delete type=0 #55
+2026/05/19-17:27:49.282 2f20 Level-0 table #61: started
+2026/05/19-17:27:49.288 2f20 Level-0 table #61: 19206 bytes OK
+2026/05/19-17:27:49.291 2f20 Delete type=0 #58
+2026/05/19-17:38:29.773 2f20 Level-0 table #63: started
+2026/05/19-17:38:29.780 2f20 Level-0 table #63: 22813 bytes OK
+2026/05/19-17:38:29.783 2f20 Delete type=0 #60

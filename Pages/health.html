@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Health Care</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--bg-primary:#0d1117;
+--bg-card:#161b22;
+--text-primary:#ffffff;
+--text-secondary:#8b949e;
+--border-color:rgba(48,54,61,0.5);
+--accent:#ff4d6d;
+}
+
+body{
+margin:0;
+font-family:Inter,sans-serif;
+background:var(--bg-primary);
+color:var(--text-primary);
+overflow-x:hidden;
+}
+
+/* BACKGROUND */
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+
+background:
+radial-gradient(circle at top left,
+rgba(255,0,80,0.08),
+transparent 35%),
+
+radial-gradient(circle at bottom right,
+rgba(255,255,255,0.03),
+transparent 40%);
+
+pointer-events:none;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+
+width:170px;
+height:100%;
+
+border-right:1px solid var(--border-color);
+
+backdrop-filter:blur(12px);
+
+padding:20px 14px;
+
+display:flex;
+flex-direction:column;
+
+z-index:20;
+}
+
+.sidebar-item{
+
+height:58px;
+
+display:flex;
+align-items:center;
+
+padding:0 18px;
+
+border-radius:16px;
+
+margin:10px 0;
+
+cursor:pointer;
+
+color:#9ca3af;
+
+transition:0.25s;
+}
+
+.sidebar-item:hover{
+background:rgba(255,255,255,0.05);
+transform:translateX(4px);
+}
+
+.sidebar-item.active{
+background:rgba(255,70,90,0.15);
+color:white;
+
+border:1px solid rgba(255,70,90,0.25);
+}
+
+.side-text{
+font-size:15px;
+font-weight:600;
+}
+
+/* HEADER */
+
+.header{
+position:fixed;
+top:30px;
+left:210px;
+
+font-size:2rem;
+font-weight:700;
+
+z-index:5;
+}
+
+/* MAIN */
+
+.main{
+margin-left:200px;
+padding:120px 40px 40px;
+}
+
+/* GRID */
+
+.grid{
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(260px,1fr));
+
+gap:24px;
+}
+
+/* CARDS */
+
+.card{
+
+background:var(--bg-card);
+
+border:1px solid var(--border-color);
+
+border-radius:24px;
+
+padding:24px;
+
+min-height:170px;
+
+position:relative;
+
+overflow:hidden;
+
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+
+box-shadow:
+0 0 30px rgba(255,70,90,0.12);
+}
+
+.card h3{
+margin:0;
+font-size:1rem;
+opacity:0.7;
+}
+
+.big{
+font-size:3rem;
+font-weight:700;
+margin-top:16px;
+}
+
+.sub{
+margin-top:8px;
+font-size:14px;
+opacity:0.7;
+}
+
+/* PREMIUM OVERLAY */
+
+.locked::before{
+content:"PREMIUM";
+
+position:absolute;
+top:18px;
+right:18px;
+
+font-size:11px;
+font-weight:700;
+
+padding:6px 10px;
+
+border-radius:999px;
+
+background:rgba(255,70,90,0.15);
+
+border:1px solid rgba(255,70,90,0.25);
+
+color:#ff8ca0;
+}
+
+/* CHART PLACEHOLDER */
+
+.chart{
+height:220px;
+
+border-radius:18px;
+
+margin-top:20px;
+
+background:
+linear-gradient(
+180deg,
+rgba(255,70,90,0.08),
+rgba(255,255,255,0.02)
+);
+
+border:1px solid rgba(255,255,255,0.04);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+opacity:0.5;
+}
+.glucose-normal{
+border-color:rgba(0,200,83,0.45);
+box-shadow:0 0 25px rgba(0,200,83,0.10);
+}
+
+.glucose-warning{
+border-color:rgba(255,152,0,0.55);
+box-shadow:0 0 25px rgba(255,152,0,0.12);
+}
+
+.glucose-high{
+border-color:rgba(255,77,109,0.65);
+box-shadow:0 0 30px rgba(255,77,109,0.18);
+}
+
+.glucose-low{
+border-color:rgba(33,150,243,0.65);
+box-shadow:0 0 30px rgba(33,150,243,0.18);
+}
+
+.status-good{
+color:#00c853;
+}
+
+.status-warning{
+color:#ff9800;
+}
+
+.status-danger{
+color:#ff4d6d;
+}
+
+.status-low{
+color:#2196f3;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.sidebar{
+width:78px;
+}
+
+.side-text{
+display:none;
+}
+
+.main{
+margin-left:95px;
+padding:110px 20px 20px;
+}
+
+.header{
+left:100px;
+font-size:1.5rem;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="sidebar-item"
+onclick="location='../index.html'">
+<span class="side-text">Dashboard</span>
+</div>
+
+<div class="sidebar-item"
+onclick="location='gym.html'">
+<span class="side-text">Gym</span>
+</div>
+
+<div class="sidebar-item"
+onclick="location='trading.html'">
+<span class="side-text">Trading</span>
+</div>
+
+<div class="sidebar-item active">
+<span class="side-text">Health</span>
+</div>
+
+</div>
+
+<div class="header">
+Health Care
+</div>
+
+<div class="main">
+
+<div class="grid">
+
+<div class="card" id="glucoseCard">
+<h3>Current Glucose</h3>
+
+<div class="big" id="currentGlucose">
+-- mg/dL
+</div>
+
+<div class="sub" id="glucoseStatus">
+LibreLinkUp connected
+</div>
+
+<div class="sub" id="lastUpdate">
+Last update: --
+</div>
+
+<div class="sub" id="trendStatus">
+Trend: --
+</div>
+</div>
+<div class="card">
+<h3>Daily Average</h3>
+
+<div class="big" id="dailyAverage">
+--
+</div>
+
+<div class="sub">
+No data yet
+</div>
+</div>
+
+<div class="card locked">
+<h3>Time In Range</h3>
+
+<div class="big">
+--%
+</div>
+
+<div class="sub">
+Premium analytics
+</div>
+</div>
+
+<div class="card locked">
+<h3>Meal Reactions</h3>
+
+<div class="big">
+AI
+</div>
+
+<div class="sub">
+Meal spike detection
+</div>
+</div>
+
+</div>
+
+<div class="card"
+style="margin-top:24px;">
+
+<h3>
+24 Hour Glucose Chart
+</h3>
+
+<canvas id="glucoseChart"></canvas>
+
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDuLQUyqoSYy3NKOMGnBsj9ufFqkWa76Es",
+  authDomain: "pmbankshealth.firebaseapp.com",
+  projectId: "pmbankshealth",
+  storageBucket: "pmbankshealth.firebasestorage.app",
+  messagingSenderId: "533245652407",
+  appId: "1:533245652407:web:12d36f43ff4cd142c0cc32"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let glucoseChart;
+function loadGlucoseData(){
+
+console.log("LOADING GLUCOSE DATA");
+
+db.collection("users/main/glucoseReadings")
+.orderBy("timestamp", "asc")
+.limit(288)
+.get()
+.then(snapshot=>{
+
+console.log("DOC COUNT:", snapshot.size);
+
+let labels = [];
+let values = [];
+let latestData = null;
+
+snapshot.forEach(doc=>{
+
+const data = doc.data();
+latestData = data;
+
+labels.push(
+data.timestamp.toDate()
+.toLocaleTimeString([],{
+hour:'2-digit',
+minute:'2-digit'
+})
+);
+
+values.push(Number(data.value));
+
+});
+
+updateDashboard(values, latestData);
+renderChart(labels, values);
+
+})
+.catch(error=>{
+console.error("Firebase glucose load failed:", error);
+
+document.getElementById("glucoseStatus").innerText =
+"Firebase connection error";
+});
+
+}
+function updateDashboard(values, latestData){
+
+if(values.length === 0) return;
+
+const current =
+values[values.length - 1];
+
+const glucoseCard =
+document.getElementById("glucoseCard");
+
+const glucoseStatus =
+document.getElementById("glucoseStatus");
+
+const lastUpdate =
+document.getElementById("lastUpdate");
+
+const trendStatus =
+document.getElementById("trendStatus");
+
+document.getElementById("currentGlucose")
+.innerText = current + " mg/dL";
+
+const avg =
+Math.round(
+values.reduce((a,b)=>a+b,0)
+/ values.length
+);
+
+document.getElementById("dailyAverage")
+.innerText = avg;
+
+glucoseCard.classList.remove(
+"glucose-normal",
+"glucose-warning",
+"glucose-high",
+"glucose-low"
+);
+
+glucoseStatus.classList.remove(
+"status-good",
+"status-warning",
+"status-danger",
+"status-low"
+);
+
+if(current < 70){
+glucoseCard.classList.add("glucose-low");
+glucoseStatus.classList.add("status-low");
+glucoseStatus.innerText = "Low glucose alert";
+}
+else if(current >= 180){
+glucoseCard.classList.add("glucose-high");
+glucoseStatus.classList.add("status-danger");
+glucoseStatus.innerText = "High glucose alert";
+}
+else if(current >= 140){
+glucoseCard.classList.add("glucose-warning");
+glucoseStatus.classList.add("status-warning");
+glucoseStatus.innerText = "Above target range";
+}
+else{
+glucoseCard.classList.add("glucose-normal");
+glucoseStatus.classList.add("status-good");
+glucoseStatus.innerText = "LibreLinkUp connected";
+}
+
+if(latestData && latestData.timestamp){
+lastUpdate.innerText =
+"Last update: " +
+latestData.timestamp.toDate().toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit"
+});
+}
+
+if(latestData && latestData.trend){
+let trendText = "→ Flat";
+
+if(latestData.trend === "up"){
+trendText = "↑ Rising";
+}
+
+if(latestData.trend === "down"){
+trendText = "↓ Falling";
+}
+
+trendStatus.innerText = "Trend: " + trendText;
+}
+
+}
+function renderChart(labels, values){
+
+const ctx =
+document.getElementById("glucoseChart");
+
+if(glucoseChart){
+glucoseChart.destroy();
+}
+
+glucoseChart = new Chart(ctx, {
+
+type:'line',
+
+data:{
+labels:labels,
+
+datasets:[{
+
+label:'Glucose',
+
+data:values,
+
+borderColor:'#ff4d6d',
+
+backgroundColor:'rgba(255,77,109,0.15)',
+
+fill:true,
+
+tension:0.4,
+
+pointRadius:3
+
+}]
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+legend:{
+display:false
+}
+},
+
+scales:{
+
+x:{
+ticks:{
+color:'#8b949e'
+},
+grid:{
+color:'rgba(255,255,255,0.04)'
+}
+},
+
+y:{
+ticks:{
+color:'#8b949e'
+},
+grid:{
+color:'rgba(255,255,255,0.04)'
+}
+}
+
+}
+
+}
+
+});
+
+}
+</script>
+<script type="module">
+
+import {
+    applyTheme,
+    loadTheme
+} from "../Scripts/theme.js";
+
+window.applyTheme = applyTheme;
+
+loadTheme();
+loadGlucoseData();
+</script>
+<script type="module"
+src="../Scripts/auth-check.js">
+</script>
+</body>
+</html>

@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Habits</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+:root{
+    --bg-primary:#0d1117;
+    --bg-card:#161b22;
+    --bg-secondary:#0f172a;
+    --text-primary:#ffffff;
+    --text-secondary:#9ca3af;
+    --border-color:rgba(255,255,255,.08);
+    --accent:#8b5cf6;
+    --accent2:#3b82f6;
+    --accent-main:#667eea;
+    --accent-soft:rgba(102,126,234,.28);
+    --green:#22c55e;
+    --red:#ef4444;
+    --warn:#f59e0b;
+}
+
+.theme-white{
+    --bg-primary:#f4f6fb;
+    --bg-card:#ffffff;
+    --bg-secondary:#eef2ff;
+    --text-primary:#111827;
+    --text-secondary:#6b7280;
+    --border-color:rgba(0,0,0,.09);
+    --accent:#7c3aed;
+    --accent2:#2563eb;
+}
+
+.theme-darkblue{
+    --bg-primary:#0a1628;
+    --bg-card:#111c33;
+    --bg-secondary:#0f1f3a;
+}
+
+.theme-purple{
+    --bg-primary:#1a0a2e;
+    --bg-card:#24103d;
+    --bg-secondary:#2d1b4e;
+}
+
+.theme-darkred{
+    --bg-primary:#1a0505;
+    --bg-card:#2a0a0a;
+    --bg-secondary:#3d1212;
+}
+
+.theme-darkbrown{
+    --bg-primary:#1e120e;
+    --bg-card:#2a1a14;
+    --bg-secondary:#3a261d;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Inter,sans-serif;
+    background:var(--bg-primary);
+    color:var(--text-primary);
+    min-height:100vh;
+    overflow-x:hidden;
+    padding-left:270px;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 20% 30%,rgba(139,92,246,.14),transparent 38%),
+        radial-gradient(circle at 80% 70%,rgba(59,130,246,.10),transparent 42%),
+        linear-gradient(120deg,transparent 40%,rgba(0,0,0,.35));
+    pointer-events:none;
+    z-index:0;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:42px 42px;
+    pointer-events:none;
+    z-index:0;
+}
+
+/* ===== SIDEBAR ===== */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:230px;
+    background:var(--bg-card);
+    backdrop-filter:blur(14px);
+    border-right:1px solid rgba(255,255,255,.06);
+    display:flex;
+    flex-direction:column;
+    padding:24px 18px;
+    z-index:1000;
+}
+
+.sidebar-logo{
+    text-decoration:none;
+    color:#fff;
+    font-size:1.3rem;
+    font-weight:800;
+    padding:14px 18px;
+    border-radius:18px;
+    background:linear-gradient(
+        135deg,
+        var(--accent-soft, var(--accent)),
+        var(--bg-secondary, var(--bg-card))
+    );
+    text-align:center;
+    margin-bottom:24px;
+}
+
+.sidebar-divider{
+    width:100%;
+    height:1px;
+    background:rgba(255,255,255,.08);
+    margin-bottom:18px;
+}
+
+.sidebar-link{
+    text-decoration:none;
+    color:#94a3b8;
+    font-size:.95rem;
+    font-weight:600;
+    padding:14px 18px;
+    border-radius:14px;
+    transition:.25s;
+    margin-bottom:8px;
+}
+
+.sidebar-link:hover{
+    background:rgba(255,255,255,.05);
+    color:#fff;
+    transform:translateX(4px);
+}
+
+.sidebar-link.active{
+    background:linear-gradient(
+        135deg,
+        var(--accent-main, var(--accent)),
+        var(--accent-soft, var(--accent2))
+    );
+    color:white;
+    box-shadow:0 0 20px rgba(102,126,234,.25);
+}
+
+/* ===== LAYOUT ===== */
+
+.main{
+    position:relative;
+    z-index:1;
+    padding:34px 36px;
+    max-width:1550px;
+    margin:0 auto;
+}
+
+.header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:20px;
+    margin-bottom:28px;
+}
+
+.header h1{
+    font-size:2rem;
+    font-weight:800;
+    letter-spacing:-.7px;
+    margin-bottom:8px;
+}
+
+.header p{
+    color:var(--text-secondary);
+    font-size:.95rem;
+    line-height:1.55;
+}
+
+.header-actions{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.icon-btn{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.04);
+    color:var(--text-primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.2s;
+    text-decoration:none;
+}
+
+.icon-btn:hover{
+    border-color:var(--accent);
+    transform:translateY(-2px);
+}
+
+.card{
+    background:rgba(22,27,34,.72);
+    border:1px solid var(--border-color);
+    border-radius:22px;
+    padding:22px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 18px 40px rgba(0,0,0,.18);
+    transition:.25s;
+}
+
+.card:hover{
+    border-color:rgba(139,92,246,.42);
+}
+
+.card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.card-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    font-size:1rem;
+}
+
+.card-title i{
+    color:var(--accent);
+}
+
+.card-small{
+    color:#b794ff;
+    font-size:.8rem;
+    font-weight:700;
+}
+
+.btn{
+    border:none;
+    border-radius:12px;
+    padding:12px 16px;
+    font-weight:800;
+    cursor:pointer;
+    color:#fff;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    font-family:inherit;
+}
+
+.goal-action{
+    border:none;
+    border-radius:10px;
+    padding:8px 11px;
+    background:rgba(139,92,246,.14);
+    color:#c4b5fd;
+    font-size:.75rem;
+    font-weight:800;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+}
+
+.goal-action:hover{
+    background:rgba(139,92,246,.22);
+    transform:translateY(-1px);
+}
+
+.input,
+.select,
+textarea{
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.25);
+    color:var(--text-primary);
+    outline:none;
+    font-family:inherit;
+}
+
+.input:focus,
+.select:focus,
+textarea:focus{
+    border-color:var(--accent);
+}
+
+textarea{
+    resize:vertical;
+}
+
+.hint{
+    color:var(--text-secondary);
+    font-size:.78rem;
+    line-height:1.5;
+}
+
+/* ===== HIDDEN MODE HERO ===== */
+
+.hidden-hero{
+    position:relative;
+    overflow:hidden;
+    margin-bottom:20px;
+    border-radius:26px;
+    border:1px solid rgba(245,158,11,.22);
+    background:
+        radial-gradient(circle at 0% 0%,rgba(245,158,11,.18),transparent 38%),
+        radial-gradient(circle at 100% 100%,rgba(139,92,246,.18),transparent 42%),
+        rgba(22,27,34,.72);
+    padding:22px;
+}
+
+.hidden-hero.enabled{
+    border-color:rgba(34,197,94,.34);
+    background:
+        radial-gradient(circle at 0% 0%,rgba(34,197,94,.18),transparent 38%),
+        radial-gradient(circle at 100% 100%,rgba(139,92,246,.18),transparent 42%),
+        rgba(22,27,34,.72);
+}
+
+.hidden-hero-grid{
+    display:grid;
+    grid-template-columns:1.4fr auto;
+    gap:18px;
+    align-items:center;
+}
+
+.hidden-title{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+}
+
+.hidden-icon{
+    width:54px;
+    height:54px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fde68a;
+    background:rgba(245,158,11,.16);
+    border:1px solid rgba(245,158,11,.26);
+    flex:0 0 auto;
+}
+
+.hidden-hero.enabled .hidden-icon{
+    color:#86efac;
+    background:rgba(34,197,94,.16);
+    border-color:rgba(34,197,94,.26);
+}
+
+.hidden-title h2{
+    font-size:1.25rem;
+    margin-bottom:6px;
+}
+
+.hidden-title p{
+    color:var(--text-secondary);
+    line-height:1.55;
+    font-size:.88rem;
+}
+
+.hidden-status{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:16px;
+}
+
+.hidden-stat{
+    padding:12px;
+    border-radius:16px;
+    background:rgba(0,0,0,.18);
+    border:1px solid var(--border-color);
+}
+
+.hidden-stat strong{
+    display:block;
+    font-size:1.2rem;
+    margin-bottom:3px;
+}
+
+.hidden-stat span{
+    color:var(--text-secondary);
+    font-size:.72rem;
+    font-weight:800;
+}
+
+.big-switch-wrap{
+    width:250px;
+    padding:16px;
+    border-radius:22px;
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.20);
+}
+
+.big-switch-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+}
+
+.big-switch-label strong{
+    display:block;
+    margin-bottom:3px;
+}
+
+.big-switch-label small{
+    color:var(--text-secondary);
+    font-size:.75rem;
+}
+
+.switch{
+    position:relative;
+    width:58px;
+    height:34px;
+    flex:0 0 auto;
+}
+
+.switch input{
+    display:none;
+}
+
+.slider{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,.12);
+    border-radius:999px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.slider::before{
+    content:"";
+    position:absolute;
+    width:28px;
+    height:28px;
+    left:3px;
+    top:3px;
+    background:#fff;
+    border-radius:50%;
+    transition:.2s;
+}
+
+.switch input:checked + .slider{
+    background:linear-gradient(135deg,var(--green),var(--accent2));
+}
+
+.switch input:checked + .slider::before{
+    transform:translateX(24px);
+}
+
+/* ===== CREATE AREA ===== */
+
+.creator-body{
+    display:block;
+}
+
+.tabs{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+}
+
+.tab{
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.04);
+    color:var(--text-secondary);
+    padding:10px 14px;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:800;
+    font-family:inherit;
+}
+
+.tab.active{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:white;
+    box-shadow:0 0 18px rgba(139,92,246,.24);
+}
+
+.creator-layout{
+    display:grid;
+    grid-template-columns:1fr .92fr;
+    gap:18px;
+    align-items:start;
+}
+
+.create-panel,
+.create-preview{
+    border:1px solid var(--border-color);
+    border-radius:22px;
+    padding:18px;
+    background:
+        radial-gradient(circle at 0% 0%,rgba(59,130,246,.12),transparent 35%),
+        rgba(0,0,0,.15);
+}
+
+.create-panel-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:16px;
+}
+
+.create-panel-title strong{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:.98rem;
+}
+
+.create-panel-title strong i{
+    color:var(--accent);
+    width:18px;
+    height:18px;
+}
+
+.clear-form-btn{
+    border:none;
+    border-radius:12px;
+    padding:9px 12px;
+    font-family:inherit;
+    font-size:.75rem;
+    font-weight:900;
+    cursor:pointer;
+    color:#c4b5fd;
+    background:rgba(139,92,246,.14);
+    border:1px solid rgba(139,92,246,.20);
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.clear-form-btn:hover{
+    background:rgba(139,92,246,.22);
+    transform:translateY(-1px);
+}
+
+.create-form-grid{
+    display:grid;
+    grid-template-columns:1.35fr .6fr .7fr;
+    gap:12px;
+}
+
+.input-card{
+    position:relative;
+}
+
+.input-card label,
+.success-criteria-card label,
+.hidden-mini-card label,
+.emoji-picker-inside label,
+.modal-field label{
+    display:block;
+    color:var(--text-secondary);
+    font-size:.68rem;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.input-card .input{
+    min-height:48px;
+}
+
+.success-criteria-card,
+.hidden-mini-card{
+    margin-top:12px;
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    padding:14px;
+    background:rgba(0,0,0,.16);
+}
+
+.success-criteria-card textarea{
+    min-height:94px;
+}
+
+.hidden-mini-card{
+    border-color:rgba(245,158,11,.20);
+}
+
+.hidden-mini-card.active{
+    border-color:rgba(34,197,94,.28);
+    background:rgba(34,197,94,.07);
+}
+
+.hidden-toggle-line{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    margin-bottom:12px;
+}
+
+.hidden-toggle-line strong{
+    display:block;
+    font-size:.9rem;
+    margin-bottom:3px;
+}
+
+/* ===== LIVE PREVIEW + EMOJI BELOW PREVIEW ===== */
+
+.create-preview{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    background:
+        radial-gradient(circle at 15% 20%,rgba(139,92,246,.18),transparent 42%),
+        rgba(0,0,0,.15);
+    border-color:rgba(139,92,246,.28);
+}
+
+.preview-label{
+    color:var(--text-secondary);
+    font-size:.66rem;
+    text-transform:uppercase;
+    letter-spacing:.9px;
+    font-weight:900;
+    margin-bottom:10px;
+}
+
+.preview-card{
+    padding:18px;
+    border-radius:20px;
+    background:rgba(0,0,0,.20);
+    border:1px solid var(--border-color);
+    min-height:128px;
+}
+
+.preview-name{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:1.2rem;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.preview-icon,
+.row-icon,
+.modal-icon-box{
+    width:40px;
+    height:40px;
+    border-radius:14px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(139,92,246,.16);
+    border:1px solid rgba(139,92,246,.20);
+    flex:0 0 auto;
+    font-size:1.15rem;
+}
+
+.preview-detail{
+    color:var(--text-secondary);
+    font-size:.82rem;
+    line-height:1.45;
+}
+
+.criteria-line{
+    display:block;
+    margin-top:4px;
+    color:#c4b5fd;
+}
+
+.preview-private{
+    display:none;
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:14px;
+    background:rgba(245,158,11,.10);
+    border:1px solid rgba(245,158,11,.24);
+    color:#fde68a;
+    font-size:.76rem;
+    font-weight:800;
+    line-height:1.45;
+}
+
+.preview-private.active{
+    display:block;
+}
+
+.emoji-picker-inside{
+    margin-top:0;
+    padding:12px;
+    border-radius:20px;
+    background:rgba(0,0,0,.18);
+    border:1px solid var(--border-color);
+}
+
+.emoji-picker-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:10px;
+}
+
+.emoji-picker-head small{
+    display:block;
+    color:var(--text-secondary);
+    font-size:.75rem;
+    line-height:1.45;
+    margin-top:3px;
+}
+
+.emoji-clear{
+    border:none;
+    border-radius:999px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:.7rem;
+    font-weight:900;
+    color:var(--text-secondary);
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--border-color);
+}
+
+.emoji-clear:hover{
+    color:white;
+    border-color:rgba(139,92,246,.35);
+}
+
+.emoji-options{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(40px, 40px));
+    gap:8px;
+    align-items:center;
+}
+
+.emoji-option{
+    width:40px;
+    height:40px;
+    border-radius:13px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.04);
+    color:var(--text-primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:1.12rem;
+    transition:.2s;
+    line-height:1;
+}
+
+.emoji-option:hover{
+    border-color:rgba(139,92,246,.45);
+    transform:translateY(-2px);
+}
+
+.emoji-option.active{
+    border-color:var(--accent);
+    background:rgba(139,92,246,.22);
+    box-shadow:0 0 18px rgba(139,92,246,.22);
+}
+
+.add-btn-wide{
+    width:100%;
+    min-height:52px;
+    margin-top:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-size:.95rem;
+}
+
+.add-btn-wide i{
+    width:18px;
+    height:18px;
+}
+
+/* ===== LIST ===== */
+
+.manage-heading{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:20px;
+    padding-top:18px;
+    border-top:1px solid rgba(255,255,255,.07);
+}
+
+.manage-heading strong{
+    font-size:.95rem;
+}
+
+.manage-heading span{
+    color:var(--text-secondary);
+    font-size:.78rem;
+    font-weight:800;
+}
+
+.list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:15px;
+}
+
+.row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px;
+    align-items:center;
+    padding:14px;
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    background:rgba(0,0,0,.16);
+}
+
+.row-main{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    min-width:0;
+}
+
+.row-title-line{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:5px;
+}
+
+.row-title-line strong{
+    font-size:.94rem;
+}
+
+.row small{
+    color:var(--text-secondary);
+    line-height:1.45;
+}
+
+.row-actions{
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+
+.privacy-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:4px 8px;
+    border-radius:999px;
+    background:rgba(245,158,11,.16);
+    color:#fcd34d;
+    font-size:.68rem;
+    font-weight:900;
+}
+
+.delete-action{
+    color:#fecaca !important;
+    background:rgba(239,68,68,.14) !important;
+    border:1px solid rgba(239,68,68,.20) !important;
+}
+
+.delete-action:hover{
+    background:rgba(239,68,68,.22) !important;
+}
+
+.empty{
+    color:var(--text-secondary);
+    font-size:.85rem;
+    padding:20px;
+    text-align:center;
+    border:1px dashed var(--border-color);
+    border-radius:18px;
+}
+
+/* ===== MODALS ===== */
+
+.modal-backdrop{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+    background:rgba(0,0,0,.62);
+    backdrop-filter:blur(12px);
+}
+
+.modal-backdrop.show{
+    display:flex;
+}
+
+.modern-modal{
+    position:relative;
+    width:min(100%,520px);
+    max-height:86vh;
+    overflow:auto;
+    border:1px solid rgba(139,92,246,.28);
+    border-radius:26px;
+    padding:24px;
+    background:
+        radial-gradient(circle at 16% 0%,rgba(139,92,246,.22),transparent 42%),
+        radial-gradient(circle at 95% 100%,rgba(59,130,246,.16),transparent 38%),
+        rgba(22,27,34,.96);
+    box-shadow:0 30px 90px rgba(0,0,0,.45);
+    animation:modalPop .18s ease-out;
+}
+
+.delete-modal{
+    border-color:rgba(239,68,68,.30);
+    background:
+        radial-gradient(circle at 16% 0%,rgba(239,68,68,.22),transparent 42%),
+        radial-gradient(circle at 95% 100%,rgba(139,92,246,.16),transparent 38%),
+        rgba(22,27,34,.96);
+}
+
+@keyframes modalPop{
+    from{
+        opacity:0;
+        transform:translateY(12px) scale(.98);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+
+.modal-close{
+    position:absolute;
+    top:16px;
+    right:16px;
+    width:36px;
+    height:36px;
+    border:none;
+    border-radius:12px;
+    background:rgba(255,255,255,.06);
+    color:var(--text-primary);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-close:hover{
+    background:rgba(255,255,255,.10);
+}
+
+.modal-top-icon{
+    width:54px;
+    height:54px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#c4b5fd;
+    background:rgba(139,92,246,.16);
+    border:1px solid rgba(139,92,246,.25);
+    margin-bottom:16px;
+}
+
+.delete-modal .modal-top-icon{
+    color:#fecaca;
+    background:rgba(239,68,68,.16);
+    border-color:rgba(239,68,68,.25);
+}
+
+.modern-modal h2{
+    font-size:1.28rem;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.modern-modal p{
+    color:var(--text-secondary);
+    font-size:.9rem;
+    line-height:1.55;
+    margin-bottom:16px;
+}
+
+.modal-item-preview{
+    padding:14px;
+    border-radius:16px;
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.22);
+    margin-bottom:18px;
+}
+
+.modal-item-preview strong{
+    display:block;
+    margin-bottom:4px;
+}
+
+.modal-item-preview small{
+    color:var(--text-secondary);
+}
+
+.modal-grid{
+    display:grid;
+    grid-template-columns:1.25fr .7fr .8fr;
+    gap:12px;
+    margin-bottom:12px;
+}
+
+.modal-field textarea{
+    min-height:86px;
+}
+
+.modal-switch-card{
+    margin-top:12px;
+    padding:13px;
+    border-radius:17px;
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.18);
+}
+
+.modal-emoji-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(38px, 38px));
+    gap:8px;
+    margin-top:8px;
+    align-items:center;
+}
+
+.modal-emoji-grid .emoji-option{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    font-size:1.05rem;
+}
+
+.modal-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:18px;
+}
+
+.cancel-btn,
+.confirm-delete-btn,
+.confirm-save-btn{
+    border:none;
+    border-radius:14px;
+    min-height:46px;
+    font-family:inherit;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.cancel-btn{
+    color:var(--text-primary);
+    background:rgba(255,255,255,.07);
+    border:1px solid var(--border-color);
+}
+
+.confirm-delete-btn{
+    color:white;
+    background:linear-gradient(135deg,#ef4444,#f97316);
+    box-shadow:0 12px 30px rgba(239,68,68,.18);
+}
+
+.confirm-save-btn{
+    color:white;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 12px 30px rgba(139,92,246,.18);
+}
+
+/* ===== TOAST ===== */
+
+.toast{
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:6000;
+    min-width:260px;
+    display:none;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    border-radius:18px;
+    background:rgba(15,23,42,.95);
+    border:1px solid rgba(34,197,94,.30);
+    box-shadow:0 20px 60px rgba(0,0,0,.32);
+}
+
+.toast.show{
+    display:flex;
+}
+
+.toast-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    background:rgba(34,197,94,.18);
+    color:#86efac;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.toast strong{
+    display:block;
+    font-size:.9rem;
+}
+
+.toast span{
+    display:block;
+    color:var(--text-secondary);
+    font-size:.75rem;
+    margin-top:2px;
+}
+
+@media(max-width:1180px){
+    .creator-layout{
+        grid-template-columns:1fr;
+    }
+
+    .hidden-hero-grid{
+        grid-template-columns:1fr;
+    }
+
+    .big-switch-wrap{
+        width:100%;
+    }
+}
+
+@media(max-width:900px){
+    body{
+        padding-left:0;
+        padding-bottom:86px;
+    }
+
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        padding:24px 16px;
+    }
+
+    .header{
+        flex-direction:column;
+    }
+
+    .create-form-grid,
+    .modal-grid{
+        grid-template-columns:1fr;
+    }
+
+    .emoji-options,
+    .modal-emoji-grid{
+        grid-template-columns:repeat(auto-fill, minmax(38px, 38px));
+    }
+
+    .row{
+        grid-template-columns:1fr;
+    }
+
+    .row-actions{
+        justify-content:flex-start;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <a class="sidebar-logo" href="../index.html">
+        Dashboard
+    </a>
+
+    <a class="sidebar-link" href="routine.html">
+        Routine
+    </a>
+
+    <div class="sidebar-divider"></div>
+
+    <a class="sidebar-link" href="routine-stats.html">
+        Stats
+    </a>
+
+    <a class="sidebar-link active" href="create-habits.html">
+        Create Habits
+    </a>
+
+    <a class="sidebar-link" href="sessions.html">
+        Sessions
+    </a>
+</div>
+
+<main class="main">
+    <div class="header">
+        <div>
+            <h1>Create Habits</h1>
+            <p>
+                Create daily habits, weekly goals, and long-term goals. Private items can show a hidden name whenever Hidden Mode is on.
+            </p>
+        </div>
+
+        <div class="header-actions">
+            <a class="icon-btn" href="routine.html" title="Back to Routine">
+                <i data-lucide="arrow-left"></i>
+            </a>
+
+            <a class="icon-btn" href="routine-stats.html" title="Stats">
+                <i data-lucide="bar-chart-3"></i>
+            </a>
+        </div>
+    </div>
+
+    <section class="hidden-hero" id="hiddenHero">
+        <div class="hidden-hero-grid">
+            <div>
+                <div class="hidden-title">
+                    <div class="hidden-icon">
+                        <i data-lucide="shield"></i>
+                    </div>
+
+                    <div>
+                        <h2 id="hiddenStatusTitle">Hidden Mode OFF</h2>
+                        <p id="hiddenStatusSub">
+                            Real names are visible while editing.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="hidden-status">
+                    <div class="hidden-stat">
+                        <strong id="privateCount">0</strong>
+                        <span>Private items</span>
+                    </div>
+
+                    <div class="hidden-stat">
+                        <strong id="aliasCount">0</strong>
+                        <span>Custom hidden names</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="big-switch-wrap">
+                <div class="big-switch-label">
+                    <div>
+                        <strong>Hide private names</strong>
+                        <small>Works across routine pages.</small>
+                    </div>
+
+                    <label class="switch">
+                        <input id="globalHiddenToggle" type="checkbox" onchange="toggleGlobalHiddenMode()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">
+                    <i data-lucide="square-pen"></i>
+                    Create Habit / Goal
+                </div>
+
+                <div class="hint" style="margin-top:4px;">
+                    No current progress here. Progress editing will be controlled from a separate page later.
+                </div>
+            </div>
+
+            <div class="card-small" id="activeTabLabel">Daily Habits</div>
+        </div>
+
+        <div class="creator-body">
+            <div class="tabs">
+                <button class="tab active" onclick="setTab('today',this)">Daily Habits</button>
+                <button class="tab" onclick="setTab('weekly',this)">Weekly Goals</button>
+                <button class="tab" onclick="setTab('monthly',this)">Monthly</button>
+                <button class="tab" onclick="setTab('quarterly',this)">Quarterly</button>
+                <button class="tab" onclick="setTab('yearly',this)">Yearly</button>
+            </div>
+
+            <div class="creator-layout">
+                <div class="create-panel">
+                    <div class="create-panel-title">
+                        <strong>
+                            <i data-lucide="plus-circle"></i>
+                            New item
+                        </strong>
+
+                        <button class="clear-form-btn" onclick="clearCreateForm()">
+                            <i data-lucide="rotate-ccw"></i>
+                            Clear form
+                        </button>
+                    </div>
+
+                    <div class="create-form-grid">
+                        <div class="input-card">
+                            <label>Real name</label>
+                            <input class="input" id="nameInput" oninput="updateCreatePreview()" placeholder="Example: Read 20 pages">
+                        </div>
+
+                        <div class="input-card">
+                            <label>Target</label>
+                            <input class="input" id="targetInput" oninput="updateCreatePreview()" type="number" placeholder="20">
+                        </div>
+
+                        <div class="input-card">
+                            <label>Unit</label>
+                            <input class="input" id="unitInput" oninput="updateCreatePreview()" placeholder="pages, min, blocks">
+                        </div>
+                    </div>
+
+                    <div class="success-criteria-card">
+                        <label>Notes / Success criteria optional</label>
+                        <textarea id="criteriaInput" oninput="updateCreatePreview()" placeholder="Example: Workout must be at least 30 min. Deep work block must be 90 min."></textarea>
+                    </div>
+
+                    <div class="hidden-mini-card" id="privateCard">
+                        <div class="hidden-toggle-line">
+                            <div>
+                                <strong>Make this item private</strong>
+                                <div class="hint">
+                                    When global Hidden Mode is ON, this item shows its hidden name instead of the real name.
+                                </div>
+                            </div>
+
+                            <label class="switch">
+                                <input id="hiddenInput" type="checkbox" onchange="refreshPrivateCard(); updateCreatePreview();">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <label>Hidden name optional</label>
+                        <input class="input" id="hiddenLabelInput" oninput="updateCreatePreview()" placeholder="Example: Habit A, Goal 1">
+
+                        <div class="hint" style="margin-top:8px;">
+                            Leave it blank to auto-show Habit 1, Goal 2, Monthly 1, etc.
+                        </div>
+                    </div>
+
+                    <button class="btn add-btn-wide" onclick="addItem()">
+                        <i data-lucide="plus"></i>
+                        Create Item
+                    </button>
+                </div>
+
+                <div class="create-preview">
+                    <div>
+                        <div class="preview-label">Live preview</div>
+
+                        <div class="preview-card">
+                            <div class="preview-name" id="createPreviewName">
+                                New habit / goal
+                            </div>
+
+                            <div class="preview-detail" id="createPreviewDetail">
+                                Target: 1
+                            </div>
+
+                            <div class="preview-private" id="createPreviewPrivate">
+                                Hidden Mode preview: this item will show its hidden name or fallback instead of the real name.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="emoji-picker-inside">
+                        <div class="emoji-picker-head">
+                            <div>
+                                <label>Optional emoji / icon</label>
+                                <small>
+                                    Choose one optional icon for this habit or goal. Leave empty for no icon.
+                                </small>
+                            </div>
+
+                            <button class="emoji-clear" onclick="clearEmojiSelection()">
+                                No icon
+                            </button>
+                        </div>
+
+                        <input type="hidden" id="iconInput">
+                        <div class="emoji-options" id="emojiOptions"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="manage-heading">
+                <div>
+                    <strong>Created items</strong>
+                    <div class="hint" style="margin-top:4px;">
+                        Private items hide their real name whenever global Hidden Mode is ON.
+                    </div>
+                </div>
+
+                <span id="manageCount">0 items</span>
+            </div>
+
+            <div class="list" id="manageList"></div>
+        </div>
+    </section>
+</main>
+
+<!-- DELETE POPUP -->
+<div class="modal-backdrop" id="deleteModalBackdrop">
+    <div class="modern-modal delete-modal">
+        <button class="modal-close" onclick="closeDeleteModal()">
+            <i data-lucide="x"></i>
+        </button>
+
+        <div class="modal-top-icon">
+            <i data-lucide="trash-2"></i>
+        </div>
+
+        <h2>Remove this item?</h2>
+        <p>
+            This will delete it from your routine data. You cannot undo this from here.
+        </p>
+
+        <div class="modal-item-preview">
+            <strong id="deleteModalName">Item name</strong>
+            <small id="deleteModalMeta">Item details</small>
+        </div>
+
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeDeleteModal()">
+                Cancel
+            </button>
+
+            <button class="confirm-delete-btn" onclick="confirmDeleteItem()">
+                Yes, remove it
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT POPUP -->
+<div class="modal-backdrop" id="editModalBackdrop">
+    <div class="modern-modal">
+        <button class="modal-close" onclick="closeEditModal()">
+            <i data-lucide="x"></i>
+        </button>
+
+        <div class="modal-top-icon">
+            <i data-lucide="square-pen"></i>
+        </div>
+
+        <h2>Edit item</h2>
+        <p>
+            Update the target, unit, criteria, icon, and hidden name in one clean popup.
+        </p>
+
+        <div class="modal-grid">
+            <div class="modal-field">
+                <label>Real name</label>
+                <input class="input" id="editNameInput">
+            </div>
+
+            <div class="modal-field">
+                <label>Target</label>
+                <input class="input" id="editTargetInput" type="number">
+            </div>
+
+            <div class="modal-field">
+                <label>Unit</label>
+                <input class="input" id="editUnitInput">
+            </div>
+        </div>
+
+        <div class="modal-field">
+            <label>Notes / Success criteria optional</label>
+            <textarea id="editCriteriaInput"></textarea>
+        </div>
+
+        <div class="modal-switch-card">
+            <div class="hidden-toggle-line">
+                <div>
+                    <strong>Private / Hidden item</strong>
+                    <div class="hint">
+                        If enabled, global Hidden Mode shows only the hidden name or fallback.
+                    </div>
+                </div>
+
+                <label class="switch">
+                    <input id="editHiddenInput" type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="modal-field">
+                <label>Hidden name optional</label>
+                <input class="input" id="editHiddenLabelInput">
+            </div>
+        </div>
+
+        <div class="modal-switch-card">
+            <div class="emoji-picker-head">
+                <div>
+                    <label>Emoji / icon optional</label>
+                    <small>Only choose one if you want this item to show an icon.</small>
+                </div>
+
+                <button class="emoji-clear" onclick="clearEditEmojiSelection()">
+                    No icon
+                </button>
+            </div>
+
+            <input type="hidden" id="editIconInput">
+            <div class="modal-emoji-grid" id="editEmojiOptions"></div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeEditModal()">
+                Cancel
+            </button>
+
+            <button class="confirm-save-btn" onclick="saveEditedItem()">
+                Save changes
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS TOAST -->
+<div class="toast" id="successToast">
+    <div class="toast-icon">
+        <i data-lucide="check"></i>
+    </div>
+
+    <div>
+        <strong id="successToastText">Item created</strong>
+        <span>Saved to your routine.</span>
+    </div>
+</div>
+
+<script>
+const STORAGE_KEY = "routineDashboardV2";
+const defaultState = {
+  hiddenModeEnabled:false,
+
+  layout:{
+    today:true,
+    timeline:false,
+    weekly:true,
+    longTerm:true,
+    quickActions:false
+  },
+
+  goalSections:{
+    monthly:true,
+    quarterly:true,
+    yearly:true
+  },
+
+  planMode:"same",
+  activeWeek:1,
+
+  today:[],
+  weekly:[],
+  monthly:[],
+  quarterly:[],
+  yearly:[],
+
+  timeline:{
+    morning:[],
+    afternoon:[],
+    evening:[]
+  },
+
+  history:[],
+
+  demoCleanupDone:true
+};
+const emojiChoices = [
+    "✅","🎯","🔥","📖","🏋️",
+    "📚","⭐","💪","🚶","🏃",
+    "🧘","🥗","🍎","🛌","⏰",
+    "⏱️","🧠","💻","📵","📱",
+    "🎧","📞","💰","📈","🗓️",
+    "☀️","🌙","⚡","🚀"
+];
+
+let state = loadState();
+let activeTab = "today";
+let pendingDelete = null;
+let pendingEdit = null;
+let toastTimer = null;
+
+function clone(data){
+    return JSON.parse(JSON.stringify(data));
+}
+
+function deepMerge(base,incoming){
+    for(const key in incoming){
+        if(
+            incoming[key] &&
+            typeof incoming[key] === "object" &&
+            !Array.isArray(incoming[key])
+        ){
+            base[key] = deepMerge(base[key] || {}, incoming[key]);
+        }else{
+            base[key] = incoming[key];
+        }
+    }
+
+    return base;
+}
+function loadState(){
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if(!saved){
+    return clone(defaultState);
+  }
+
+  try{
+    const merged = deepMerge(
+      clone(defaultState),
+      JSON.parse(saved)
+    );
+
+    delete merged.planMode;
+    delete merged.activeWeek;
+    delete merged.weekPlans;
+
+    if(typeof merged.hiddenModeEnabled !== "boolean"){
+      merged.hiddenModeEnabled = false;
+    }
+
+    hydrateExistingItems(merged);
+
+    return removeDemoItems(merged);
+  }catch{
+    return clone(defaultState);
+  }
+}
+
+function hydrateExistingItems(data){
+    ["today","weekly","monthly","quarterly","yearly"].forEach(group => {
+        (data[group] || []).forEach(item => {
+            if(typeof item.hidden !== "boolean") item.hidden = false;
+            if(typeof item.hiddenLabel !== "string") item.hiddenLabel = "";
+            if(typeof item.criteria !== "string") item.criteria = "";
+            if(typeof item.icon !== "string") item.icon = "";
+            if(typeof item.current !== "number") item.current = 0;
+            if(group === "today" && typeof item.done !== "boolean") item.done = false;
+        });
+    });
+}
+
+function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function applyTheme(){
+    const theme = localStorage.getItem("theme") || "theme-black";
+    document.body.className = theme;
+}
+
+function lucideRefresh(){
+    if(window.lucide){
+        lucide.createIcons();
+    }
+}
+
+function getPercent(current,target){
+    if(!target) return 0;
+    return Math.min(100, Math.round((Number(current) / Number(target)) * 100));
+}
+
+function getFallbackName(type,index){
+    const labels = {
+        today:"Habit",
+        weekly:"Goal",
+        monthly:"Monthly",
+        quarterly:"Quarterly",
+        yearly:"Yearly"
+    };
+
+    return `${labels[type] || "Item"} ${index + 1}`;
+}
+
+function displayItemName(item,index,type = activeTab){
+    const hiddenIsActive = state.hiddenModeEnabled === true;
+
+    if(hiddenIsActive && item.hidden){
+        return item.hiddenLabel && item.hiddenLabel.trim()
+            ? item.hiddenLabel.trim()
+            : getFallbackName(type,index);
+    }
+
+    return item.name;
+}
+
+function shouldHideRealDetails(item){
+    return state.hiddenModeEnabled === true && item.hidden === true;
+}
+
+function getPrivateStats(){
+    const groups = ["today","weekly","monthly","quarterly","yearly"];
+    let privateCount = 0;
+    let aliasCount = 0;
+
+    groups.forEach(group => {
+        (state[group] || []).forEach(item => {
+            if(item.hidden){
+                privateCount += 1;
+
+                if(item.hiddenLabel && item.hiddenLabel.trim()){
+                    aliasCount += 1;
+                }
+            }
+        });
+    });
+
+    return {
+        privateCount,
+        aliasCount
+    };
+}
+
+function init(){
+    applyTheme();
+    renderEmojiOptions("emojiOptions", "main");
+    renderEmojiOptions("editEmojiOptions", "edit");
+    renderHiddenMode();
+    renderList();
+    refreshPrivateCard();
+    updateCreatePreview();
+    lucideRefresh();
+}
+
+function toggleGlobalHiddenMode(){
+    state.hiddenModeEnabled = document.getElementById("globalHiddenToggle").checked;
+    saveState();
+    renderHiddenMode();
+    updateCreatePreview();
+    renderList();
+}
+
+function renderHiddenMode(){
+    const toggle = document.getElementById("globalHiddenToggle");
+    const hero = document.getElementById("hiddenHero");
+    const statusTitle = document.getElementById("hiddenStatusTitle");
+    const statusSub = document.getElementById("hiddenStatusSub");
+    const privateCount = document.getElementById("privateCount");
+    const aliasCount = document.getElementById("aliasCount");
+    const stats = getPrivateStats();
+
+    toggle.checked = state.hiddenModeEnabled === true;
+    hero.classList.toggle("enabled", state.hiddenModeEnabled === true);
+
+    if(state.hiddenModeEnabled){
+        statusTitle.innerText = "Hidden Mode ON";
+        statusSub.innerText = "Private real names are hidden across the routine pages.";
+    }else{
+        statusTitle.innerText = "Hidden Mode OFF";
+        statusSub.innerText = "Real names are visible while editing.";
+    }
+
+    privateCount.innerText = stats.privateCount;
+    aliasCount.innerText = stats.aliasCount;
+}
+
+function setTab(tab,button){
+    activeTab = tab;
+
+    document.querySelectorAll(".tab").forEach(tabButton => {
+        tabButton.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    const labels = {
+        today:"Daily Habits",
+        weekly:"Weekly Goals",
+        monthly:"Monthly Goals",
+        quarterly:"Quarterly Goals",
+        yearly:"Yearly Goals"
+    };
+
+    document.getElementById("activeTabLabel").innerText = labels[tab] || "Items";
+
+    updateCreatePreview();
+    renderList();
+}
+
+function refreshPrivateCard(){
+    const checked = document.getElementById("hiddenInput").checked;
+    const card = document.getElementById("privateCard");
+
+    card.classList.toggle("active", checked);
+    lucideRefresh();
+}
+
+function updateCreatePreview(){
+    const name = document.getElementById("nameInput").value.trim() || "New habit / goal";
+    const target = Number(document.getElementById("targetInput").value) || 1;
+    const unit = document.getElementById("unitInput").value.trim();
+    const criteria = document.getElementById("criteriaInput").value.trim();
+    const icon = document.getElementById("iconInput").value.trim();
+    const hidden = document.getElementById("hiddenInput").checked;
+    const hiddenLabel = document.getElementById("hiddenLabelInput").value.trim();
+    const fallback = getFallbackName(activeTab,(state[activeTab] || []).length);
+    const previewName = hidden && state.hiddenModeEnabled
+        ? (hiddenLabel || fallback)
+        : name;
+    const iconHTML = icon
+        ? `<span class="preview-icon">${icon}</span>`
+        : "";
+    const criteriaText = criteria
+        ? `<br><span class="criteria-line">Success: ${criteria}</span>`
+        : "";
+
+    document.getElementById("createPreviewName").innerHTML = `${iconHTML}<span>${previewName}</span>`;
+    document.getElementById("createPreviewDetail").innerHTML = `Target: ${target} ${unit}${criteriaText}`.trim();
+    document.getElementById("createPreviewPrivate").classList.toggle("active", hidden);
+}
+
+function renderEmojiOptions(containerId,mode){
+    const wrap = document.getElementById(containerId);
+
+    if(!wrap) return;
+
+    const emojiButtons = emojiChoices.map(emoji => `
+        <button
+            type="button"
+            class="emoji-option"
+            data-emoji="${emoji}"
+            onclick="${mode === "edit" ? `selectEditEmoji('${emoji}')` : `selectEmoji('${emoji}')`}">
+            ${emoji}
+        </button>
+    `).join("");
+
+    wrap.innerHTML = emojiButtons;
+
+    const inputId = mode === "edit" ? "editIconInput" : "iconInput";
+    const selectedValue = document.getElementById(inputId)?.value || "";
+
+    syncEmojiActive(containerId, selectedValue);
+}
+
+function toggleEmojiOptions(containerId){
+    syncEmojiExpandedState(containerId);
+}
+
+function syncEmojiExpandedState(containerId){
+    const wrap = document.getElementById(containerId);
+
+    if(!wrap) return;
+
+    wrap.classList.remove("collapsed");
+}
+
+
+function selectEmoji(emoji){
+    const input = document.getElementById("iconInput");
+    input.value = input.value === emoji ? "" : emoji;
+    syncEmojiActive("emojiOptions", input.value);
+    updateCreatePreview();
+}
+
+function clearEmojiSelection(){
+    document.getElementById("iconInput").value = "";
+    syncEmojiActive("emojiOptions", "");
+    updateCreatePreview();
+}
+
+function selectEditEmoji(emoji){
+    const input = document.getElementById("editIconInput");
+    input.value = input.value === emoji ? "" : emoji;
+    syncEmojiActive("editEmojiOptions", input.value);
+}
+
+function clearEditEmojiSelection(){
+    document.getElementById("editIconInput").value = "";
+    syncEmojiActive("editEmojiOptions", "");
+}
+
+function syncEmojiActive(containerId,value){
+    const wrap = document.getElementById(containerId);
+
+    if(!wrap) return;
+
+    wrap.classList.remove("collapsed");
+
+    const buttons = [...wrap.querySelectorAll(".emoji-option")];
+
+    buttons.forEach(button => {
+        button.classList.toggle("active", button.dataset.emoji === value);
+    });
+}
+
+
+function clearCreateForm(){
+    [
+        "nameInput",
+        "targetInput",
+        "unitInput",
+        "hiddenLabelInput",
+        "criteriaInput",
+        "iconInput"
+    ].forEach(id => {
+        const element = document.getElementById(id);
+
+        if(element){
+            element.value = "";
+        }
+    });
+
+    document.getElementById("hiddenInput").checked = false;
+    syncEmojiActive("emojiOptions", "");
+    refreshPrivateCard();
+    updateCreatePreview();
+}
+
+function getActiveTabCreatedMessage(){
+    const labels = {
+        today:"Daily habit was created",
+        weekly:"Weekly goal was created",
+        monthly:"Monthly goal was created",
+        quarterly:"Quarterly goal was created",
+        yearly:"Yearly goal was created"
+    };
+
+    return labels[activeTab] || "Item was created";
+}
+
+function showSuccessToast(message){
+    const toast = document.getElementById("successToast");
+    const text = document.getElementById("successToastText");
+
+    if(!toast || !text) return;
+
+    text.innerText = message;
+    toast.classList.add("show");
+    lucideRefresh();
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    },2200);
+}
+
+function addItem(){
+    const name = document.getElementById("nameInput").value.trim();
+
+    if(!name){
+        alert("Add a real name first.");
+        return;
+    }
+
+    const item = {
+        name,
+        current:0,
+        target:Number(document.getElementById("targetInput").value) || 1,
+        unit:document.getElementById("unitInput").value.trim(),
+        criteria:document.getElementById("criteriaInput").value.trim(),
+        icon:document.getElementById("iconInput").value.trim(),
+        hidden:document.getElementById("hiddenInput").checked,
+        hiddenLabel:document.getElementById("hiddenLabelInput").value.trim()
+    };
+
+    if(activeTab === "today"){
+        item.done = false;
+        item.type = "daily";
+    }
+
+    state[activeTab].push(item);
+    saveState();
+    renderHiddenMode();
+    renderList();
+    showSuccessToast(getActiveTabCreatedMessage());
+    clearCreateForm();
+}
+
+function renderList(){
+    const list = document.getElementById("manageList");
+    const items = state[activeTab] || [];
+    const labels = {
+        today:"Daily habit",
+        weekly:"Weekly goal",
+        monthly:"Monthly goal",
+        quarterly:"Quarterly goal",
+        yearly:"Yearly goal"
+    };
+
+    document.getElementById("manageCount").innerText = `${items.length} items`;
+
+    if(!items.length){
+        list.innerHTML = `<div class="empty">No ${labels[activeTab] || "items"} yet.</div>`;
+        return;
+    }
+
+    list.innerHTML = items.map((item,index) => {
+        const visibleName = displayItemName(item,index,activeTab);
+        const hiddenDetails = shouldHideRealDetails(item);
+        const iconHTML = item.icon
+            ? `<span class="row-icon">${item.icon}</span>`
+            : "";
+        const targetLine = `Target: ${item.target || 1} ${item.unit || ""}`;
+        const realLine = hiddenDetails
+            ? "Private real name hidden"
+            : `Real: ${item.name}`;
+        const criteriaLine = item.criteria
+            ? hiddenDetails
+                ? `<br><span class="criteria-line">Success criteria hidden</span>`
+                : `<br><span class="criteria-line">Success: ${item.criteria}</span>`
+            : "";
+
+        return `
+            <div class="row">
+                <div class="row-main">
+                    ${iconHTML}
+                    <div>
+                        <div class="row-title-line">
+                            <strong>${visibleName}</strong>
+                            ${item.hidden ? `<span class="privacy-badge">Hidden</span>` : ""}
+                        </div>
+
+                        <small>
+                            ${realLine} • ${targetLine}${criteriaLine}
+                        </small>
+                    </div>
+                </div>
+
+                <div class="row-actions">
+                    <button class="goal-action" onclick="openEditModal(${index})">
+                        <i data-lucide="square-pen"></i>
+                        Edit
+                    </button>
+
+                    <button class="goal-action delete-action" onclick="openDeleteModal(${index})">
+                        <i data-lucide="trash-2"></i>
+                        Remove
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    lucideRefresh();
+}
+
+function getDefaultIcon(type){
+    const defaults = {
+        today:"✅",
+        weekly:"🎯",
+        monthly:"🗓️",
+        quarterly:"📈",
+        yearly:"⭐"
+    };
+
+    return defaults[type] || "✅";
+}
+
+function openDeleteModal(index){
+    const item = state[activeTab][index];
+
+    pendingDelete = {
+        tab:activeTab,
+        index
+    };
+
+    document.getElementById("deleteModalName").innerText = displayItemName(item,index,activeTab);
+    document.getElementById("deleteModalMeta").innerText = `Target: ${item.target || 1} ${item.unit || ""}`;
+    document.getElementById("deleteModalBackdrop").classList.add("show");
+    lucideRefresh();
+}
+
+function closeDeleteModal(){
+    pendingDelete = null;
+    document.getElementById("deleteModalBackdrop").classList.remove("show");
+}
+
+function confirmDeleteItem(){
+    if(!pendingDelete) return;
+
+    const group = pendingDelete.tab;
+    const index = pendingDelete.index;
+    const item = state[group][index];
+    const name = displayItemName(item,index,group);
+
+    state[group].splice(index,1);
+    saveState();
+
+    if(group === activeTab){
+        renderList();
+    }
+
+    renderHiddenMode();
+    closeDeleteModal();
+    showSuccessToast(`${name} was removed`);
+}
+
+function openEditModal(index){
+    const item = state[activeTab][index];
+
+    pendingEdit = {
+        tab:activeTab,
+        index
+    };
+
+    document.getElementById("editNameInput").value = item.name || "";
+    document.getElementById("editTargetInput").value = item.target || 1;
+    document.getElementById("editUnitInput").value = item.unit || "";
+    document.getElementById("editCriteriaInput").value = item.criteria || "";
+    document.getElementById("editHiddenInput").checked = item.hidden === true;
+    document.getElementById("editHiddenLabelInput").value = item.hiddenLabel || "";
+    document.getElementById("editIconInput").value = item.icon || "";
+
+    syncEmojiActive("editEmojiOptions", item.icon || "");
+    document.getElementById("editModalBackdrop").classList.add("show");
+    lucideRefresh();
+}
+
+function closeEditModal(){
+    pendingEdit = null;
+    document.getElementById("editModalBackdrop").classList.remove("show");
+}
+
+function saveEditedItem(){
+    if(!pendingEdit) return;
+
+    const group = pendingEdit.tab;
+    const index = pendingEdit.index;
+    const item = state[group][index];
+    const name = document.getElementById("editNameInput").value.trim();
+
+    if(!name){
+        alert("The real name cannot be empty.");
+        return;
+    }
+
+    item.name = name;
+    item.target = Number(document.getElementById("editTargetInput").value) || 1;
+    item.unit = document.getElementById("editUnitInput").value.trim();
+    item.criteria = document.getElementById("editCriteriaInput").value.trim();
+    item.hidden = document.getElementById("editHiddenInput").checked;
+    item.hiddenLabel = document.getElementById("editHiddenLabelInput").value.trim();
+    item.icon = document.getElementById("editIconInput").value.trim();
+
+    saveState();
+    renderHiddenMode();
+    renderList();
+    closeEditModal();
+    showSuccessToast("Item was updated");
+}
+
+window.addEventListener("keydown",event => {
+    if(event.key === "Escape"){
+        closeDeleteModal();
+        closeEditModal();
+    }
+});
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2498 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Customizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{  
+    --bg-primary:#0d1117;
+    --bg-secondary:#111827;
+
+    --bg-card:rgba(20,25,35,.72);
+
+    --text-primary:#ffffff;
+    --text-secondary:#8b949e;
+
+    --border-color:rgba(255,255,255,.08);
+
+    --accent-main:#667eea;
+    --accent-soft:#764ba2;
+
+    --accent-green:#22c55e;
+    --accent-red:#ef4444;
+}
+.theme-black{
+    --bg-primary:#0d1117;
+    --bg-secondary:#111827;
+    --bg-card:rgba(20,25,35,.72);
+
+    --accent-main:#667eea;
+    --accent-soft:#764ba2;
+}
+
+.theme-darkblue{
+    --bg-primary:#071120;
+    --bg-secondary:#0f1c2e;
+    --bg-card:rgba(10,20,35,.88);
+
+    --accent-main:#3b82f6;
+    --accent-soft:#2563eb;
+}
+
+.theme-purple{
+    --bg-primary:#14071f;
+    --bg-secondary:#221033;
+    --bg-card:rgba(30,15,50,.88);
+
+    --accent-main:#8b5cf6;
+    --accent-soft:#6d28d9;
+}
+
+.theme-darkred{
+    --bg-primary:#090303;
+    --bg-secondary:#140707;
+    --bg-card:rgba(20,8,8,.92);
+
+    --accent-main:#8b5a5a;
+    --accent-soft:#5b1d1d;
+}
+
+.theme-darkbrown{
+    --bg-primary:#1a120d;
+    --bg-secondary:#241812;
+    --bg-card:rgba(35,25,18,.92);
+
+    --accent-main:#9a735a;
+    --accent-soft:#5c4033;
+}
+
+.theme-white{
+    --bg-primary:#f3f4f6;
+    --bg-secondary:#ffffff;
+    --bg-card:rgba(255,255,255,.85);
+
+    --text-primary:#111827;
+    --text-secondary:#6b7280;
+
+    --border-color:rgba(0,0,0,.08);
+
+    --accent-main:#3b82f6;
+    --accent-soft:#2563eb;
+}
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+
+width:230px;
+height:100%;
+
+background:var(--bg-card);
+
+border-right:1px solid var(--border-color);
+
+padding:24px 18px;
+
+display:flex;
+flex-direction:column;
+
+z-index:100;
+
+backdrop-filter:blur(12px);
+}
+
+.sidebar-logo{
+text-decoration:none;
+
+color:#fff;
+
+font-size:1.3rem;
+font-weight:800;
+
+padding:14px 18px;
+
+border-radius:18px;
+
+background:linear-gradient(
+135deg,
+var(--accent-soft),
+var(--bg-secondary)
+);
+
+text-align:center;
+
+margin-bottom:24px;
+}
+
+.sidebar-divider{
+height:1px;
+
+width:100%;
+
+background:var(--border-color);
+
+margin-bottom:14px;
+
+opacity:.8;
+}
+
+.sidebar-link{
+padding:14px 18px;
+
+border-radius:14px;
+
+margin-bottom:8px;
+
+text-decoration:none;
+
+color:var(--text-secondary);
+
+font-size:15px;
+font-weight:600;
+
+transition:.25s;
+}
+
+.sidebar-link:hover{
+background:rgba(255,255,255,.04);
+
+color:var(--text-primary);
+}
+
+.sidebar-link.active{
+background:linear-gradient(
+135deg,
+var(--accent-main),
+var(--accent-soft)
+);
+
+color:white;
+
+box-shadow:0 0 20px rgba(102,126,234,.25);
+}
+.sidebar-sublink{
+margin-left:14px;
+
+padding:10px 14px;
+
+border-radius:12px;
+
+text-decoration:none;
+
+color:var(--text-secondary);
+
+font-size:14px;
+font-weight:600;
+
+transition:.25s;
+
+display:block;
+
+margin-bottom:8px;
+}
+
+.sidebar-sublink:hover{
+background:rgba(255,255,255,.04);
+
+color:white;
+}
+
+.sidebar-sublink.active{
+background:rgba(255,255,255,.06);
+
+color:white;
+
+border:1px solid rgba(255,255,255,.05);
+}
+.sidebar-dropdown{
+margin-bottom:8px;
+}
+
+.sidebar-dropdown-btn{
+width:100%;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+padding:14px 18px;
+
+border:none;
+
+border-radius:14px;
+
+background:transparent;
+
+color:var(--text-secondary);
+
+font-size:15px;
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+}
+
+.sidebar-dropdown-btn.active{
+background:linear-gradient(
+135deg,
+var(--accent-main),
+var(--accent-soft)
+);
+
+color:white;
+
+box-shadow:0 0 20px rgba(102,126,234,.25);
+}
+
+.sidebar-dropdown-content{
+display:flex;
+flex-direction:column;
+
+margin-top:8px;
+
+padding-left:12px;
+}
+
+.sidebar-sublink{
+padding:11px 14px;
+
+border-radius:12px;
+
+text-decoration:none;
+
+color:var(--text-secondary);
+
+font-size:14px;
+font-weight:600;
+
+transition:.25s;
+}
+
+.sidebar-sublink:hover{
+background:rgba(255,255,255,.04);
+
+color:white;
+}
+
+.sidebar-sublink.active{
+background:rgba(255,255,255,.08);
+
+color:white;
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+.sidebar-sublink.current-page{
+
+background:linear-gradient(
+135deg,
+rgba(var(--theme-rgb),.22),
+rgba(118,75,162,.18)
+);
+
+border:1px solid rgba(var(--theme-rgb),.35);
+
+box-shadow:
+0 0 18px rgba(var(--theme-rgb),.18);
+
+color:white;
+
+position:relative;
+}
+
+.sidebar-sublink.current-page::before{
+
+content:'';
+
+position:absolute;
+
+left:-8px;
+top:50%;
+
+transform:translateY(-50%);
+
+width:4px;
+height:24px;
+
+border-radius:999px;
+
+background:
+rgb(var(--theme-rgb));
+
+}
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg-primary);
+    color:var(--text-primary);
+    min-height:100vh;
+
+    padding:40px;
+    padding-left:270px;
+
+    overflow-x:hidden;
+    position:relative;
+}
+body::before{
+content:'';
+position:fixed;
+inset:0;
+
+background:
+radial-gradient(circle at top left,
+rgba(255,255,255,.05),
+transparent 30%),
+
+radial-gradient(circle at bottom right,
+rgba(255,255,255,.03),
+transparent 35%);
+
+pointer-events:none;
+z-index:0;
+}
+.container{
+   max-width:1280px;
+    margin:auto;
+    position:relative;
+    z-index:1;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:22px;
+}
+
+.back-btn{
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--border-color);
+
+    color:white;
+
+    padding:14px 22px;
+
+    border-radius:16px;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.25s;
+}
+
+.back-btn:hover{
+    border-color:var(--accent-main);
+    transform:translateY(-2px);
+}
+
+.page-title h1{
+    font-size:2.6rem;
+    font-weight:800;
+
+    background:linear-gradient(
+    135deg,
+    #fff,
+    var(--accent-main)
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.page-title p{
+    color:var(--text-secondary);
+    margin-top:8px;
+}
+.main-grid{
+display:grid;
+
+grid-template-columns:
+minmax(0, 1fr)
+420px;
+
+gap:28px;
+
+align-items:start;
+}
+.card{
+    background:var(--bg-card);
+    backdrop-filter:blur(14px);
+
+    border:1px solid var(--border-color);
+
+    border-radius:24px;
+
+    padding:28px;
+}
+
+.section-title{
+    font-size:1.2rem;
+    font-weight:700;
+
+    margin-bottom:22px;
+}
+.firm-filters{
+display:flex;
+align-items:center;
+gap:14px;
+
+margin-bottom:26px;
+
+padding:6px;
+
+border-radius:20px;
+
+background:rgba(255,255,255,.03);
+
+border:1px solid rgba(255,255,255,.05);
+
+backdrop-filter:blur(12px);
+
+width:fit-content;
+}
+
+.firm-filter{
+height:46px;
+
+padding:0 22px;
+
+border:none;
+
+border-radius:16px;
+
+background:transparent;
+
+color:var(--text-secondary);
+
+font-size:.92rem;
+font-weight:700;
+
+cursor:pointer;
+
+transition:.25s;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+gap:8px;
+
+position:relative;
+}
+
+.firm-filter:hover{
+color:white;
+
+background:rgba(255,255,255,.04);
+}
+
+.firm-filter.active{
+background:linear-gradient(
+135deg,
+rgba(102,126,234,.95),
+rgba(118,75,162,.95)
+);
+
+color:white;
+
+box-shadow:
+0 0 20px rgba(102,126,234,.22),
+0 6px 18px rgba(102,126,234,.18);
+}
+.firms-slider-wrapper{
+position:relative;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+width:100%;
+
+margin-top:26px;
+margin-bottom:24px;
+}
+.firms-slider{
+display:flex;
+gap:18px;
+
+overflow:hidden;
+
+scroll-behavior:smooth;
+
+width:538px;
+max-width:538px;
+
+padding-top:10px;
+padding-bottom:6px;
+}
+.firms-slider::-webkit-scrollbar{
+height:5px;
+}
+
+.firms-slider::-webkit-scrollbar-thumb{
+background:rgba(255,255,255,.08);
+border-radius:999px;
+}
+.slider-arrow{
+
+position:absolute;
+top:50%;
+
+transform:translateY(-50%);
+
+width:58px;
+height:58px;
+
+border-radius:20px;
+
+border:1px solid rgba(255,255,255,.08);
+
+background:rgba(17,24,39,.82);
+
+backdrop-filter:blur(18px);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+cursor:pointer;
+
+color:white;
+
+font-size:1.6rem;
+font-weight:700;
+
+transition:
+transform .22s ease,
+background .22s ease,
+border-color .22s ease,
+box-shadow .22s ease;
+
+z-index:20;
+}
+.slider-arrow.left{
+left:-1px;
+}
+
+.slider-arrow.right{
+right:-1px;
+}
+.slider-arrow:hover{
+
+transform:
+translateY(-50%)
+scale(1.06);
+
+background:
+rgba(102,126,234,.14);
+
+border-color:
+rgba(102,126,234,.45);
+
+box-shadow:
+0 10px 24px rgba(102,126,234,.18),
+0 0 22px rgba(102,126,234,.12);
+}
+.slider-arrow:active{
+
+transform:scale(.96);
+
+}
+.firm-card{
+    position:relative;
+
+    display:flex;
+    align-items:center;
+    gap:18px;
+
+    min-width:260px;
+    max-width:260px;
+
+    height:96px;
+
+    padding:18px 22px;
+
+    border-radius:24px;
+
+    background:rgba(255,255,255,.03);
+
+    border:1px solid rgba(255,255,255,.06);
+
+    transition:
+    opacity .25s ease,
+    transform .25s ease,
+    border-color .25s ease,
+    box-shadow .25s ease,
+    background .25s ease;
+
+    flex-shrink:0;
+
+    cursor:pointer;
+
+    overflow:hidden;
+}
+.firm-card.hidden{
+
+opacity:0;
+
+transform:scale(.92);
+
+pointer-events:none;
+
+display:none;
+}
+.firm-card:hover{
+transform:translateY(-4px);
+
+border-color:var(--accent-main);
+}
+.firm-info{
+    flex:1;
+    min-width:0;
+
+    display:flex;
+    align-items:center;
+
+    margin-left:6px;
+}
+.firm-info h3{
+    font-size:1.02rem;
+    font-weight:700;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+
+    max-width:150px;
+}
+.firm-logo{
+    width:42px;
+    height:42px;
+
+    border-radius:16px;
+
+    object-fit:cover;
+
+    background:#0f172a;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    flex-shrink:0;
+}
+.firm-info span{
+display:block;
+
+font-size:.78rem;
+
+color:var(--text-secondary);
+
+margin-top:4px;
+}
+.empty-firms{
+
+display:none;
+
+width:100%;
+
+height:102px;
+
+border-radius:24px;
+
+border:1px dashed rgba(255,255,255,.08);
+
+background:rgba(255,255,255,.02);
+
+align-items:center;
+justify-content:center;
+
+text-align:center;
+
+font-size:1rem;
+
+font-weight:700;
+
+color:var(--text-secondary);
+
+margin-top:8px;
+margin-bottom:34px;
+}
+.firm-card p{
+font-size:.88rem;
+
+color:var(--text-secondary);
+}
+.favorite-btn{
+    position:absolute;
+
+    top:12px;
+    right:12px;
+
+    width:30px;
+    height:30px;
+
+    border:none;
+    background:transparent;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:
+    transform .2s ease,
+    opacity .2s ease;
+
+    opacity:.72;
+
+    color:#FFD54A;
+
+    font-size:1rem;
+}
+
+.favorite-btn:hover{
+    transform:scale(1.08);
+    opacity:1;
+}
+.custom-actions{
+
+position:absolute;
+
+top:12px;
+right:12px;
+
+display:flex;
+align-items:center;
+
+gap:6px;
+}
+.prop-card:hover{
+    transform:translateY(-4px);
+    border-color:var(--accent-main);
+}
+.prop-card h3{
+    font-size:1.1rem;
+    margin-bottom:8px;
+}
+.firm-card.active{
+
+background:
+linear-gradient(
+145deg,
+rgba(102,126,234,.18),
+rgba(118,75,162,.14)
+);
+
+border-color:
+rgba(102,126,234,.45);
+
+transform:
+translateY(-4px);
+
+box-shadow:
+0 10px 28px rgba(102,126,234,.18),
+0 0 24px rgba(102,126,234,.10);
+
+position:relative;
+
+overflow:hidden;
+}
+.firm-card.active::before{
+content:'';
+
+position:absolute;
+
+inset:0;
+
+background:
+linear-gradient(
+120deg,
+transparent,
+rgba(255,255,255,.08),
+transparent
+);
+
+transform:translateX(-100%);
+
+animation:activeShine 3s linear infinite;
+}
+@keyframes activeShine{
+
+100%{
+transform:translateX(100%);
+}
+
+}
+
+.prop-card p{
+    color:var(--text-secondary);
+    font-size:.92rem;
+}
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+.money-input{
+display:flex;
+align-items:center;
+
+height:50px;
+
+border-radius:16px;
+
+border:1px solid var(--border-color);
+
+background:#050b14;
+
+padding:0 18px;
+
+gap:10px;
+}
+
+.money-input span{
+color:var(--text-secondary);
+
+font-weight:700;
+
+font-size:1rem;
+}
+
+.money-input input{
+border:none !important;
+
+background:transparent !important;
+
+height:100%;
+
+width:100%;
+
+padding:0 !important;
+
+box-shadow:none !important;
+}
+.custom-modal{
+position:fixed;
+inset:0;
+
+background:rgba(0,0,0,.75);
+
+display:none;
+
+justify-content:center;
+align-items:center;
+
+z-index:9999;
+}
+
+.custom-modal.active{
+display:flex;
+
+animation:fadeModal .25s ease;
+}
+@keyframes fadeModal{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
+}
+.custom-modal-box{
+
+width:520px;
+
+max-height:88vh;
+
+overflow-y:auto;
+
+background:
+linear-gradient(
+145deg,
+rgba(17,24,39,.96),
+rgba(15,23,42,.92)
+);
+
+backdrop-filter:blur(20px);
+
+border:
+1px solid rgba(255,255,255,.08);
+
+border-radius:30px;
+
+padding:30px;
+
+display:flex;
+flex-direction:column;
+
+gap:22px;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.45);
+
+animation:modalPop .28s ease;
+}
+@keyframes modalPop{
+
+from{
+opacity:0;
+transform:
+translateY(20px)
+scale(.96);
+}
+
+to{
+opacity:1;
+transform:
+translateY(0)
+scale(1);
+}
+
+}
+.custom-modal-box::-webkit-scrollbar{
+width:6px;
+}
+
+.custom-modal-box::-webkit-scrollbar-thumb{
+background:
+rgba(255,255,255,.08);
+
+border-radius:999px;
+}
+#modalTitle{
+
+font-size:1.45rem;
+font-weight:800;
+
+background:
+linear-gradient(
+135deg,
+#fff,
+var(--accent-main)
+);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+.custom-modal-box input{
+height:54px;
+
+border-radius:14px;
+
+border:1px solid var(--border-color);
+
+background:#050b14;
+
+color:white;
+
+padding:0 16px;
+
+outline:none;
+}
+
+.custom-modal-box button{
+height:54px;
+
+border:none;
+
+border-radius:14px;
+
+background:linear-gradient(
+135deg,
+var(--accent-main),
+var(--accent-soft)
+);
+
+color:white;
+
+font-weight:700;
+
+cursor:pointer;
+}
+.modal-actions{
+display:flex;
+gap:14px;
+
+margin-top:6px;
+}
+
+.modal-actions button{
+flex:1;
+
+height:56px;
+
+border-radius:16px;
+
+font-size:.95rem;
+font-weight:700;
+
+transition:
+transform .22s ease,
+opacity .22s ease,
+box-shadow .22s ease;
+
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.modal-actions button:hover{
+transform:translateY(-2px);
+}
+
+.modal-cancel-btn{
+
+background:
+rgba(255,255,255,.05) !important;
+
+border:
+1px solid rgba(255,255,255,.08) !important;
+
+color:white;
+
+box-shadow:none !important;
+}
+
+.modal-cancel-btn:hover{
+
+background:
+rgba(255,255,255,.08) !important;
+
+border-color:
+rgba(255,255,255,.15) !important;
+}
+
+.modal-save-btn{
+
+background:
+linear-gradient(
+135deg,
+var(--accent-main),
+var(--accent-soft)
+) !important;
+
+color:white;
+
+box-shadow:
+0 10px 24px rgba(102,126,234,.25);
+}
+
+.modal-save-btn:hover{
+
+box-shadow:
+0 14px 30px rgba(102,126,234,.35);
+}
+.input-group{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.input-group label{
+    font-size:.68rem;
+    color:var(--text-secondary);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-weight:700;
+}
+
+.input-group input,
+.input-group select{
+    height:50px;
+
+    border-radius:16px;
+
+    border:1px solid var(--border-color);
+
+    background:#050b14;
+
+    color:white;
+
+    padding:0 18px;
+
+    font-size:1rem;
+    text-align:center;
+
+    outline:none;
+
+    transition:.25s;
+    
+}
+
+.input-group input:focus,
+.input-group select:focus{
+    border-color:var(--accent-main);
+    box-shadow:0 0 18px rgba(102,126,234,.20);
+}
+
+.account-id-box{
+    margin-top:22px;
+
+    background:linear-gradient(
+    135deg,
+    rgba(102,126,234,.12),
+    rgba(118,75,162,.12)
+    );
+
+    border:1px solid rgba(102,126,234,.25);
+
+    border-radius:22px;
+
+    padding:22px;
+}
+
+.account-id-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:12px;
+}
+
+.account-id-label{
+    color:var(--text-secondary);
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+.search-wrapper {
+    margin-bottom: 20px;
+}
+
+.search-wrapper input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-wrapper input:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(33,150,243,0.15);
+}
+
+.search-wrapper input::placeholder {
+    color: var(--text-secondary);
+}
+
+.generate-btn{
+    background:rgba(255,255,255,.06);
+
+    border:1px solid var(--border-color);
+
+    color:white;
+
+    padding:10px 16px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.25s;
+}
+
+.generate-btn:hover{
+    border-color:var(--accent-main);
+}
+
+.account-id-value{
+    font-size:2rem;
+    font-weight:800;
+}
+.sticky-panel{
+
+position:sticky;
+
+top:24px;
+
+height:fit-content;
+}
+.preview-card{
+    
+    display:flex;
+flex-direction:column;
+    justify-content:center;
+
+padding-top:28px;
+padding-bottom:28px;
+    min-height: 430px;
+    transition:
+transform .25s ease,
+box-shadow .25s ease;
+    margin-top:28px;
+
+    border-radius:26px;
+
+    padding:20px;
+
+background:linear-gradient(
+145deg,
+rgba(var(--theme-rgb),.16),
+rgba(17,24,39,.95)
+);
+
+    border:1px solid rgba(102,126,234,.18);
+}
+.preview-left{
+display:flex;
+
+align-items:center;
+
+gap:18px;
+}
+.preview-logo-column{
+margin-top:-6px;
+display:flex;
+flex-direction:column;
+align-items:center;
+
+gap:12px;
+}
+.preview-text{
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+
+height:100%;
+
+padding-left:6px;
+
+margin-top:10px;
+}
+.preview-logo{
+
+width:100px;
+height:100px;
+
+border-radius:22px;
+
+object-fit:cover;
+
+border:
+1px solid rgba(255,255,255,.08);
+
+background:#0f172a;
+
+padding:6px;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.25);
+
+margin-bottom:10px;
+}
+
+.preview-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+
+    margin-bottom:12px;
+}
+.preview-top h2{
+
+font-size:1.05rem;
+
+font-weight:700;
+
+margin-top:2px;
+
+margin-bottom:6px;
+
+line-height:1.2;
+
+max-width:190px;
+
+word-break:break-word;
+
+color:#8ea2ff;}
+.preview-top p{
+
+font-size:1.15rem;
+
+font-weight:700;
+
+color:white;
+
+margin-top:-2px;
+
+line-height:1.1;
+
+max-width:180px;
+
+}
+.status-pill{
+    margin-bottom:14px;
+    background:rgba(34,197,94,.15);
+
+    border:1px solid rgba(34,197,94,.35);
+
+    color:#22c55e;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    font-weight:700;
+
+    font-size:.78rem;
+
+}
+
+.preview-stats{
+    padding:10px;
+min-height:78px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+    margin-top:20px;
+gap:18px;
+}
+
+.preview-stat{
+    background:rgba(255,255,255,.04);
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:18px;
+
+    padding:12px;
+}
+
+.preview-stat span{
+    display:block;
+
+    color:var(--text-secondary);
+
+    margin-bottom:8px;
+
+    font-size:.85rem;
+}
+
+.preview-stat strong{
+    font-size:1.1rem;
+}
+
+.submit-btn{
+    width:100%;
+
+    height:58px;
+
+    margin-top:18px;
+
+    border:none;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+    135deg,
+    var(--accent-main),
+    var(--accent-soft)
+    );
+
+    color:white;
+
+    font-size:.95rem;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    box-shadow:0 10px 35px rgba(102,126,234,.28);
+    
+}
+
+.submit-btn:hover{
+    transform:translateY(-3px);
+}
+@media(max-width:1100px){
+
+.main-grid{
+grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:700px){
+
+.sidebar{
+transform:translateX(-100%);
+}
+
+body{
+padding:22px;
+padding-left:22px;
+}
+
+.form-grid,
+.preview-stats{
+grid-template-columns:1fr;
+}
+
+.page-title h1{
+font-size:2rem;
+}
+
+.topbar{
+flex-direction:column;
+align-items:flex-start;
+gap:14px;
+}
+
+
+}
+</style>
+</head>
+<body>
+    <div class="sidebar">
+
+<a href="../index.html"
+class="sidebar-logo">
+Dashboard
+</a>
+
+<a href="trading.html"
+class="sidebar-link">
+Trading Hub
+</a>
+
+<div class="sidebar-divider"></div>
+
+<a href="calendar.html"
+class="sidebar-link">
+Calendar
+</a>
+
+<a href="journal.html"
+class="sidebar-link">
+Journal
+</a>
+<a href="propfirms.html"
+class="sidebar-link active">
+Prop Firms
+</a>
+
+<a href="create-propfirm-acc.html"
+class="sidebar-sublink active">
+Create Account
+</a>
+
+<a href="payouts.html"
+class="sidebar-sublink">
+Payouts
+</a>
+
+<a href="analytics.html"
+class="sidebar-link">
+Analytics
+</a>
+
+<a href="rules.html"
+class="sidebar-link">
+Rules
+</a>
+
+</div>
+
+</div>
+
+</div>
+<div class="container">
+
+<div class="topbar">
+
+<div class="page-title">
+<h1>Account Customizer</h1>
+<p>Customize imported accounts, assign prop firms and manage trading rules.</p>
+</div>
+
+</div>
+
+<div class="main-grid">
+
+<div class="card">
+
+<!-- ====================================
+FIRM SELECTOR
+==================================== -->
+
+<h2 class="section-title">
+Select Prop Firm
+</h2>
+<div class="search-wrapper">
+    <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search propfirm name..."
+    >
+</div>
+<!-- FILTERS -->
+
+<div class="firm-filters">
+
+<button class="firm-filter active"
+data-filter="all">
+🌐 All Firms
+</button>
+<button class="firm-filter"
+data-filter="favorites">
+⭐ Favorites
+</button>
+
+<button class="firm-filter"
+data-filter="created">
+🛠 Custom
+</button>
+
+</div>
+
+<!-- HORIZONTAL FIRMS -->
+
+<div class="firms-slider-wrapper">
+<button class="slider-arrow left"
+id="slideLeft">
+❮
+</button>
+<div class="firms-slider"
+id="firmsSlider">
+<div class="firm-card active"
+data-type="default"
+data-favorite="true"
+data-firm="Lucid Trading">
+
+<img
+src="../Assets/lucid.png"
+class="firm-logo"
+>
+
+<div class="firm-info">
+<h3>Lucid Trading</h3>
+</div>
+<button class="favorite-btn">
+⭐
+</button>
+</div>
+<div class="firm-card"
+data-type="default"
+data-favorite="true"
+data-firm="Apex Trading">
+
+<img
+src="../Assets/apex.png"
+class="firm-logo"
+>
+
+<div class="firm-info">
+<h3>Apex Trading</h3>
+</div>
+
+<button class="favorite-btn">
+⭐
+</button>
+</div>
+
+<div class="firm-card"
+data-type="default"
+data-favorite="false"
+data-firm="Topstep X">
+
+<img
+src="../Assets/topstep.png"
+class="firm-logo"
+>
+
+<div class="firm-info">
+<h3>Topstep X</h3>
+</div>
+
+<button class="favorite-btn">
+⭐
+</button>
+</div>
+<!-- ALPHA FUTURES -->
+<div class="firm-card"
+data-type="default"
+data-favorite="false"
+data-firm="Alpha Futures">
+
+<img
+src="../Assets/alpha.png"
+class="firm-logo"
+>
+
+<div class="firm-info">
+<h3>Alpha Futures</h3>
+</div>
+
+<button class="favorite-btn">
+⭐
+</button>
+</div>
+
+<!-- MY FUNDED FUTURES -->
+<div class="firm-card"
+data-type="default"
+data-favorite="false"
+data-firm="My Funded Futures">
+
+<img
+src="../Assets/mff.png"
+class="firm-logo"
+>
+
+<div class="firm-info">
+<h3>My Funded Futures</h3>
+</div>
+
+<button class="favorite-btn">
+⭐
+</button>
+</div>
+<div class="firm-card"
+data-type="default"
+data-favorite="false"
+data-firm="Take Profit Trader">
+
+<img
+src="../Assets/tpt.png"
+class="firm-logo"
+>
+
+<div class="firm-info">
+<h3>Take Profit Trader</h3>
+</div>
+
+<button class="favorite-btn">
+⭐
+</button>
+</div>
+<div class="firm-card"
+data-type="default"
+data-favorite="false"
+data-firm="Tradeify">
+
+<img
+src="../Assets/tradeify.png"
+class="firm-logo"
+>
+
+<div class="firm-info">
+<h3>Tradeify</h3>
+</div>
+
+<button class="favorite-btn">
+⭐
+</button>
+</div>
+
+<div class="firm-card create-card"
+data-ignore-filter="true"
+id="customFirmCard">
+<h3>+ Create Firm</h3>
+
+</div>
+
+</div>
+<button class="slider-arrow right"
+id="slideRight">
+❯
+</button>
+
+</div>
+
+<div class="empty-firms" id="emptyFirms">
+No prop firms found
+</div>
+
+<div class="form-grid">
+<div class="input-group">
+<label>Account Name</label>
+
+<input
+type="text"
+id="accountName"
+placeholder="LFE025-U728GGW2-TEST002"
+>
+</div>
+
+<div class="input-group">
+<label>Account Type</label>
+
+<select id="accountType">
+<option>Evaluation</option>
+<option>Funded</option>
+<option>Instant Funding</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Account Size</label>
+<select id="accountSize">
+<option>$10,000</option>
+<option>$25,000</option>
+<option>$50,000</option>
+<option>$100,000</option>
+<option>$150,000</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Purchase Price</label>
+<div class="money-input">
+
+<span>$</span>
+
+<input
+type="number"
+id="purchasePrice"
+placeholder="150"
+>
+
+</div>
+</div>
+
+<div class="input-group">
+<label>Purchase Date</label>
+<input type="date" id="purchaseDate">
+</div>
+</div>
+
+<button class="submit-btn">
+    Customize Account
+</button>
+
+</div>
+
+<div class="card sticky-panel">
+
+<div class="preview-card">
+
+<div class="preview-top">
+<div class="preview-left">
+
+<div class="preview-logo-column">
+
+<div class="status-pill">
+ACTIVE
+</div>
+
+<img
+id="previewLogo"
+src="../Assets/lucid.png"
+class="preview-logo"
+>
+
+</div>
+
+<div class="preview-text">
+
+<h2 id="previewAccountName">
+My Account
+</h2>
+
+<p id="previewFirm">
+Lucid Trading
+</p>
+
+</div>
+
+</div>
+</div>
+
+<div class="preview-stats">
+
+<div class="preview-stat">
+<span>Account Size</span>
+<strong id="previewSize">$100,000</strong>
+</div>
+
+<div class="preview-stat">
+<span>Account Type</span>
+<strong id="previewType">Evaluation</strong>
+</div>
+
+<div class="preview-stat">
+<span>Selected Firm</span>
+<strong id="previewFirmName">
+Lucid Trading
+</strong>
+</div>
+
+<div class="preview-stat">
+<span>Purchase Price</span>
+<strong id="previewPrice">
+$0
+</strong>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="custom-modal" id="customModal">
+
+<div class="custom-modal-box">
+
+<h2 id="modalTitle">
+Create Custom Firm
+</h2>
+
+<input
+type="text"
+id="customFirmName"
+placeholder="Firm Name"
+>
+
+<input
+type="text"
+id="customFirmPrefix"
+placeholder="Prefix"
+>
+
+<div class="modal-actions">
+
+<button id="closeCustomModal"
+class="modal-cancel-btn">
+Cancel
+</button>
+
+<button id="saveCustomFirm"
+class="modal-save-btn">
+Save Firm
+</button>
+
+</div>
+</div>
+
+</div>
+<script type="module">
+import {
+    auth,
+    db,
+    onAuthStateChanged
+} from "../Scripts/firebase.js";
+onAuthStateChanged(auth, (user) => {
+
+    if(!user){
+        window.location.href = "../Auth/login.html";
+        return;
+    }
+
+    window.currentUser = user;
+
+});
+import {
+    collection,
+    addDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const DEV_MODE = true;
+
+const savedTheme =
+localStorage.getItem('theme')
+|| 'theme-black';
+
+document.body.className =
+savedTheme;
+if(savedTheme){
+
+document.documentElement
+.style.setProperty(
+'--theme-rgb',
+savedTheme
+);
+
+}
+let accounts =
+JSON.parse(
+localStorage.getItem('propfirmAccounts')
+|| '[]'
+);
+
+let selectedFirm = 'Lucid Trading';
+const previewLogo =
+document.getElementById('previewLogo');
+const previewFirm =
+document.getElementById('previewFirm');
+
+const previewSize =
+document.getElementById('previewSize');
+
+
+const previewType =
+document.getElementById('previewType');
+const customModal =
+document.getElementById('customModal');
+document.getElementById('closeCustomModal')
+.addEventListener('click', () => {
+
+customModal.classList.remove('active');
+
+});
+
+customModal.addEventListener('click', (e) => {
+
+if(e.target === customModal){
+
+customModal.classList.remove('active');
+
+}
+
+});
+document.getElementById('accountName')
+
+.addEventListener('input', e => {
+
+document.getElementById(
+'previewAccountName'
+).textContent =
+e.target.value || 'My Account';
+
+
+});
+
+
+/* -------------------------
+SET TODAY DATE
+------------------------- */
+
+document.getElementById('purchaseDate')
+.value =
+new Date()
+.toISOString()
+.split('T')[0];
+function createFirmCard(name, description){
+
+const newCard =
+document.createElement('div');
+
+newCard.className = 'firm-card';
+
+newCard.dataset.firm = name;
+newCard.dataset.type = 'custom';
+newCard.dataset.favorite = 'false';
+newCard.innerHTML = `
+
+<img
+src="../Assets/default.png"
+class="firm-logo"
+>
+
+<div class="firm-info">
+<h3>${name}</h3>
+</div>
+
+<div class="custom-actions">
+<button class="delete-firm-btn">
+🗑️
+</button>
+
+</div>
+
+`;
+document.getElementById('firmsSlider')
+.appendChild(newCard);
+const deleteBtn =
+newCard.querySelector('.delete-firm-btn');
+if(deleteBtn){
+
+deleteBtn.addEventListener('click', (e) => {
+
+e.stopPropagation();
+
+if(!confirm('Delete this custom firm?'))
+return;
+
+let savedFirms =
+JSON.parse(
+localStorage.getItem('customPropFirms')
+|| '[]'
+);
+
+savedFirms =
+savedFirms.filter(
+firm => firm.name !== name
+);
+
+localStorage.setItem(
+'customPropFirms',
+JSON.stringify(savedFirms)
+);
+
+location.reload();
+
+});
+
+}
+
+
+/* -------------------------
+SELECT CARD
+------------------------- */
+
+newCard.addEventListener('click', (e) => {
+const clickedEdit =
+e.target.classList.contains('edit-firm-btn') ||
+e.target.parentElement.classList.contains('edit-firm-btn');
+
+const clickedDelete =
+e.target.classList.contains('delete-firm-btn') ||
+e.target.parentElement.classList.contains('delete-firm-btn');
+
+if(clickedEdit || clickedDelete){
+return;
+}
+document.querySelectorAll('.firm-card')
+.forEach(c => c.classList.remove('active'));
+
+newCard.classList.add('active');
+
+selectedFirm = name;
+document.getElementById(
+'previewFirmName'
+).textContent =
+selectedFirm;
+
+previewFirm.textContent =
+selectedFirm;
+newCard.scrollIntoView({
+behavior:'smooth',
+inline:'center',
+block:'nearest'
+});
+
+});
+
+}
+document.querySelectorAll('.firm-card').forEach(card => {
+
+if(card.classList.contains('create-card')) return;
+
+card.addEventListener('click', () => {
+document.querySelectorAll('.firm-card')
+.forEach(c => c.classList.remove('active'));
+
+card.classList.add('active');
+
+
+selectedFirm = card.dataset.firm;
+const firmLogo =
+card.querySelector('img');
+
+if(firmLogo){
+
+previewLogo.src =
+firmLogo.src;
+
+}
+document.getElementById(
+'previewFirmName'
+).textContent =
+selectedFirm;
+
+previewFirm.textContent =
+selectedFirm;
+card.scrollIntoView({
+behavior:'smooth',
+inline:'center',
+block:'nearest'
+});
+
+});
+
+});
+document.getElementById('accountSize')
+.addEventListener('change', e => {
+
+previewSize.textContent =
+e.target.value;
+
+});
+
+document.getElementById('accountType')
+.addEventListener('change', e => {
+
+previewType.textContent =
+e.target.value;
+
+});
+document.getElementById('customFirmCard')
+.addEventListener('click', () => {
+
+document.getElementById('modalTitle')
+.textContent = 'Create Custom Firm';
+
+document.getElementById('customFirmName').value = '';
+
+document.getElementById('customFirmPrefix').value = '';
+
+customModal.classList.add('active');
+
+});
+
+
+/* -------------------------
+SAVE CUSTOM FIRM
+------------------------- */
+
+document.getElementById('saveCustomFirm')
+.addEventListener('click', () => {
+
+const name =
+document.getElementById('customFirmName')
+.value
+.trim();
+if(name.length > 18){
+
+alert('Firm name too long');
+
+return;
+
+}
+if(!name){
+
+alert('Please enter firm name');
+
+return;
+
+}
+const customFirm = {
+
+name:name,
+
+description:'Custom Firm'
+
+};
+
+
+const savedFirms =
+JSON.parse(
+localStorage.getItem('customPropFirms')
+|| '[]'
+);
+
+savedFirms.push(customFirm);
+
+localStorage.setItem(
+'customPropFirms',
+JSON.stringify(savedFirms)
+);
+
+createFirmCard(
+name,
+'Custom Firm'
+);
+customModal.classList.remove('active');
+
+document.getElementById('customFirmName')
+.value = '';
+
+});
+document.querySelector('.submit-btn')
+.addEventListener('click', async () => {
+const account = {
+
+id: Date.now().toString(),
+
+userId: auth.currentUser.uid,
+
+firm:selectedFirm,
+
+name:
+document.getElementById('accountName').value,
+
+type:
+document.getElementById('accountType').value,
+
+size:
+document.getElementById('accountSize').value,
+
+purchasePrice:
+document.getElementById('purchasePrice').value,
+
+purchaseDate:
+document.getElementById('purchaseDate').value,
+
+status:'active',
+
+phase:'Phase 1'
+
+};
+await addDoc(
+collection(db, "propfirmAccounts"),
+account
+);
+
+alert('✅ Account Created');
+
+window.location.href =
+'propfirms.html';
+
+});
+const firmsSlider =
+document.getElementById('firmsSlider');
+
+document.getElementById('slideLeft')
+.addEventListener('click', () => {
+
+firmsSlider.scrollBy({
+left:-278,
+behavior:'smooth'
+});
+
+});
+
+document.getElementById('slideRight')
+.addEventListener('click', () => {
+
+firmsSlider.scrollBy({
+left:278,
+behavior:'smooth'
+});
+
+});
+/* ====================================
+SEARCH
+==================================== */
+
+const searchInput =
+document.getElementById('searchInput');
+searchInput.addEventListener('input', () => {
+
+applyFirmFilters();
+
+});
+function applyFirmFilters(){
+
+const value =
+searchInput.value.toLowerCase();
+
+const activeFilter =
+document.querySelector('.firm-filter.active')
+.dataset.filter;
+
+document.querySelectorAll('.firm-card')
+.forEach(card => {
+
+/* CREATE CARD */
+
+if(card.classList.contains('create-card')){
+
+card.style.display =
+activeFilter === 'all'
+? 'flex'
+: 'none';
+
+return;
+
+}
+
+const firmName =
+(card.dataset.firm || '')
+.toLowerCase();
+
+/* SEARCH */
+
+const matchesSearch =
+firmName.includes(value);
+
+/* FILTER */
+
+let matchesFilter = false;
+
+if(activeFilter === 'all'){
+matchesFilter = true;
+}
+
+if(
+activeFilter === 'favorites' &&
+card.dataset.favorite === 'true'
+){
+matchesFilter = true;
+}
+
+if(
+activeFilter === 'created' &&
+card.dataset.type === 'custom'
+){
+matchesFilter = true;
+}
+if(matchesSearch && matchesFilter){
+
+card.classList.remove('hidden');
+}else{
+
+card.classList.add('hidden');
+
+}
+
+});
+
+const visibleCards =
+document.querySelectorAll(
+'.firm-card:not(.hidden):not(.create-card)'
+);
+const emptyState =
+document.getElementById('emptyFirms');
+
+const sliderWrapper =
+document.querySelector('.firms-slider-wrapper');
+
+if(visibleCards.length === 0){
+
+emptyState.style.display = 'flex';
+
+sliderWrapper.style.display = 'none';
+
+}else{
+
+emptyState.style.display = 'none';
+
+sliderWrapper.style.display = 'flex';
+
+}
+}
+document.querySelectorAll('.firm-filter')
+.forEach(btn => {
+
+btn.addEventListener('click', () => {
+
+document.querySelectorAll('.firm-filter')
+.forEach(b => b.classList.remove('active'));
+
+btn.classList.add('active');
+
+applyFirmFilters();
+
+});
+
+});
+const favoriteFirms =
+JSON.parse(
+localStorage.getItem('favoritePropFirms')
+|| '[]'
+);
+
+
+document.querySelectorAll('.firm-card')
+.forEach(card => {
+
+const firmName =
+card.dataset.firm;
+
+if(
+favoriteFirms.includes(firmName)
+){
+
+card.dataset.favorite = 'true';
+
+const star =
+card.querySelector('.favorite-btn');
+
+if(star){
+
+star.textContent = '⭐';
+
+}
+
+}
+
+});
+
+/* TOGGLE FAVORITES */
+
+document.querySelectorAll('.favorite-btn')
+.forEach(btn => {
+
+btn.addEventListener('click', (e) => {
+
+e.stopPropagation();
+
+const card =
+btn.closest('.firm-card');
+
+const firmName =
+card.dataset.firm;
+
+let savedFavorites =
+JSON.parse(
+localStorage.getItem('favoritePropFirms')
+|| '[]'
+);
+
+const isFavorite =
+savedFavorites.includes(firmName);
+
+if(isFavorite){
+
+savedFavorites =
+savedFavorites.filter(
+f => f !== firmName
+);
+
+card.dataset.favorite = 'false';
+
+btn.textContent = '☆';
+
+}else{
+
+savedFavorites.push(firmName);
+
+card.dataset.favorite = 'true';
+
+btn.textContent = '⭐';
+
+}
+
+localStorage.setItem(
+'favoritePropFirms',
+JSON.stringify(savedFavorites)
+);
+
+});
+
+});
+</script>
+<script type="module"
+src="../Scripts/app.js"></script>
+<script type="module">
+
+import {
+    applyTheme,
+    loadTheme
+} from "../Scripts/theme.js";
+
+window.applyTheme = applyTheme;
+
+loadTheme();
+
+</script>
+<script type="module"
+src="../Scripts/auth-check.js">
+</script>
+</body>
+</html>

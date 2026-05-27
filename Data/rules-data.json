@@ -1,0 +1,57 @@
+{
+  "Lucid Trading": {
+    "prefix": "LT",
+    "target": "6%",
+    "daily": "3%",
+    "max": "3%",
+    "days": "0 Days"
+  },
+
+  "Alpha Futures": {
+    "prefix": "AF",
+    "target": "8%",
+    "daily": "4%",
+    "max": "4%",
+    "days": "3 Days"
+  },
+
+  "Topstep X": {
+    "prefix": "TS",
+    "target": "$3,000",
+    "daily": "$1,500",
+    "max": "$3,000",
+    "days": "2 Days"
+  },
+
+  "MyFundedFutures": {
+    "prefix": "MFF",
+    "target": "6%",
+    "daily": "3%",
+    "max": "3%",
+    "days": "0 Days"
+  },
+
+  "Apex Trading": {
+    "prefix": "APX",
+    "target": "$3,000",
+    "daily": "$0",
+    "max": "$2,500",
+    "days": "7 Days"
+  },
+
+  "TakeProfitTrader": {
+    "prefix": "TPT",
+    "target": "$3,000",
+    "daily": "$0",
+    "max": "$2,000",
+    "days": "5 Days"
+  },
+
+  "Tradeify": {
+    "prefix": "TRD",
+    "target": "$3,000",
+    "daily": "$1,000",
+    "max": "$2,500",
+    "days": "5 Days"
+  }
+}

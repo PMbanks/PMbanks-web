@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rest Space</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<style>
+:root{
+    --bg-primary:#0d1117;
+    --bg-card:#161b22;
+    --bg-soft:#0f172a;
+    --text-primary:#ffffff;
+    --text-secondary:#9ca3af;
+    --border-color:rgba(255,255,255,.08);
+    --accent:#8b5cf6;
+    --accent2:#3b82f6;
+    --green:#22c55e;
+    --red:#ef4444;
+}
+.theme-white{ --bg-primary:#f4f6fb; --bg-card:#ffffff; --bg-soft:#eef2ff; --text-primary:#111827; --text-secondary:#6b7280; --border-color:rgba(0,0,0,.09); --accent:#7c3aed; --accent2:#2563eb; }
+.theme-darkblue{ --bg-primary:#0a1628; --bg-card:#111c33; --bg-soft:#0f1f3a; }
+.theme-purple{ --bg-primary:#1a0a2e; --bg-card:#24103d; --bg-soft:#2d1b4e; }
+.theme-darkred{ --bg-primary:#1a0505; --bg-card:#2a0a0a; --bg-soft:#3d1212; }
+.theme-darkbrown{ --bg-primary:#1e120e; --bg-card:#2a1a14; --bg-soft:#3a261d; }
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{
+    font-family:Inter,sans-serif;
+    background:
+        radial-gradient(circle at 20% 18%,rgba(139,92,246,.10),transparent 30%),
+        radial-gradient(circle at 78% 70%,rgba(56,189,248,.08),transparent 35%),
+        linear-gradient(135deg,#101010 0%,#171717 48%,#0d0d0d 100%);
+    color:var(--text-primary);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+}
+#topoCanvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+    opacity:.72;
+}
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at 50% 50%,transparent 0%,rgba(0,0,0,.18) 68%,rgba(0,0,0,.52) 100%),
+        linear-gradient(180deg,rgba(255,255,255,.018),transparent 45%,rgba(0,0,0,.16));
+}
+.rest-page{
+    position:relative;
+    z-index:1;
+    min-height:100vh;
+    padding:28px;
+    max-width:1480px;
+    margin:0 auto;
+}
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    margin-bottom:18px;
+}
+.brand{ display:flex; align-items:center; gap:14px; }
+.brand-icon{
+    width:52px; height:52px; border-radius:18px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 14px 30px rgba(139,92,246,.28);
+}
+.brand h1{ font-size:1.65rem; font-weight:900; letter-spacing:-.7px; }
+.brand p{ color:var(--text-secondary); font-size:.86rem; margin-top:4px; }
+.top-actions{ display:flex; align-items:center; gap:10px; }
+.btn{
+    min-height:44px; padding:0 15px; border-radius:14px;
+    border:1px solid var(--border-color); background:rgba(255,255,255,.05);
+    color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center;
+    gap:9px; cursor:pointer; text-decoration:none; font-family:inherit; font-weight:900;
+    transition:.22s;
+}
+.btn:hover{ transform:translateY(-2px); border-color:var(--accent); }
+.btn.primary{ border:none; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; box-shadow:0 14px 30px rgba(139,92,246,.24); }
+.layout{ display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:18px; align-items:start; }
+.main-card{
+    border:1px solid var(--border-color); border-radius:28px; background:rgba(22,27,34,.68);
+    backdrop-filter:blur(16px); overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.28);
+}
+.video-stage{
+    position:relative; height:min(62vh,680px); min-height:430px; background:#05070d; overflow:hidden;
+}
+.video-shell{
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 45%,rgba(139,92,246,.16),transparent 42%),linear-gradient(135deg,#020617,#111827 55%,#1e1b4b);
+}
+#youtubePlayer,.video-shell iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.video-shell iframe{ transform:scale(1.01); }
+.video-overlay{
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 20%,transparent 70%,rgba(0,0,0,.56)),radial-gradient(circle at 50% 50%,transparent 60%,rgba(0,0,0,.30));
+}
+.center-play{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    border-radius:999px; width:92px; height:92px; border:1px solid rgba(255,255,255,.20);
+    background:rgba(255,255,255,.10); backdrop-filter:blur(12px); color:white; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 20px 55px rgba(0,0,0,.32); transition:.22s;
+}
+.center-play:hover{ transform:translate(-50%,-50%) scale(1.04); background:rgba(139,92,246,.24); }
+.now-playing{
+    position:absolute; left:18px; right:18px; bottom:18px; display:flex; justify-content:space-between; align-items:flex-end; gap:14px; pointer-events:none;
+}
+.now-playing h2{ font-size:1.45rem; font-weight:900; letter-spacing:-.5px; text-shadow:0 8px 28px rgba(0,0,0,.55); }
+.now-playing p{ color:#d1d5db; font-size:.82rem; margin-top:6px; text-shadow:0 8px 24px rgba(0,0,0,.55); }
+.float-controls{ pointer-events:auto; display:flex; align-items:center; gap:9px; padding:9px; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.32); backdrop-filter:blur(12px); border-radius:18px; }
+.icon-btn{ width:42px; height:42px; border-radius:14px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.06); color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.2s; }
+.icon-btn:hover{ border-color:var(--accent); background:rgba(139,92,246,.18); }
+.video-picker{ padding:18px; }
+.panel-title{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; font-size:.9rem; font-weight:900; }
+.panel-title span{ display:flex; align-items:center; gap:8px; }
+.space-carousel{
+    display:grid;
+    grid-template-columns:48px minmax(0,1fr) 48px;
+    align-items:center;
+    gap:12px;
+}
+.preset-track{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:12px;
+    min-width:0;
+}
+.carousel-arrow{
+    width:48px;
+    height:86px;
+    border-radius:18px;
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.20);
+    color:var(--text-primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.22s;
+}
+.carousel-arrow:hover{
+    transform:translateY(-2px);
+    border-color:var(--accent);
+    background:rgba(139,92,246,.16);
+}
+.preset-card{
+    position:relative;
+    min-height:158px;
+    border:1px solid rgba(255,255,255,.12);
+    background:#111;
+    color:var(--text-primary);
+    border-radius:24px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    overflow:hidden;
+    font-family:inherit;
+    text-align:left;
+    cursor:pointer;
+    opacity:.78;
+    transform:scale(.96);
+    transition:transform .24s ease, opacity .24s ease, border-color .24s ease, box-shadow .24s ease;
+    box-shadow:0 16px 36px rgba(0,0,0,.24);
+}
+.preset-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(180deg,rgba(0,0,0,.04) 0%,rgba(0,0,0,.18) 42%,rgba(0,0,0,.78) 100%),
+        var(--thumb);
+    background-size:cover;
+    background-position:center;
+    transform:scale(1.04);
+    opacity:.86;
+    transition:transform .35s ease, opacity .24s ease, filter .24s ease;
+}
+.preset-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at 22% 18%,rgba(255,255,255,.22),transparent 30%),
+        linear-gradient(135deg,rgba(139,92,246,.20),rgba(56,189,248,.10));
+    opacity:.24;
+    transition:.24s ease;
+}
+.preset-card.active{
+    opacity:1;
+    transform:scale(1);
+    border-color:rgba(56,189,248,.78);
+    box-shadow:0 24px 58px rgba(56,189,248,.20),0 16px 44px rgba(0,0,0,.32);
+}
+.preset-card.active::before{
+    opacity:.96;
+    filter:saturate(1.12) contrast(1.04);
+}
+.preset-card.active::after{ opacity:.34; }
+.preset-card:hover{
+    opacity:1;
+    transform:translateY(-4px) scale(.985);
+    border-color:rgba(139,92,246,.70);
+}
+.preset-card:hover::before{ transform:scale(1.10); }
+.preset-card.active:hover{ transform:translateY(-4px) scale(1); }
+.preset-info{
+    position:relative;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding-right:28px;
+}
+.preset-card strong{
+    display:block;
+    font-size:1.02rem;
+    font-weight:950;
+    line-height:1.08;
+    text-shadow:0 10px 24px rgba(0,0,0,.85);
+}
+.preset-card span{
+    color:#e5e7eb;
+    font-size:.72rem;
+    font-weight:850;
+    line-height:1.3;
+    text-shadow:0 8px 20px rgba(0,0,0,.85);
+}
+.preset-badge{
+    position:absolute;
+    top:12px;
+    left:12px;
+    z-index:2;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 9px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(0,0,0,.36);
+    backdrop-filter:blur(10px);
+    color:#fff;
+    font-size:.66rem;
+    font-weight:950;
+    text-transform:uppercase;
+    letter-spacing:.45px;
+}
+.carousel-count{
+    color:var(--text-secondary);
+    font-size:.7rem;
+    font-weight:900;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.04);
+    border-radius:999px;
+    padding:5px 9px;
+}
+
+.favorite-toggle{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:32px;
+    height:32px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(0,0,0,.22);
+    color:var(--text-secondary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.2s;
+}
+.favorite-toggle:hover,
+.favorite-toggle.active{
+    color:#facc15;
+    border-color:rgba(250,204,21,.45);
+    background:rgba(250,204,21,.12);
+}
+.favorites-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:12px;
+}
+.favorite-space{
+    position:relative;
+    width:100%;
+    min-height:74px;
+    border:1px solid var(--border-color);
+    background:#101010;
+    color:var(--text-primary);
+    border-radius:18px;
+    padding:12px 12px 12px 74px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    text-align:left;
+    cursor:pointer;
+    font-family:inherit;
+    overflow:hidden;
+    transition:.2s;
+}
+.favorite-space::before{
+    content:"";
+    position:absolute;
+    left:10px;
+    top:10px;
+    width:50px;
+    height:50px;
+    border-radius:14px;
+    background:var(--thumb);
+    background-size:cover;
+    background-position:center;
+    box-shadow:0 8px 18px rgba(0,0,0,.28);
+}
+.favorite-space > *{ position:relative; z-index:1; }
+.favorite-space:hover,
+.favorite-space.active{
+    border-color:var(--accent);
+    background:rgba(139,92,246,.14);
+    transform:translateY(-1px);
+}
+.favorite-space i{ color:#facc15; }
+.favorite-space strong{ display:block; font-size:.82rem; margin-bottom:2px; }
+.favorite-space span{ color:var(--text-secondary); font-size:.68rem; font-weight:800; }
+.favorite-empty{
+    color:var(--text-secondary);
+    font-size:.75rem;
+    line-height:1.5;
+    border:1px dashed rgba(255,255,255,.14);
+    border-radius:16px;
+    padding:12px;
+    background:rgba(255,255,255,.025);
+    margin-top:12px;
+}
+.side-stack{ display:flex; flex-direction:column; gap:18px; }
+.side-card{ border:1px solid var(--border-color); border-radius:24px; background:rgba(22,27,34,.70); backdrop-filter:blur(16px); padding:18px; box-shadow:0 18px 46px rgba(0,0,0,.18); }
+.timer-card{ text-align:center; }
+.timer-ring{
+    --p:0; width:214px; height:214px; border-radius:50%; margin:12px auto 16px; display:flex; align-items:center; justify-content:center; position:relative;
+    background:conic-gradient(var(--accent) calc(var(--p) * 1%),rgba(255,255,255,.08) 0);
+    box-shadow:inset 0 0 32px rgba(0,0,0,.55),0 0 38px rgba(139,92,246,.18);
+}
+.timer-ring::before{ content:""; position:absolute; inset:13px; border-radius:50%; border:2px solid rgba(255,255,255,.12); background:rgba(13,17,23,.84); }
+.timer-content{ position:relative; z-index:2; }
+.timer-time{ font-size:2.85rem; font-weight:600; letter-spacing:-2px; line-height:1; }
+.timer-label{ margin-top:9px; color:var(--text-secondary); font-size:.72rem; text-transform:uppercase; letter-spacing:1px; font-weight:900; }
+.session-name{ font-size:1rem; font-weight:900; margin-bottom:4px; }
+.session-goal{ color:var(--text-secondary); font-size:.78rem; min-height:20px; }
+.timer-actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+.timer-actions .btn{ width:100%; }
+.volume-row{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; padding:12px; border-radius:16px; border:1px solid var(--border-color); background:rgba(0,0,0,.18); }
+.volume-row i{ color:#c4b5fd; }
+.volume-row output{ color:var(--text-secondary); font-size:.72rem; font-weight:900; }
+input[type="range"]{ width:100%; accent-color:var(--accent); }
+.small-note{ margin-top:10px; color:var(--text-secondary); font-size:.72rem; line-height:1.5; }
+@media(max-width:1180px){ .layout{ grid-template-columns:1fr; } .video-stage{ height:520px; } .side-stack{ grid-template-columns:1fr 1fr; display:grid; } }
+@media(max-width:760px){ .rest-page{ padding:16px; } .topbar{ align-items:flex-start; flex-direction:column; } .top-actions{ width:100%; } .btn{ flex:1; } .video-stage{ height:360px; min-height:300px; } .now-playing{ flex-direction:column; align-items:flex-start; } .float-controls{ width:100%; justify-content:space-between; } .space-carousel{ grid-template-columns:42px 1fr 42px; gap:8px; } .preset-track{ grid-template-columns:1fr; } .preset-track .preset-card:not(.active){ display:none; } .carousel-arrow{ width:42px; height:78px; } .preset-card{ min-height:132px; padding:14px; } .side-stack{ display:flex; } }
+</style>
+</head>
+<body>
+<canvas id="topoCanvas"></canvas>
+<div class="rest-page">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-icon"><i data-lucide="sparkles"></i></div>
+            <div>
+                <h1>Rest Space</h1>
+                <p>Choose a visual ambience, keep the sound on, and keep your Sessions timer synced.</p>
+            </div>
+        </div>
+        <div class="top-actions">
+            <a class="btn" href="sessions.html"><i data-lucide="arrow-left"></i> Sessions</a>
+        </div>
+    </header>
+
+    <main class="layout">
+        <section class="main-card">
+            <div class="video-stage" id="videoStage">
+                <div class="video-shell"><div id="youtubePlayer"></div></div>
+                <div class="video-overlay"></div>
+                <button class="center-play" id="centerPlayBtn" onclick="togglePlay()" title="Play / Pause"><i data-lucide="play" width="38" height="38"></i></button>
+                <div class="now-playing">
+                    <div>
+                        <h2 id="nowTitle">NY Room Rain Late Night</h2>
+                        <p id="nowDesc">Rain on a late-night city room window</p>
+                    </div>
+                    <div class="float-controls">
+                        <button class="icon-btn" onclick="togglePlay()" title="Play / Pause"><i id="playIcon" data-lucide="play"></i></button>
+                        <button class="icon-btn" onclick="toggleMute()" title="Mute / Unmute"><i id="muteIcon" data-lucide="volume-2"></i></button>
+                        <button class="icon-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Fullscreen video"><i id="fullscreenIcon" data-lucide="maximize-2"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="video-picker">
+                <div class="panel-title"><span><i data-lucide="image"></i> Choose your space</span><span class="carousel-count" id="carouselCount">1 / 10</span></div>
+                <div class="space-carousel">
+                    <button class="carousel-arrow" onclick="changePreset(-1)" title="Previous space"><i data-lucide="chevron-left"></i></button>
+                    <div id="presetList"></div>
+                    <button class="carousel-arrow" onclick="changePreset(1)" title="Next space"><i data-lucide="chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <aside class="side-stack">
+            <section class="side-card timer-card">
+                <div class="panel-title"><span><i data-lucide="timer"></i> Synced session timer</span></div>
+                <div class="timer-ring" id="timerRing">
+                    <div class="timer-content">
+                        <div class="timer-time" id="timerDisplay">25:00</div>
+                        <div class="timer-label" id="timerStatus">Ready</div>
+                    </div>
+                </div>
+                <div class="session-name" id="sessionName">Rain Session</div>
+                <div class="session-goal" id="sessionGoal">Relax and focus</div>
+                <div class="timer-actions">
+                    <button class="btn primary" id="timerToggleBtn" onclick="toggleSessionTimer()"><i data-lucide="play"></i> Start</button>
+                    <button class="btn" onclick="resetSessionTimer()"><i data-lucide="rotate-ccw"></i> Reset</button>
+                </div>
+                <p class="small-note">This uses the same saved session timer as Sessions. If you start or pause here, it stays synced when you go back.</p>
+            </section>
+
+            <section class="side-card">
+                <div class="panel-title"><span><i data-lucide="star"></i> Favourite spaces</span><span class="carousel-count" id="favoriteCount">0</span></div>
+                <div id="favoriteList" class="favorites-list"></div>
+                <p class="small-note">Tap the star on a space to save it here.</p>
+            </section>
+
+        </aside>
+    </main>
+</div>
+
+<script>
+/* ===== CLEAN ANIMATED TOPOGRAPHIC BACKGROUND ===== */
+const topoCanvas = document.getElementById("topoCanvas");
+const topoCtx = topoCanvas.getContext("2d");
+let topoW = 0;
+let topoH = 0;
+let topoLines = [];
+
+function resizeTopo(){
+    const ratio = window.devicePixelRatio || 1;
+    topoW = window.innerWidth;
+    topoH = window.innerHeight;
+    topoCanvas.width = topoW * ratio;
+    topoCanvas.height = topoH * ratio;
+    topoCanvas.style.width = topoW + "px";
+    topoCanvas.style.height = topoH + "px";
+    topoCtx.setTransform(ratio,0,0,ratio,0,0);
+    createTopoLines();
+}
+
+function createTopoLines(){
+    topoLines = [];
+    const centers = [
+        {x:.10,y:.33,w:170,h:95,rings:5},
+        {x:.30,y:.42,w:115,h:160,rings:5},
+        {x:.52,y:.56,w:130,h:95,rings:4},
+        {x:.76,y:.36,w:180,h:85,rings:5},
+        {x:.86,y:.72,w:150,h:95,rings:4},
+        {x:.18,y:.76,w:175,h:75,rings:5},
+        {x:.62,y:.12,w:120,h:75,rings:4},
+        {x:.93,y:.12,w:100,h:145,rings:4}
+    ];
+
+    centers.forEach((c, centerIndex) => {
+        for(let r = 0; r < c.rings; r++){
+            topoLines.push({
+                type:"ring",
+                cx:c.x * topoW,
+                cy:c.y * topoH,
+                rx:c.w + r * 28,
+                ry:c.h + r * 22,
+                wobble:10 + r * 2,
+                phase:centerIndex * 1.2 + r * .55,
+                width:r === c.rings - 1 ? 2.5 : 1.1,
+                alpha:r === c.rings - 1 ? .23 : .32
+            });
+        }
+    });
+
+    for(let i = 0; i < 9; i++){
+        topoLines.push({
+            type:"wave",
+            y:(i / 8) * topoH + 20,
+            amp:26 + (i % 3) * 14,
+            phase:i * .7,
+            width:i % 4 === 0 ? 2.2 : 1,
+            alpha:i % 4 === 0 ? .20 : .26
+        });
+    }
+}
+
+function drawSmoothRing(line, time){
+    const points = 160;
+    topoCtx.beginPath();
+    for(let i = 0; i <= points; i++){
+        const a = (i / points) * Math.PI * 2;
+        const wob =
+            Math.sin(a * 3 + line.phase + time * .24) * line.wobble +
+            Math.cos(a * 5 + line.phase * 1.4 + time * .15) * (line.wobble * .45);
+        const x = line.cx + Math.cos(a) * (line.rx + wob);
+        const y = line.cy + Math.sin(a) * (line.ry + wob);
+        if(i === 0) topoCtx.moveTo(x,y);
+        else topoCtx.lineTo(x,y);
+    }
+    topoCtx.closePath();
+    topoCtx.strokeStyle = `rgba(92,92,92,${line.alpha})`;
+    topoCtx.lineWidth = line.width;
+    topoCtx.stroke();
+}
+
+function drawWave(line, time){
+    topoCtx.beginPath();
+    for(let x = -120; x <= topoW + 120; x += 18){
+        const y =
+            line.y +
+            Math.sin(x * .006 + line.phase + time * .11) * line.amp +
+            Math.cos(x * .012 + line.phase * 1.6 + time * .07) * (line.amp * .35);
+        if(x === -120) topoCtx.moveTo(x,y);
+        else topoCtx.lineTo(x,y);
+    }
+    topoCtx.strokeStyle = `rgba(82,82,82,${line.alpha})`;
+    topoCtx.lineWidth = line.width;
+    topoCtx.stroke();
+}
+
+function animateTopo(){
+    const time = performance.now() / 1000;
+    topoCtx.clearRect(0,0,topoW,topoH);
+    topoCtx.save();
+    topoCtx.translate(
+        Math.sin(time * .06) * 12,
+        Math.cos(time * .05) * 10
+    );
+    topoLines.forEach(line => {
+        if(line.type === "ring") drawSmoothRing(line,time);
+        if(line.type === "wave") drawWave(line,time);
+    });
+    topoCtx.restore();
+    requestAnimationFrame(animateTopo);
+}
+
+window.addEventListener("resize", resizeTopo);
+resizeTopo();
+animateTopo();
+
+const savedTheme = localStorage.getItem("theme") || "black";
+document.body.classList.add(savedTheme.startsWith("theme-") ? savedTheme : "theme-" + savedTheme);
+
+const STORAGE_KEY = "routineSessionsYoutubeGaplessV2";
+const defaultSessionState = {
+    name:"Rain Session",
+    goal:"Relax and focus",
+    duration:25,
+    remaining:25 * 60,
+    running:false
+};
+
+const presets = [
+    {name:'NY Room Rain Late Night', desc:'Rain on a late-night city room window', icon:'cloud-rain', videoId:'GNGSs0-Dt3g'},
+    {name:'Medieval Town', desc:'Medieval town ambience for calm focus', icon:'castle', videoId:'81iRGxYAmMk'},
+    {name:'Night in the Forest', desc:'Deep forest night ambience', icon:'trees', videoId:'JdOeODUIEmc'},
+    {name:'Wooden House Rain', desc:'Warm wooden cabin rain sounds', icon:'home', videoId:'qe3l1rvJMlA'},
+    {name:'Space Relax', desc:'Calm space ambience for focus', icon:'orbit', videoId:'y45qWy8TFJw'},
+    {name:'Biosphere Rain', desc:'Rain inside a peaceful biosphere', icon:'leaf', videoId:'Q2RP1wVtubQ'},
+    {name:'Calm in the Forest', desc:'Gentle forest ambience', icon:'tree-pine', videoId:'DRFHklnN-SM'},
+    {name:'Jazz City', desc:'City night jazz ambience', icon:'music', videoId:'pjX9O7AhogM'},
+    {name:'House and Vacations', desc:'Relaxed house vacation ambience', icon:'palmtree', videoId:'MJpQINiU6PA'},
+    {name:'Space Ambient', desc:'Deep space ambient focus sound', icon:'sparkles', videoId:'vZ0SFAZf2yA'},
+    {name:'Cozy Winter', desc:'Warm winter ambience with calm background sound', icon:'snowflake', videoId:'FslCeCp1GqM'},
+    {name:'Soft Storm Outside Spaceship', desc:'Softer spaceship storm ambience', icon:'cloud-lightning', videoId:'y3Hjx8iE6OQ'},
+    {name:'Paris', desc:'Paris ambience for calm focus and rest', icon:'landmark', videoId:'tqoaDVa9cbM'}
+];
+
+let player = null;
+let currentVideoId = localStorage.getItem("restSpaceVideoId") || presets[0].videoId;
+let currentTitle = localStorage.getItem("restSpaceTitle") || presets[0].name;
+let currentIndex = Math.max(0,presets.findIndex(item => item.videoId === currentVideoId));
+let favoriteSpaces = loadFavoriteSpaces();
+let isMuted = false;
+let isPlaying = false;
+let timerInterval = null;
+let sessionState = loadSessionState();
+
+function loadFavoriteSpaces(){
+    try{
+        const saved = JSON.parse(localStorage.getItem("restSpaceFavorites") || "[]");
+        return Array.isArray(saved) ? saved : [];
+    }catch{
+        return [];
+    }
+}
+
+function saveFavoriteSpaces(){
+    localStorage.setItem("restSpaceFavorites", JSON.stringify(favoriteSpaces));
+}
+
+function isFavorite(videoId){
+    return favoriteSpaces.includes(videoId);
+}
+
+function toggleFavorite(videoId,event){
+    if(event) event.stopPropagation();
+    if(isFavorite(videoId)){
+        favoriteSpaces = favoriteSpaces.filter(id => id !== videoId);
+    }else{
+        favoriteSpaces = [...favoriteSpaces, videoId];
+    }
+    saveFavoriteSpaces();
+    renderPresets(currentVideoId);
+    renderFavorites();
+}
+
+function renderFavorites(){
+    const list = document.getElementById("favoriteList");
+    const count = document.getElementById("favoriteCount");
+    if(!list) return;
+    const items = favoriteSpaces.map(id => presets.find(item => item.videoId === id)).filter(Boolean);
+    if(count) count.textContent = String(items.length);
+    if(!items.length){
+        list.innerHTML = '<div class="favorite-empty">No favourite spaces yet. Star the ones you use the most and they will stay here.</div>';
+        if(window.lucide) lucide.createIcons();
+        return;
+    }
+    list.innerHTML = items.map(item => `
+        <button class="favorite-space ${item.videoId === currentVideoId ? "active" : ""}" style="--thumb:url('https://img.youtube.com/vi/${item.videoId}/mqdefault.jpg')" onclick="loadVideo('${item.videoId}','${escapeAttr(item.name)}','${escapeAttr(item.desc)}')">
+            <div><strong>${item.name}</strong><span>${item.desc}</span></div>
+            <i data-lucide="play"></i>
+        </button>
+    `).join("");
+    if(window.lucide) lucide.createIcons();
+}
+
+function loadSessionState(){
+    try{
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        return {...defaultSessionState, ...(saved || {})};
+    }catch{
+        return {...defaultSessionState};
+    }
+}
+
+function saveSessionState(){
+    try{
+        const fullState = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {};
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({...fullState, ...sessionState}));
+    }catch{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionState));
+    }
+}
+
+function formatTime(seconds){
+    const safe = Math.max(0, Number(seconds) || 0);
+    const minutes = Math.floor(safe / 60);
+    const secs = safe % 60;
+    return String(minutes).padStart(2,"0") + ":" + String(secs).padStart(2,"0");
+}
+
+function updateTimerUI(){
+    const totalSeconds = (Number(sessionState.duration) || 25) * 60;
+    const progress = totalSeconds ? ((totalSeconds - (Number(sessionState.remaining) || 0)) / totalSeconds) * 100 : 0;
+    document.getElementById("timerDisplay").textContent = formatTime(sessionState.remaining);
+    document.getElementById("timerRing").style.setProperty("--p", Math.max(0, Math.min(100, progress)));
+    document.getElementById("timerStatus").textContent = sessionState.running ? "Running" : ((sessionState.remaining || 0) <= 0 ? "Complete" : "Ready");
+    document.getElementById("sessionName").textContent = sessionState.name || "Session";
+    document.getElementById("sessionGoal").textContent = sessionState.goal || "";
+    const btn = document.getElementById("timerToggleBtn");
+    btn.innerHTML = sessionState.running ? '<i data-lucide="pause"></i> Pause' : '<i data-lucide="play"></i> Start';
+    if(window.lucide) lucide.createIcons();
+}
+
+function startTimerLoop(){
+    clearInterval(timerInterval);
+    if(!sessionState.running) return;
+    timerInterval = setInterval(() => {
+        sessionState.remaining = Math.max(0, (Number(sessionState.remaining) || 0) - 1);
+        if(sessionState.remaining <= 0){
+            sessionState.remaining = 0;
+            sessionState.running = false;
+            clearInterval(timerInterval);
+        }
+        saveSessionState();
+        updateTimerUI();
+    },1000);
+}
+
+function toggleSessionTimer(){
+    sessionState = loadSessionState();
+    sessionState.running = !sessionState.running;
+    if(sessionState.running && (!sessionState.remaining || sessionState.remaining <= 0)){
+        sessionState.remaining = (Number(sessionState.duration) || 25) * 60;
+    }
+    saveSessionState();
+    updateTimerUI();
+    startTimerLoop();
+}
+
+function resetSessionTimer(){
+    sessionState = loadSessionState();
+    sessionState.running = false;
+    sessionState.remaining = (Number(sessionState.duration) || 25) * 60;
+    saveSessionState();
+    updateTimerUI();
+    startTimerLoop();
+}
+
+function onYouTubeIframeAPIReady(){
+    player = new YT.Player("youtubePlayer",{
+        videoId:currentVideoId,
+        playerVars:{ autoplay:0, controls:0, disablekb:1, fs:0, iv_load_policy:3, modestbranding:1, playsinline:1, rel:0, loop:1, playlist:currentVideoId },
+        events:{ onReady:onPlayerReady, onStateChange:onPlayerStateChange }
+    });
+}
+
+function onPlayerReady(){
+    const savedVolume = Number(localStorage.getItem("restSpaceVolume") || 70);
+    setVolume(savedVolume);
+    const preset = presets.find(item => item.videoId === currentVideoId) || presets[0];
+    currentIndex = Math.max(0,presets.findIndex(item => item.videoId === currentVideoId));
+    updateNowPlaying(currentTitle || preset.name,preset.desc);
+    renderPresets(currentVideoId);
+    renderFavorites();
+}
+
+function onPlayerStateChange(event){
+    isPlaying = event.data === YT.PlayerState.PLAYING;
+    refreshIcons();
+}
+
+function loadVideo(videoId,title,desc){
+    currentVideoId = videoId;
+    currentTitle = title;
+    currentIndex = Math.max(0,presets.findIndex(item => item.videoId === videoId));
+    localStorage.setItem("restSpaceVideoId",videoId);
+    localStorage.setItem("restSpaceTitle",title);
+    if(player && player.loadVideoById){
+        player.loadVideoById(videoId);
+        setTimeout(() => {
+            try{
+                player.setLoop(true);
+                player.setVolume(Number(localStorage.getItem("restSpaceVolume") || 70));
+            }catch(error){}
+        },350);
+    }
+    updateNowPlaying(title,desc);
+    renderPresets(videoId);
+    renderFavorites();
+}
+
+function togglePlay(){
+    if(!player) return;
+    const state = player.getPlayerState ? player.getPlayerState() : null;
+    if(state === YT.PlayerState.PLAYING) player.pauseVideo();
+    else player.playVideo();
+}
+
+function toggleMute(){
+    if(!player) return;
+    if(isMuted){ player.unMute(); isMuted = false; }
+    else{ player.mute(); isMuted = true; }
+    refreshIcons();
+}
+
+function setVolume(value){
+    const volume = Number(value) || 70;
+    localStorage.setItem("restSpaceVolume",volume);
+    if(player && player.setVolume){
+        player.setVolume(volume);
+        if(volume > 0 && isMuted){ player.unMute(); isMuted = false; }
+    }
+    refreshIcons();
+}
+
+function getFullscreenElement(){
+    return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+}
+
+function toggleFullscreen(){
+    const stage = document.getElementById("videoStage");
+    const active = getFullscreenElement();
+
+    if(active){
+        if(document.exitFullscreen) document.exitFullscreen();
+        else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if(document.msExitFullscreen) document.msExitFullscreen();
+        return;
+    }
+
+    if(stage.requestFullscreen) stage.requestFullscreen();
+    else if(stage.webkitRequestFullscreen) stage.webkitRequestFullscreen();
+    else if(stage.msRequestFullscreen) stage.msRequestFullscreen();
+}
+
+function updateFullscreenButton(){
+    const isFull = !!getFullscreenElement();
+    const btn = document.getElementById("fullscreenBtn");
+    const icon = document.getElementById("fullscreenIcon");
+    if(btn) btn.title = isFull ? "Exit fullscreen" : "Fullscreen video";
+    if(icon) icon.setAttribute("data-lucide", isFull ? "minimize-2" : "maximize-2");
+    if(window.lucide) lucide.createIcons();
+}
+
+function updateNowPlaying(title,desc){
+    document.getElementById("nowTitle").textContent = title;
+    document.getElementById("nowDesc").textContent = desc;
+}
+
+function refreshIcons(){
+    const playIcon = document.getElementById("playIcon");
+    const muteIcon = document.getElementById("muteIcon");
+    const center = document.getElementById("centerPlayBtn");
+    if(playIcon) playIcon.setAttribute("data-lucide",isPlaying ? "pause" : "play");
+    if(muteIcon) muteIcon.setAttribute("data-lucide",isMuted ? "volume-x" : "volume-2");
+    if(center) center.innerHTML = `<i data-lucide="${isPlaying ? "pause" : "play"}" width="38" height="38"></i>`;
+    if(window.lucide) lucide.createIcons();
+}
+
+function escapeAttr(value){
+    return String(value).replace(/'/g,"&#39;").replace(/"/g,"&quot;");
+}
+
+function changePreset(direction){
+    currentIndex = (currentIndex + direction + presets.length) % presets.length;
+    const item = presets[currentIndex];
+    loadVideo(item.videoId,item.name,item.desc);
+}
+
+function renderPresets(activeId=currentVideoId){
+    const list = document.getElementById("presetList");
+    const activeIndex = Math.max(0,presets.findIndex(item => item.videoId === activeId));
+    currentIndex = activeIndex;
+    const visible = [-1,0,1].map(offset => {
+        const index = (currentIndex + offset + presets.length) % presets.length;
+        return {...presets[index], index, active:offset === 0};
+    });
+    list.innerHTML = `<div class="preset-track">${visible.map(item => `
+        <div class="preset-card ${item.active ? "active" : ""}" style="--thumb:url('https://img.youtube.com/vi/${item.videoId}/hqdefault.jpg')" onclick="selectPreset(${item.index})" title="${item.active ? "Play / Pause this space" : "Choose this space"}" role="button" tabindex="0">
+            <div class="preset-badge"><i data-lucide="${item.icon}" size="13"></i>${item.active ? "Now playing" : "Space"}</div>
+            <button class="favorite-toggle ${isFavorite(item.videoId) ? "active" : ""}" onclick="toggleFavorite('${item.videoId}',event)" title="${isFavorite(item.videoId) ? "Remove favorite" : "Add favorite"}"><i data-lucide="star"></i></button>
+            <div class="preset-info"><strong>${item.name}</strong><span>${item.desc}</span></div>
+        </div>
+    `).join("")}</div>`;
+    const count = document.getElementById("carouselCount");
+    if(count) count.textContent = `${currentIndex + 1} / ${presets.length}`;
+    if(window.lucide) lucide.createIcons();
+}
+
+function selectPreset(index){
+    const item = presets[index];
+    if(!item) return;
+    if(index === currentIndex){
+        togglePlay();
+        return;
+    }
+    currentIndex = index;
+    loadVideo(item.videoId,item.name,item.desc);
+}
+
+document.addEventListener("keydown",event => {
+    if(event.code === "Space" && !["INPUT","TEXTAREA","BUTTON"].includes(event.target.tagName)){
+        event.preventDefault();
+        togglePlay();
+    }
+});
+
+window.addEventListener("storage",event => {
+    if(event.key === STORAGE_KEY){
+        sessionState = loadSessionState();
+        updateTimerUI();
+        startTimerLoop();
+    }
+});
+
+renderPresets();
+renderFavorites();
+updateTimerUI();
+startTimerLoop();
+if(window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>

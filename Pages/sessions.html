@@ -1,0 +1,4504 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Sessions</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<style>
+:root{
+    --bg-primary:#0d1117;
+    --bg-card:#161b22;
+    --bg-soft:#0f172a;
+    --text-primary:#ffffff;
+    --text-secondary:#9ca3af;
+    --border-color:rgba(255,255,255,.08);
+    --accent:#8b5cf6;
+    --accent2:#3b82f6;
+    --green:#22c55e;
+    --red:#ef4444;
+    --warn:#f59e0b;
+}
+
+.theme-white{
+    --bg-primary:#f4f6fb;
+    --bg-card:#ffffff;
+    --bg-soft:#eef2ff;
+    --text-primary:#111827;
+    --text-secondary:#6b7280;
+    --border-color:rgba(0,0,0,.09);
+    --accent:#7c3aed;
+    --accent2:#2563eb;
+}
+
+.theme-darkblue{
+    --bg-primary:#0a1628;
+    --bg-card:#111c33;
+    --bg-soft:#0f1f3a;
+}
+
+.theme-purple{
+    --bg-primary:#1a0a2e;
+    --bg-card:#24103d;
+    --bg-soft:#2d1b4e;
+}
+
+.theme-darkred{
+    --bg-primary:#1a0505;
+    --bg-card:#2a0a0a;
+    --bg-soft:#3d1212;
+}
+
+.theme-darkbrown{
+    --bg-primary:#1e120e;
+    --bg-card:#2a1a14;
+    --bg-soft:#3a261d;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Inter,sans-serif;
+    background:var(--bg-primary);
+    color:var(--text-primary);
+    min-height:100vh;
+    padding-left:270px;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 20% 25%,rgba(139,92,246,.16),transparent 38%),
+        radial-gradient(circle at 78% 65%,rgba(59,130,246,.12),transparent 42%),
+        linear-gradient(120deg,transparent 42%,rgba(0,0,0,.36));
+    pointer-events:none;
+    z-index:0;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:42px 42px;
+    pointer-events:none;
+    z-index:0;
+}
+
+/* ===== SIDEBAR ===== */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:230px;
+    background:var(--bg-card);
+    backdrop-filter:blur(14px);
+    border-right:1px solid rgba(255,255,255,.06);
+    display:flex;
+    flex-direction:column;
+    padding:24px 18px;
+    z-index:1000;
+}
+
+.sidebar-logo{
+    text-decoration:none;
+    color:#fff;
+    font-size:1.3rem;
+    font-weight:800;
+    padding:14px 18px;
+    border-radius:18px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    text-align:center;
+    margin-bottom:24px;
+    box-shadow:0 0 22px rgba(139,92,246,.25);
+}
+
+.sidebar-divider{
+    width:100%;
+    height:1px;
+    background:rgba(255,255,255,.08);
+    margin-bottom:18px;
+}
+
+.sidebar-link{
+    text-decoration:none;
+    color:#94a3b8;
+    font-size:.95rem;
+    font-weight:600;
+    padding:14px 18px;
+    border-radius:14px;
+    transition:.25s;
+    margin-bottom:8px;
+}
+
+.sidebar-link:hover{
+    background:rgba(255,255,255,.05);
+    color:#fff;
+    transform:translateX(4px);
+}
+
+.sidebar-link.active{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:white;
+    box-shadow:0 0 20px rgba(102,126,234,.25);
+}
+
+/* ===== MAIN ===== */
+
+.main{
+    position:relative;
+    z-index:1;
+    padding:34px 36px 110px;
+    max-width:1680px;
+    margin:0 auto;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:18px;
+    margin-bottom:26px;
+}
+
+.header h1{
+    font-size:2.2rem;
+    line-height:1;
+    letter-spacing:-1px;
+    font-weight:900;
+    margin-bottom:10px;
+}
+
+.header p{
+    color:var(--text-secondary);
+    font-size:.95rem;
+}
+
+.header-actions{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.icon-btn,
+.primary-btn{
+    height:46px;
+    border-radius:14px;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.04);
+    color:var(--text-primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    cursor:pointer;
+    transition:.2s;
+    text-decoration:none;
+    font-family:inherit;
+    font-weight:800;
+}
+
+.icon-btn{
+    width:46px;
+}
+
+.primary-btn{
+    padding:0 18px;
+    color:#ddd6fe;
+    border-color:rgba(139,92,246,.45);
+}
+
+.icon-btn:hover,
+.primary-btn:hover{
+    border-color:var(--accent);
+    transform:translateY(-2px);
+}
+
+.card{
+    background:rgba(22,27,34,.74);
+    border:1px solid var(--border-color);
+    border-radius:22px;
+    padding:20px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 18px 40px rgba(0,0,0,.18);
+    transition:.25s;
+}
+
+.card:hover{
+    border-color:rgba(139,92,246,.42);
+}
+
+.card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:16px;
+}
+
+.card-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:1rem;
+    font-weight:900;
+}
+
+.card-title i{
+    color:var(--accent);
+}
+
+.card-small{
+    color:#b794ff;
+    font-size:.78rem;
+    font-weight:800;
+}
+
+/* ===== SESSION LAYOUT ===== */
+
+.session-grid{
+    display:grid;
+    grid-template-columns:1.55fr .75fr;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.main-session{
+    min-height:430px;
+    position:relative;
+    overflow:hidden;
+}
+
+.main-session::before{
+    content:"";
+    position:absolute;
+    inset:auto 0 0 0;
+    height:150px;
+    background:
+        radial-gradient(circle at 28% 100%,rgba(139,92,246,.22),transparent 50%),
+        radial-gradient(circle at 70% 100%,rgba(59,130,246,.18),transparent 48%);
+    pointer-events:none;
+}
+
+.session-inner{
+    position:relative;
+    z-index:1;
+    display:grid;
+    grid-template-columns:310px 1fr;
+    gap:34px;
+    align-items:center;
+    min-height:335px;
+}
+
+.timer-ring{
+    --p:0;
+    width:265px;
+    height:265px;
+    border-radius:50%;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    background:
+        conic-gradient(
+            var(--accent) calc(var(--p) * 1%),
+            rgba(255,255,255,.08) 0
+        );
+    box-shadow:
+        inset 0 0 32px rgba(0,0,0,.55),
+        0 0 45px rgba(139,92,246,.20);
+}
+
+.timer-ring::before{
+    content:"";
+    position:absolute;
+    inset:15px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.12);
+    background:rgba(13,17,23,.84);
+}
+
+.timer-content{
+    position:relative;
+    z-index:2;
+    text-align:center;
+}
+
+.timer-time{
+    font-size:3.6rem;
+    font-weight:500;
+    letter-spacing:-2px;
+    line-height:1;
+}
+
+.timer-label{
+    margin-top:10px;
+    color:var(--text-secondary);
+    font-size:.78rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-weight:900;
+}
+
+.session-info{
+    min-width:0;
+}
+
+.session-badge{
+    width:54px;
+    height:54px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(139,92,246,.20);
+    border:1px solid rgba(139,92,246,.42);
+    color:#c4b5fd;
+    margin-bottom:14px;
+}
+
+.session-title{
+    font-size:1.55rem;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.session-meta{
+    color:#c4b5fd;
+    font-size:.88rem;
+    margin-bottom:24px;
+}
+
+.info-line{
+    padding-top:17px;
+    border-top:1px solid rgba(255,255,255,.08);
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.info-line span{
+    display:block;
+    color:var(--text-secondary);
+    font-size:.78rem;
+    margin-bottom:6px;
+}
+
+.info-line strong{
+    font-size:1.45rem;
+}
+
+.session-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.action-main,
+.action-ghost{
+    border:none;
+    border-radius:16px;
+    height:52px;
+    padding:0 26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:inherit;
+    font-weight:900;
+    cursor:pointer;
+    transition:.22s;
+}
+
+.action-main{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:white;
+    min-width:150px;
+    box-shadow:0 12px 28px rgba(139,92,246,.28);
+}
+
+.action-ghost{
+    background:rgba(255,255,255,.04);
+    color:var(--text-primary);
+    border:1px solid var(--border-color);
+}
+
+.action-main:hover,
+.action-ghost:hover{
+    transform:translateY(-2px);
+    border-color:var(--accent);
+}
+
+.timer-mute-btn{
+    display:none;
+    height:52px;
+    border:none;
+    border-radius:16px;
+    padding:0 22px;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:inherit;
+    font-weight:900;
+    cursor:pointer;
+    transition:.22s;
+    background:rgba(239,68,68,.16);
+    color:#fecaca;
+    border:1px solid rgba(239,68,68,.45);
+}
+
+.timer-mute-btn.visible{
+    display:flex;
+}
+
+.timer-mute-btn:hover{
+    transform:translateY(-2px);
+    background:rgba(239,68,68,.24);
+}
+
+.active-session-bar{
+    position:relative;
+    z-index:1;
+    margin-top:6px;
+    border-radius:16px;
+    background:rgba(0,0,0,.26);
+    border:1px solid rgba(255,255,255,.06);
+    min-height:48px;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.active-session-bar strong{
+    color:#c4b5fd;
+}
+
+/* ===== SAVED SESSIONS ===== */
+
+.saved-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.saved-item{
+    display:grid;
+    grid-template-columns:44px 1fr auto;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    border-radius:16px;
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.18);
+    cursor:pointer;
+    transition:.2s;
+}
+
+.saved-item:hover,
+.saved-item.active{
+    border-color:var(--accent);
+    background:rgba(139,92,246,.13);
+}
+
+.saved-icon{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(139,92,246,.18);
+    color:#c4b5fd;
+}
+
+.saved-name{
+    font-weight:900;
+    margin-bottom:3px;
+}
+
+.saved-meta{
+    color:var(--text-secondary);
+    font-size:.72rem;
+}
+
+.dots{
+    color:var(--text-secondary);
+}
+
+/* ===== LOWER CARDS ===== */
+
+.control-grid{
+    display:grid;
+    grid-template-columns:.85fr 1.4fr .85fr;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.preset-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-bottom:14px;
+}
+
+.preset{
+    min-height:72px;
+    border:1px solid var(--border-color);
+    border-radius:14px;
+    background:rgba(0,0,0,.18);
+    color:var(--text-primary);
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:800;
+    transition:.18s;
+}
+
+.preset span{
+    display:block;
+    font-size:.72rem;
+    color:var(--text-secondary);
+    font-weight:700;
+}
+
+.preset:hover,
+.preset.active{
+    border-color:var(--accent);
+    background:rgba(139,92,246,.16);
+    box-shadow:0 0 18px rgba(139,92,246,.18);
+}
+
+.custom-input-row{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+}
+
+.input,
+.textarea{
+    width:100%;
+    background:rgba(0,0,0,.24);
+    border:1px solid var(--border-color);
+    border-radius:14px;
+    color:var(--text-primary);
+    padding:12px 14px;
+    outline:none;
+    font-family:inherit;
+    transition:.2s;
+}
+
+.input:focus,
+.textarea:focus{
+    border-color:var(--accent);
+}
+
+/* ===== AUDIO PICKER ===== */
+
+.default-audio-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(86px,1fr));
+    gap:8px;
+    margin-bottom:12px;
+}
+
+.default-audio-card{
+    min-height:76px;
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.18);
+    border-radius:14px;
+    padding:8px 6px;
+    color:var(--text-primary);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    cursor:pointer;
+    font-family:inherit;
+    transition:.2s;
+    position:relative;
+}
+
+.default-audio-card i{
+    color:var(--text-secondary);
+    width:18px;
+    height:18px;
+}
+
+.default-audio-card strong{
+    font-size:.72rem;
+    line-height:1.1;
+    text-align:center;
+}
+
+.default-audio-card span{
+    color:var(--text-secondary);
+    font-size:.56rem;
+    font-weight:800;
+}
+
+.default-audio-card:hover,
+.default-audio-card.active{
+    border-color:var(--accent);
+    background:rgba(139,92,246,.16);
+    box-shadow:0 0 18px rgba(139,92,246,.18);
+}
+
+.default-audio-card.disabled{
+    opacity:.42;
+    cursor:not-allowed;
+}
+
+.default-audio-card.active::after{
+    content:"ON";
+    position:absolute;
+    top:5px;
+    right:5px;
+    font-size:.48rem;
+    font-weight:900;
+    color:white;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    padding:2px 5px;
+    border-radius:999px;
+}
+
+.audio-limit-note{
+    color:var(--text-secondary);
+    font-size:.7rem;
+    font-weight:800;
+    margin:8px 0 0;
+    text-align:center;
+}
+
+.choose-audio-btn{
+    width:100%;
+    height:48px;
+    border-radius:16px;
+    border:1px solid rgba(139,92,246,.38);
+    background:rgba(139,92,246,.12);
+    color:#ddd6fe;
+    font-family:inherit;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.choose-audio-btn:hover{
+    transform:translateY(-2px);
+    border-color:var(--accent);
+    background:rgba(139,92,246,.18);
+}
+
+.selected-audio-preview{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+}
+
+.selected-audio-pill{
+    border:1px solid rgba(139,92,246,.32);
+    background:rgba(139,92,246,.12);
+    color:#ddd6fe;
+    border-radius:999px;
+    padding:7px 10px;
+    font-size:.72rem;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.audio-control-stack{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:14px;
+}
+
+.audio-control-row{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:12px;
+    align-items:center;
+    padding:12px;
+    border-radius:16px;
+    background:rgba(0,0,0,.20);
+    border:1px solid var(--border-color);
+}
+
+.audio-control-row i{
+    color:#c4b5fd;
+}
+
+.audio-control-row span{
+    color:var(--text-secondary);
+    font-size:.78rem;
+    font-weight:800;
+}
+
+.audio-volume,
+.volume-bar{
+    width:100%;
+    accent-color:var(--accent);
+}
+
+.audio-note{
+    margin-top:12px;
+    color:var(--text-secondary);
+    font-size:.74rem;
+    line-height:1.5;
+}
+
+.audio-note strong{
+    color:#c4b5fd;
+}
+
+.audio-picker-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(96px,1fr));
+    gap:8px;
+    max-height:430px;
+    overflow-y:auto;
+    padding-right:4px;
+}
+
+.audio-picker-option{
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.20);
+    color:var(--text-primary);
+    border-radius:14px;
+    min-height:78px;
+    padding:8px 6px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    cursor:pointer;
+    transition:.2s;
+    font-family:inherit;
+    text-align:center;
+}
+
+.audio-picker-option i{
+    color:var(--text-secondary);
+}
+
+.audio-picker-option strong{
+    font-size:.7rem;
+    line-height:1.1;
+}
+
+.audio-picker-option span{
+    color:var(--text-secondary);
+    font-size:.54rem;
+    font-weight:800;
+}
+
+.audio-picker-option.active{
+    border-color:var(--accent);
+    background:rgba(139,92,246,.18);
+    box-shadow:0 0 15px rgba(139,92,246,.16);
+}
+
+.audio-picker-option.disabled{
+    opacity:.42;
+    cursor:not-allowed;
+}
+
+.audio-modal-actions{
+    display:flex;
+    gap:12px;
+    margin-top:16px;
+}
+
+.audio-modal-actions button{
+    flex:1;
+    height:46px;
+    border-radius:14px;
+    border:1px solid var(--border-color);
+    font-family:inherit;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.audio-clear-btn{
+    background:rgba(255,255,255,.04);
+    color:var(--text-secondary);
+}
+
+.audio-confirm-btn{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:white;
+    border:none !important;
+}
+
+.youtube-audio-holder{
+    width:1px;
+    height:1px;
+    opacity:0;
+    pointer-events:none;
+    position:absolute;
+    overflow:hidden;
+    left:-9999px;
+    top:-9999px;
+}
+
+/* ===== END SOUND ===== */
+
+.end-sound-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.end-option{
+    border:1px solid transparent;
+    background:transparent;
+    color:var(--text-secondary);
+    border-radius:12px;
+    padding:10px 12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    transition:.18s;
+    font-family:inherit;
+    font-weight:700;
+    text-align:left;
+}
+
+.end-option:hover,
+.end-option.active{
+    color:white;
+    border-color:rgba(139,92,246,.35);
+    background:rgba(139,92,246,.14);
+}
+
+.radio-dot{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.26);
+    flex:0 0 auto;
+}
+
+.end-option.active .radio-dot{
+    border-color:var(--accent);
+    box-shadow:inset 0 0 0 4px var(--accent);
+}
+
+.details-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1.3fr;
+    gap:20px;
+}
+
+.detail-row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:9px 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    color:var(--text-secondary);
+    font-size:.82rem;
+}
+
+.detail-row strong{
+    color:var(--text-primary);
+    font-weight:800;
+}
+
+.textarea{
+    min-height:165px;
+    resize:none;
+    line-height:1.7;
+}
+
+.tool-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.tool-toggle{
+    border:1px solid var(--border-color);
+    background:rgba(0,0,0,.18);
+    border-radius:14px;
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+}
+
+.tool-toggle span{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--text-secondary);
+    font-weight:800;
+    font-size:.82rem;
+}
+
+.switch{
+    position:relative;
+    width:44px;
+    height:25px;
+    flex:0 0 auto;
+}
+
+.switch input{
+    display:none;
+}
+
+.slider{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,.12);
+    border-radius:999px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.slider::before{
+    content:"";
+    position:absolute;
+    width:19px;
+    height:19px;
+    left:3px;
+    top:3px;
+    background:white;
+    border-radius:50%;
+    transition:.2s;
+}
+
+.switch input:checked + .slider{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.switch input:checked + .slider::before{
+    transform:translateX(19px);
+}
+
+/* ===== PLAYER BAR ===== */
+
+.player-bar{
+    position:fixed;
+    left:230px;
+    right:0;
+    bottom:0;
+    height:78px;
+    z-index:900;
+    background:rgba(8,12,22,.94);
+    backdrop-filter:blur(18px);
+    border-top:1px solid rgba(255,255,255,.08);
+    display:grid;
+    grid-template-columns:260px 1fr 280px;
+    gap:20px;
+    align-items:center;
+    padding:12px 26px;
+}
+
+.player-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.player-art{
+    width:52px;
+    height:52px;
+    border-radius:14px;
+    background:
+        radial-gradient(circle at 30% 30%,rgba(139,92,246,.9),transparent 35%),
+        linear-gradient(135deg,#172554,#312e81);
+    box-shadow:0 0 18px rgba(139,92,246,.28);
+}
+
+.player-left strong{
+    display:block;
+    margin-bottom:4px;
+}
+
+.player-left span{
+    color:var(--text-secondary);
+    font-size:.75rem;
+}
+
+.player-controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+}
+
+.player-btn{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:none;
+    background:transparent;
+    color:var(--text-secondary);
+    cursor:pointer;
+}
+
+.player-btn.big{
+    width:48px;
+    height:48px;
+    background:rgba(255,255,255,.07);
+    color:white;
+    border:1px solid var(--border-color);
+}
+
+.player-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+/* ===== MODAL ===== */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:3000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(10px);
+}
+
+.modal-overlay.active{
+    display:flex;
+}
+
+.modal{
+    width:100%;
+    max-width:520px;
+    background:var(--bg-card);
+    border:1px solid rgba(139,92,246,.35);
+    border-radius:24px;
+    padding:24px;
+    box-shadow:0 25px 70px rgba(0,0,0,.45);
+}
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+}
+
+.modal-header h3{
+    font-size:1.15rem;
+}
+
+.close-btn{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.04);
+    color:var(--text-primary);
+    cursor:pointer;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.form-field{
+    margin-bottom:12px;
+}
+
+.form-field.full{
+    grid-column:1 / -1;
+}
+
+.form-field label{
+    display:block;
+    margin-bottom:7px;
+    color:var(--text-secondary);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-weight:900;
+    font-size:.68rem;
+}
+
+.modal-actions{
+    display:flex;
+    gap:12px;
+    margin-top:12px;
+}
+
+.cancel-btn,
+.save-btn{
+    flex:1;
+    border:none;
+    border-radius:14px;
+    height:46px;
+    font-family:inherit;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.cancel-btn{
+    background:rgba(255,255,255,.04);
+    color:var(--text-secondary);
+    border:1px solid var(--border-color);
+}
+
+.save-btn{
+    color:white;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.toast{
+    position:fixed;
+    right:24px;
+    bottom:96px;
+    z-index:4000;
+    padding:14px 16px;
+    border-radius:16px;
+    border:1px solid rgba(139,92,246,.35);
+    background:rgba(13,17,23,.95);
+    color:white;
+    box-shadow:0 18px 40px rgba(0,0,0,.30);
+    display:none;
+    font-weight:800;
+}
+
+.toast.active{
+    display:block;
+    animation:toastIn .25s ease;
+}
+
+@keyframes toastIn{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media(max-width:1300px){
+    .session-grid,
+    .control-grid,
+    .details-grid{
+        grid-template-columns:1fr;
+    }
+
+    .session-inner{
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .session-badge{
+        margin-left:auto;
+        margin-right:auto;
+    }
+
+    .info-line{
+        justify-content:center;
+    }
+
+    .default-audio-row{
+        grid-template-columns:repeat(auto-fit,minmax(78px,1fr));
+    }
+
+    .audio-picker-grid{
+        grid-template-columns:repeat(auto-fit,minmax(86px,1fr));
+    }
+
+    .player-bar{
+        grid-template-columns:1fr;
+        height:auto;
+        gap:10px;
+    }
+
+    .player-right{
+        max-width:380px;
+        margin:0 auto;
+        width:100%;
+    }
+}
+
+@media(max-width:768px){
+    body{
+        padding-left:0;
+    }
+
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        padding:24px 16px 135px;
+    }
+
+    .header{
+        flex-direction:column;
+    }
+
+    .timer-ring{
+        width:230px;
+        height:230px;
+    }
+
+    .timer-time{
+        font-size:3rem;
+    }
+
+    .preset-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .default-audio-row,
+    .audio-picker-grid,
+    .tool-grid,
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .player-bar{
+        left:0;
+        padding:12px 16px;
+    }
+
+    .player-left{
+        display:none;
+    }
+}
+
+/* === SAVED SESSIONS: TWO SAME-SIZE FOLDERS === */
+
+.saved-list{
+    height:430px !important;
+    max-height:430px !important;
+    overflow:hidden !important;
+    display:grid !important;
+    grid-template-rows:1fr 1fr !important;
+    gap:14px !important;
+}
+
+.saved-folder{
+    min-height:0 !important;
+    height:100% !important;
+    overflow:hidden !important;
+    border:1px solid rgba(139,92,246,.26) !important;
+    background:rgba(0,0,0,.16) !important;
+    border-radius:18px !important;
+    padding:12px !important;
+    display:flex !important;
+    flex-direction:column !important;
+}
+
+.saved-folder-title{
+    min-height:42px !important;
+    padding:10px 12px !important;
+    border-radius:14px !important;
+    background:rgba(139,92,246,.13) !important;
+    border:1px solid rgba(139,92,246,.25) !important;
+    color:#ddd6fe !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+    font-size:.78rem !important;
+    font-weight:900 !important;
+    text-transform:uppercase !important;
+    letter-spacing:.7px !important;
+    margin-bottom:10px !important;
+}
+
+.saved-folder-title-left{
+    display:flex !important;
+    align-items:center !important;
+    gap:8px !important;
+}
+
+.saved-folder-count{
+    color:var(--text-secondary) !important;
+    font-size:.68rem !important;
+    text-transform:none !important;
+    letter-spacing:0 !important;
+}
+
+.saved-folder-content{
+    flex:1 !important;
+    min-height:0 !important;
+    overflow-y:auto !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:10px !important;
+    padding-right:4px !important;
+}
+
+.saved-folder-content::-webkit-scrollbar{
+    width:6px;
+}
+
+.saved-folder-content::-webkit-scrollbar-track{
+    background:rgba(255,255,255,.04);
+    border-radius:999px;
+}
+
+.saved-folder-content::-webkit-scrollbar-thumb{
+    background:rgba(139,92,246,.42);
+    border-radius:999px;
+}
+
+.saved-folder .saved-item{
+    grid-template-columns:38px 1fr auto !important;
+    min-height:58px !important;
+    padding:10px !important;
+}
+
+.saved-folder .saved-icon{
+    width:36px !important;
+    height:36px !important;
+    border-radius:12px !important;
+}
+
+.saved-empty{
+    color:var(--text-secondary);
+    font-size:.76rem;
+    padding:10px 8px;
+    border:1px dashed rgba(255,255,255,.12);
+    border-radius:14px;
+    background:rgba(255,255,255,.025);
+}
+
+
+/* === TIMER PRESET + END SOUND REWORK === */
+
+.preview-end-btn{
+    margin-left:auto;
+    border:1px solid rgba(139,92,246,.38);
+    background:rgba(139,92,246,.12);
+    color:#ddd6fe;
+    padding:5px 9px;
+    border-radius:999px;
+    font-size:.64rem;
+    font-weight:900;
+    cursor:pointer;
+    font-family:inherit;
+}
+
+.preview-end-btn:hover{
+    background:rgba(139,92,246,.22);
+}
+
+.custom-timer-section{
+    margin-top:14px;
+    padding:14px;
+    border-radius:18px;
+    border:1px solid rgba(139,92,246,.24);
+    background:rgba(0,0,0,.14);
+}
+
+.custom-timer-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.custom-timer-title{
+    color:#ddd6fe;
+    font-size:.78rem;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+}
+
+.custom-timer-subtitle{
+    color:var(--text-secondary);
+    font-size:.68rem;
+    font-weight:800;
+    margin-top:3px;
+}
+
+.custom-timer-count{
+    color:var(--text-secondary);
+    font-size:.68rem;
+    font-weight:900;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.04);
+    border-radius:999px;
+    padding:5px 8px;
+}
+
+.custom-timer-grid{
+    margin-bottom:10px;
+}
+
+.custom-timer-create-row{
+    display:grid !important;
+    grid-template-columns:1fr auto auto;
+    align-items:center;
+}
+
+.custom-timer-create-row .input{
+    text-align:center;
+    font-weight:900;
+}
+
+.timer-unit-toggle{
+    display:flex;
+    gap:6px;
+    align-items:center;
+}
+
+.timer-unit-btn{
+    height:44px;
+    min-width:58px;
+    border-radius:13px;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.04);
+    color:var(--text-secondary);
+    cursor:pointer;
+    font-family:inherit;
+    font-size:.72rem;
+    font-weight:900;
+    transition:.18s;
+}
+
+.timer-unit-btn.active{
+    color:white;
+    border-color:transparent;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.custom-timer-preset{
+    position:relative;
+    padding:10px 24px 10px 10px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+}
+
+.custom-timer-preset-actions{
+    position:absolute;
+    top:6px;
+    right:6px;
+    display:flex;
+    gap:4px;
+    opacity:0;
+    pointer-events:none;
+    transform:scale(.92);
+    transition:.16s;
+}
+
+.custom-timer-preset:hover .custom-timer-preset-actions{
+    opacity:1;
+    pointer-events:auto;
+    transform:scale(1);
+}
+
+.custom-timer-mini-btn{
+    width:19px;
+    height:19px;
+    border-radius:50%;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.08);
+    color:var(--text-secondary);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.65rem;
+    line-height:1;
+}
+
+.custom-timer-mini-btn:hover{
+    border-color:var(--accent);
+    color:white;
+    background:rgba(139,92,246,.20);
+}
+
+.custom-timer-mini-btn.delete:hover{
+    border-color:rgba(239,68,68,.55);
+    color:#fecaca;
+    background:rgba(239,68,68,.18);
+}
+
+.modal-unit-toggle{
+    height:46px;
+}
+
+.modal-unit-toggle .timer-unit-btn{
+    flex:1;
+}
+
+@media(max-width:768px){
+    .custom-timer-create-row{
+        grid-template-columns:1fr !important;
+    }
+
+    .timer-unit-toggle{
+        justify-content:center;
+    }
+}
+
+
+/* === COMPACT TIMER ENDING SOUND FIX === */
+
+.compact-end-sounds{
+    gap:8px !important;
+}
+
+.compact-end-sounds .end-option{
+    min-height:46px !important;
+    padding:8px 10px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+}
+
+.end-sound-main{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-width:0;
+}
+
+.end-sound-name{
+    font-weight:850;
+    line-height:1;
+    white-space:nowrap;
+}
+
+.compact-end-sounds .end-option > i{
+    width:18px;
+    height:18px;
+    flex:0 0 auto;
+    color:var(--text-secondary);
+}
+
+.compact-end-sounds .end-option:hover > i,
+.compact-end-sounds .end-option.active > i{
+    color:#c4b5fd;
+}
+
+.compact-end-sounds .preview-end-btn{
+    margin-left:4px !important;
+    border:1px solid rgba(139,92,246,.38) !important;
+    background:rgba(139,92,246,.12) !important;
+    color:#ddd6fe !important;
+    padding:5px 8px !important;
+    border-radius:999px !important;
+    font-size:.62rem !important;
+    font-weight:900 !important;
+    cursor:pointer !important;
+    font-family:inherit !important;
+    line-height:1 !important;
+}
+
+.compact-end-sounds .preview-end-btn:hover{
+    background:rgba(139,92,246,.24) !important;
+}
+
+.compact-end-sounds .radio-dot{
+    width:14px !important;
+    height:14px !important;
+}
+
+
+/* === CUSTOM TIMER PRESETS: HOURS + MINUTES ONLY === */
+
+.custom-timer-section{
+    margin-top:14px;
+    padding:14px;
+    border-radius:18px;
+    border:1px solid rgba(139,92,246,.24);
+    background:rgba(0,0,0,.14);
+}
+
+.custom-timer-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.custom-timer-title{
+    color:#ddd6fe;
+    font-size:.78rem;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+}
+
+.custom-timer-subtitle{
+    color:var(--text-secondary);
+    font-size:.68rem;
+    font-weight:800;
+    margin-top:3px;
+}
+
+.custom-timer-count{
+    color:var(--text-secondary);
+    font-size:.68rem;
+    font-weight:900;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.04);
+    border-radius:999px;
+    padding:5px 8px;
+}
+
+.custom-timer-grid{
+    margin-bottom:12px;
+}
+
+.custom-timer-create-box{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:10px;
+    align-items:end;
+}
+
+.time-field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.time-field span{
+    color:#c4b5fd;
+    font-size:.68rem;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+}
+
+.time-field .input,
+#editTimerPresetHours,
+#editTimerPresetMinutes{
+    text-align:center;
+    font-weight:900;
+}
+
+.custom-timer-create-btn{
+    height:44px !important;
+    padding:0 16px !important;
+}
+
+.custom-timer-preset{
+    position:relative;
+    padding:10px 30px 10px 10px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+}
+
+.custom-timer-preset-actions{
+    position:absolute;
+    top:6px;
+    right:6px;
+    display:flex;
+    gap:4px;
+    opacity:0;
+    pointer-events:none;
+    transform:scale(.92);
+    transition:.16s;
+}
+
+.custom-timer-preset:hover .custom-timer-preset-actions{
+    opacity:1;
+    pointer-events:auto;
+    transform:scale(1);
+}
+
+.custom-timer-mini-btn{
+    width:19px;
+    height:19px;
+    border-radius:50%;
+    border:1px solid var(--border-color);
+    background:rgba(255,255,255,.08);
+    color:var(--text-secondary);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.65rem;
+    line-height:1;
+}
+
+.custom-timer-mini-btn:hover{
+    border-color:var(--accent);
+    color:white;
+    background:rgba(139,92,246,.20);
+}
+
+.custom-timer-mini-btn.delete:hover{
+    border-color:rgba(239,68,68,.55);
+    color:#fecaca;
+    background:rgba(239,68,68,.18);
+}
+
+@media(max-width:768px){
+    .custom-timer-create-box{
+        grid-template-columns:1fr;
+    }
+}
+
+
+/* === FIX CUSTOM TIMER PRESET CARD ALIGNMENT === */
+
+.custom-timer-section{
+    min-height:220px;
+}
+
+.custom-timer-grid{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px !important;
+    margin-bottom:14px !important;
+}
+
+.custom-timer-preset{
+    min-height:74px !important;
+    border-radius:16px !important;
+    position:relative !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    padding:14px 40px 14px 14px !important;
+    line-height:1.05 !important;
+}
+
+.custom-timer-preset > span{
+    margin-top:4px !important;
+    display:block !important;
+    text-align:center !important;
+}
+
+.custom-timer-preset-actions{
+    position:absolute !important;
+    top:8px !important;
+    right:8px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:5px !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+}
+
+.custom-timer-mini-btn{
+    width:22px !important;
+    height:22px !important;
+    border-radius:8px !important;
+    border:1px solid rgba(255,255,255,.12) !important;
+    background:rgba(255,255,255,.07) !important;
+    color:var(--text-secondary) !important;
+    cursor:pointer !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-size:.72rem !important;
+    line-height:1 !important;
+}
+
+.custom-timer-mini-btn:hover{
+    border-color:var(--accent) !important;
+    color:white !important;
+    background:rgba(139,92,246,.20) !important;
+}
+
+.custom-timer-mini-btn.delete:hover{
+    border-color:rgba(239,68,68,.55) !important;
+    color:#fecaca !important;
+    background:rgba(239,68,68,.18) !important;
+}
+
+.custom-timer-create-box{
+    grid-template-columns:1fr 1fr auto !important;
+    align-items:end !important;
+}
+
+@media(max-width:768px){
+    .custom-timer-grid{
+        grid-template-columns:1fr !important;
+    }
+}
+
+
+/* === FIX CUSTOM TIMER PRESET PLACEMENT === */
+
+.custom-timer-section{
+    min-height:auto !important;
+}
+
+.custom-timer-grid{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px !important;
+    margin-bottom:12px !important;
+}
+
+.custom-timer-preset{
+    min-height:72px !important;
+    height:72px !important;
+    border-radius:14px !important;
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    padding:10px 34px 10px 10px !important;
+    overflow:hidden !important;
+    cursor:pointer !important;
+}
+
+.custom-timer-main-value{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    line-height:1.1 !important;
+    width:100% !important;
+}
+
+.custom-timer-main-value strong{
+    font-size:.95rem !important;
+    font-weight:900 !important;
+    color:var(--text-primary) !important;
+}
+
+.custom-timer-main-value span{
+    display:block !important;
+    margin-top:4px !important;
+    font-size:.72rem !important;
+    color:var(--text-secondary) !important;
+    font-weight:800 !important;
+}
+
+.custom-timer-preset-actions{
+    position:absolute !important;
+    top:7px !important;
+    right:7px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:5px !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    transform:none !important;
+    z-index:4 !important;
+}
+
+.custom-timer-mini-btn{
+    width:21px !important;
+    height:21px !important;
+    min-width:21px !important;
+    min-height:21px !important;
+    border-radius:7px !important;
+    border:1px solid rgba(255,255,255,.14) !important;
+    background:rgba(255,255,255,.075) !important;
+    color:var(--text-secondary) !important;
+    cursor:pointer !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    font-size:.68rem !important;
+    line-height:1 !important;
+    padding:0 !important;
+}
+
+.custom-timer-mini-btn:hover{
+    border-color:var(--accent) !important;
+    color:white !important;
+    background:rgba(139,92,246,.20) !important;
+}
+
+.custom-timer-mini-btn.delete:hover{
+    border-color:rgba(239,68,68,.55) !important;
+    color:#fecaca !important;
+    background:rgba(239,68,68,.18) !important;
+}
+
+.custom-timer-create-box{
+    grid-template-columns:1fr 1fr auto !important;
+    align-items:end !important;
+}
+
+@media(max-width:768px){
+    .custom-timer-grid{
+        grid-template-columns:1fr !important;
+    }
+}
+
+
+/* === CUSTOM TIMER PRESETS: MINUTES ONLY PATCH === */
+
+.minutes-only-create{
+    display:grid !important;
+    grid-template-columns:1fr auto !important;
+    gap:10px !important;
+    align-items:end !important;
+}
+
+.minutes-only-create .input,
+#editTimerPresetMinutesOnly{
+    text-align:center !important;
+    font-weight:900 !important;
+}
+
+.custom-timer-grid{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px !important;
+    margin-bottom:12px !important;
+}
+
+.custom-timer-preset{
+    min-height:72px !important;
+    height:72px !important;
+}
+
+@media(max-width:768px){
+    .minutes-only-create{
+        grid-template-columns:1fr !important;
+    }
+
+    .custom-timer-grid{
+        grid-template-columns:1fr !important;
+    }
+}
+
+
+/* === CURRENT SESSION ACTIVE AUDIO POLISH ONLY === */
+
+.active-audio-polished{
+    position:relative !important;
+    z-index:1 !important;
+    margin-top:10px !important;
+    min-height:66px !important;
+    padding:12px 14px !important;
+    border-radius:18px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:14px !important;
+    background:
+        linear-gradient(135deg,rgba(139,92,246,.20),rgba(59,130,246,.10)),
+        rgba(0,0,0,.24) !important;
+    border:1px solid rgba(139,92,246,.34) !important;
+    box-shadow:
+        inset 0 0 24px rgba(139,92,246,.08),
+        0 12px 28px rgba(0,0,0,.16) !important;
+}
+
+.active-audio-left{
+    display:flex !important;
+    align-items:center !important;
+    gap:12px !important;
+    min-width:0 !important;
+}
+
+.active-audio-icon{
+    width:40px !important;
+    height:40px !important;
+    min-width:40px !important;
+    border-radius:14px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:linear-gradient(135deg,rgba(139,92,246,.36),rgba(59,130,246,.22)) !important;
+    border:1px solid rgba(139,92,246,.42) !important;
+    color:#ddd6fe !important;
+    box-shadow:0 0 18px rgba(139,92,246,.18) !important;
+}
+
+.active-audio-icon i{
+    width:20px !important;
+    height:20px !important;
+    display:block !important;
+}
+
+.active-audio-copy{
+    min-width:0 !important;
+}
+
+.active-audio-label{
+    color:#ddd6fe !important;
+    font-size:.68rem !important;
+    font-weight:900 !important;
+    text-transform:uppercase !important;
+    letter-spacing:.8px !important;
+    margin-bottom:4px !important;
+}
+
+.active-audio-value{
+    color:var(--text-primary) !important;
+    font-size:.9rem !important;
+    font-weight:850 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    max-width:620px !important;
+}
+
+.test-audio-btn{
+    height:42px !important;
+    min-width:122px !important;
+    padding:0 14px !important;
+    border-radius:14px !important;
+    white-space:nowrap !important;
+}
+
+.test-audio-btn.testing{
+    color:#fecaca !important;
+    border-color:rgba(239,68,68,.50) !important;
+    background:rgba(239,68,68,.15) !important;
+}
+
+.test-audio-btn.testing:hover{
+    background:rgba(239,68,68,.24) !important;
+}
+
+@media(max-width:768px){
+    .active-audio-polished{
+        flex-direction:column !important;
+        align-items:stretch !important;
+    }
+
+    .active-audio-value{
+        max-width:100% !important;
+        white-space:normal !important;
+    }
+
+    .test-audio-btn{
+        width:100% !important;
+    }
+}
+
+
+/* === PAGE BACKGROUND CONTOUR LINES + ACTIVE AUDIO SAME COLOR === */
+
+/* Replace the grid background with contour/topographic lines */
+body::after{
+    content:"" !important;
+    position:fixed !important;
+    inset:0 !important;
+    pointer-events:none !important;
+    z-index:0 !important;
+    opacity:.34 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='900' height='900' viewBox='0 0 900 900' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%238b5cf6' stroke-width='1' stroke-opacity='.28'%3E%3Cpath d='M54 130c74-64 154-76 232-32 70 40 94 112 168 142 94 38 174-38 264 6 78 38 102 132 82 210-18 72-78 118-148 142-96 32-170-14-264 20-90 34-114 126-224 122-90-4-146-72-154-154-8-86 52-142 60-218 8-84-84-150-16-238Z'/%3E%3Cpath d='M105 178c56-48 124-58 184-24 58 34 78 92 140 118 80 34 144-30 220 8 62 32 82 106 66 168-16 58-64 94-122 114-80 28-142-12-220 18-72 28-94 100-180 96-70-4-116-56-122-122-6-68 42-112 48-174 8-66-68-118-14-202Z'/%3E%3Cpath d='M156 226c42-34 92-42 136-16 46 26 62 72 110 92 62 26 112-22 170 8 48 24 64 82 50 130-12 44-50 72-94 88-62 22-110-10-170 14-56 22-72 78-138 74-52-2-88-42-92-92-6-52 32-86 38-132 4-52-54-92-10-166Z'/%3E%3Cpath d='M210 278c28-22 62-28 92-10 32 18 42 50 76 64 44 18 78-16 118 6 34 18 44 58 36 92-8 30-34 50-64 60-44 16-78-8-120 10-38 16-50 54-94 52-36-2-60-30-64-64-4-36 22-58 26-90 4-36-36-64-2-120Z'/%3E%3Cpath d='M598 95c44 16 76 50 84 94 10 48-14 80-2 122 16 54 74 68 80 124 4 46-28 86-68 104-38 16-76 8-110-12-48-30-56-80-102-110-44-30-96-12-126-58-24-38-14-82 18-112 34-32 72-26 108-46 40-24 44-90 118-106Z'/%3E%3Cpath d='M614 154c32 12 54 36 60 68 8 34-10 58-2 88 12 40 54 50 58 90 4 34-20 62-50 76-28 12-56 6-80-10-36-22-42-58-76-80-32-20-70-8-92-42-18-28-10-60 14-82 24-24 52-18 78-34 30-16 34-64 90-74Z'/%3E%3C/g%3E%3C/svg%3E") !important;
+    background-size:620px 620px !important;
+    background-position:35px 20px !important;
+}
+
+/* Keep the Active Audio bar the same visual family as the Current Session card */
+.active-audio-polished{
+    background:rgba(22,27,34,.74) !important;
+    border:1px solid var(--border-color) !important;
+    box-shadow:0 12px 28px rgba(0,0,0,.14) !important;
+}
+
+.active-audio-polished:hover{
+    border-color:rgba(139,92,246,.42) !important;
+}
+
+.active-audio-icon{
+    background:rgba(139,92,246,.18) !important;
+    border:1px solid rgba(139,92,246,.42) !important;
+    box-shadow:none !important;
+}
+
+/* Softer page glow so the contour lines are the visual texture */
+body::before{
+    background:
+        radial-gradient(circle at 18% 22%,rgba(139,92,246,.13),transparent 38%),
+        radial-gradient(circle at 82% 70%,rgba(59,130,246,.10),transparent 42%),
+        linear-gradient(120deg,transparent 42%,rgba(0,0,0,.34)) !important;
+}
+
+
+/* === STRONGER CONTOUR BACKGROUND + UNIFIED CURRENT SESSION CARD === */
+
+/* Make contour lines more visible */
+body::after{
+    opacity:.58 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='900' height='900' viewBox='0 0 900 900' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23a78bfa' stroke-width='1.35' stroke-opacity='.52'%3E%3Cpath d='M54 130c74-64 154-76 232-32 70 40 94 112 168 142 94 38 174-38 264 6 78 38 102 132 82 210-18 72-78 118-148 142-96 32-170-14-264 20-90 34-114 126-224 122-90-4-146-72-154-154-8-86 52-142 60-218 8-84-84-150-16-238Z'/%3E%3Cpath d='M105 178c56-48 124-58 184-24 58 34 78 92 140 118 80 34 144-30 220 8 62 32 82 106 66 168-16 58-64 94-122 114-80 28-142-12-220 18-72 28-94 100-180 96-70-4-116-56-122-122-6-68 42-112 48-174 8-66-68-118-14-202Z'/%3E%3Cpath d='M156 226c42-34 92-42 136-16 46 26 62 72 110 92 62 26 112-22 170 8 48 24 64 82 50 130-12 44-50 72-94 88-62 22-110-10-170 14-56 22-72 78-138 74-52-2-88-42-92-92-6-52 32-86 38-132 4-52-54-92-10-166Z'/%3E%3Cpath d='M210 278c28-22 62-28 92-10 32 18 42 50 76 64 44 18 78-16 118 6 34 18 44 58 36 92-8 30-34 50-64 60-44 16-78-8-120 10-38 16-50 54-94 52-36-2-60-30-64-64-4-36 22-58 26-90 4-36-36-64-2-120Z'/%3E%3Cpath d='M260 326c18-14 40-18 60-6 22 12 28 34 50 44 30 12 52-10 80 4 22 12 30 38 24 60-6 20-22 34-44 42-30 10-52-6-80 6-26 10-34 36-64 34-24-2-40-20-42-44-2-24 14-38 18-60 2-24-24-42-2-80Z'/%3E%3Cpath d='M598 95c44 16 76 50 84 94 10 48-14 80-2 122 16 54 74 68 80 124 4 46-28 86-68 104-38 16-76 8-110-12-48-30-56-80-102-110-44-30-96-12-126-58-24-38-14-82 18-112 34-32 72-26 108-46 40-24 44-90 118-106Z'/%3E%3Cpath d='M614 154c32 12 54 36 60 68 8 34-10 58-2 88 12 40 54 50 58 90 4 34-20 62-50 76-28 12-56 6-80-10-36-22-42-58-76-80-32-20-70-8-92-42-18-28-10-60 14-82 24-24 52-18 78-34 30-16 34-64 90-74Z'/%3E%3Cpath d='M634 210c20 8 34 24 38 44 4 22-6 38-2 56 8 26 34 32 38 58 2 22-14 40-32 48-18 8-36 4-52-6-22-14-26-38-48-52-20-14-44-6-58-28-12-18-6-38 10-52 16-14 34-12 50-20 20-12 22-42 58-48Z'/%3E%3C/g%3E%3C/svg%3E") !important;
+    background-size:560px 560px !important;
+    background-position:24px 10px !important;
+}
+
+/* Softer glow so current-session square does not look split into different colors */
+.main-session::before{
+    display:none !important;
+}
+
+/* Make the whole Current Session card one unified surface */
+.main-session{
+    background:rgba(22,27,34,.78) !important;
+    border-color:var(--border-color) !important;
+    overflow:hidden !important;
+}
+
+/* Remove any different-color band from inner active audio area */
+.active-audio-polished{
+    background:rgba(22,27,34,.78) !important;
+    border:1px solid rgba(255,255,255,.08) !important;
+    box-shadow:none !important;
+}
+
+/* Match the timer info/background feel inside the same card */
+.session-badge,
+.active-audio-icon{
+    background:rgba(139,92,246,.18) !important;
+    border:1px solid rgba(139,92,246,.40) !important;
+    box-shadow:none !important;
+}
+
+.session-inner{
+    position:relative !important;
+    z-index:1 !important;
+}
+
+/* Make the active audio bar feel embedded instead of like a different color panel */
+.active-audio-polished{
+    margin-top:10px !important;
+    border-radius:18px !important;
+}
+
+.active-audio-polished:hover{
+    border-color:rgba(139,92,246,.42) !important;
+}
+
+
+/* === REST SPACE BUTTON === */
+.rest-space-btn{
+    letter-spacing:.6px;
+    color:white;
+    border:none;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 14px 30px rgba(139,92,246,.25);
+}
+
+.rest-space-btn:hover{
+    box-shadow:0 18px 38px rgba(139,92,246,.34);
+}
+
+</style>
+</head>
+<body>
+<div class="sidebar">
+<a class="sidebar-logo" href="../index.html">
+        Dashboard
+    </a>
+<a class="sidebar-link" href="routine.html">
+        Routine
+    </a>
+<div class="sidebar-divider"></div>
+<a class="sidebar-link" href="routine-stats.html">
+        Stats
+    </a>
+<a class="sidebar-link" href="create-habits.html">
+        Create Habits
+    </a>
+<a class="sidebar-link active" href="sessions.html">
+        Sessions
+    </a>
+</div>
+<main class="main">
+<div class="header">
+<div>
+<h1>Sessions</h1>
+<p>Build timers, choose multiple loop audios, and save session setups in one place.</p>
+</div>
+<div class="header-actions">
+<a class="primary-btn rest-space-btn" href="rest-space.html">
+<i data-lucide="sparkles"></i>
+REST SPACE
+</a>
+</div>
+</div>
+<section class="session-grid">
+<div class="card main-session">
+<div class="card-header">
+<div>
+<div class="card-title">
+<i data-lucide="timer"></i>
+                        Current Session
+                    </div>
+<div class="card-small" id="sessionStatusText">
+                        Ready
+                    </div>
+</div>
+<button class="action-ghost" onclick="openSaveModal()" style="height:38px;padding:0 14px;border-radius:12px;">
+<i data-lucide="save"></i>
+                    Save Session
+                </button>
+</div>
+<div class="session-inner">
+<div class="timer-ring" id="timerRing">
+<div class="timer-content">
+<div class="timer-time" id="timerDisplay">
+                            25:00
+                        </div>
+<div class="timer-label">
+                            Remaining
+                        </div>
+</div>
+</div>
+<div class="session-info">
+<div class="session-badge">
+<i data-lucide="audio-lines"></i>
+</div>
+<div class="session-title" id="sessionName">
+                        Rain Session
+                    </div>
+<div class="session-meta">
+                        Type: Session · Goal:
+                        <span id="sessionGoal">Relax and focus</span>
+</div>
+<div class="info-line">
+<div>
+<span>Target Duration</span>
+<strong id="durationText">25 min</strong>
+</div>
+<button class="action-ghost" onclick="openEditModal()" style="height:42px;padding:0 16px;border-radius:13px;">
+                            Edit
+                        </button>
+</div>
+<div class="session-actions">
+<button class="action-main" id="startPauseBtn" onclick="toggleTimer()">
+<i data-lucide="play"></i>
+                            Start
+                        </button>
+<button class="action-ghost" onclick="resetTimer()">
+<i data-lucide="rotate-ccw"></i>
+                            Reset
+                        </button>
+<button class="action-ghost" onclick="completeSession()">
+<i data-lucide="circle-check"></i>
+                            Complete
+                        </button>
+<button class="timer-mute-btn" id="muteTimerBtn" onclick="muteTimerEndingSound()">
+<i data-lucide="volume-x"></i>
+                            Mute Timer
+                        </button>
+</div>
+</div>
+</div>
+<div class="active-session-bar active-audio-polished">
+<div class="active-audio-left">
+<div class="active-audio-icon">
+<i data-lucide="audio-lines"></i>
+</div>
+<div class="active-audio-copy">
+<div class="active-audio-label">
+                Active Audio
+            </div>
+<div class="active-audio-value" id="activeMixText">
+                Rain
+            </div>
+</div>
+</div>
+<button class="action-ghost test-audio-btn" id="testAudioBtn" onclick="toggleTestAudio()">
+<i data-lucide="play"></i>
+        Test Audio
+    </button>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="card-title">
+<i data-lucide="bookmark"></i>
+                    Saved Sessions
+                </div>
+<button class="icon-btn" onclick="openSaveModal()" style="width:36px;height:36px;border-radius:12px;">
+<i data-lucide="plus"></i>
+</button>
+</div>
+<div class="saved-list" id="savedSessionsList">
+</div>
+</div>
+</section>
+<section class="control-grid">
+<div class="card">
+<div class="card-header">
+<div class="card-title">
+<i data-lucide="hourglass"></i>
+        Timer Presets
+    </div>
+</div>
+<div class="preset-grid">
+<button class="preset" onclick="setDuration(5)">
+        5
+        <span>min</span>
+</button>
+<button class="preset" onclick="setDuration(10)">
+        10
+        <span>min</span>
+</button>
+<button class="preset" onclick="setDuration(15)">
+        15
+        <span>min</span>
+</button>
+<button class="preset active" onclick="setDuration(30)">
+        30
+        <span>min</span>
+</button>
+<button class="preset" onclick="setDuration(60)">
+        60
+        <span>min</span>
+</button>
+</div>
+<div class="custom-timer-section">
+<div class="custom-timer-header">
+<div>
+<div class="custom-timer-title">
+                Your Timer Presets
+            </div>
+<div class="custom-timer-subtitle">
+                Create up to 5 custom presets in minutes
+            </div>
+</div>
+<span class="custom-timer-count" id="customTimerCount">
+            0 / 5
+        </span>
+</div>
+<div class="preset-grid custom-timer-grid" id="customTimerPresetGrid">
+</div>
+<div class="custom-timer-create-box minutes-only-create">
+<div class="time-field">
+<span>Minutes</span>
+<input class="input" id="customPresetMinutesOnly" inputmode="numeric" min="1" pattern="[0-9]*" placeholder="Example: 45" type="number"/>
+</div>
+<button class="action-ghost custom-timer-create-btn" onclick="createCustomTimerPreset()">
+            Create
+        </button>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div>
+<div class="card-title">
+<i data-lucide="audio-lines"></i>
+                        Audio Sources
+                    </div>
+<div class="card-small">
+                        All audios visible · max 5 active
+                    </div>
+</div>
+<span class="card-small" id="activeSoundCount">
+                    1 Active
+                </span>
+</div>
+<div class="default-audio-row" id="allAudioGrid">
+</div>
+<p class="audio-limit-note" id="audioLimitNote">
+                1 / 5 active audio sources
+            </p>
+<div class="selected-audio-preview" id="selectedAudioPreview">
+</div>
+<div class="audio-control-stack" id="audioControlStack">
+</div>
+<p class="audio-note">
+<strong>Important:</strong>
+                These use hidden YouTube players with an early overlap system. Use the bottom-right volume for overall audio volume.
+            </p>
+<div class="youtube-audio-holder" id="youtubePlayers">
+</div>
+<div class="youtube-audio-holder" id="endingSoundPlayers">
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="card-title">
+<i data-lucide="bell"></i>
+                    Timer Ending Sound
+                </div>
+</div>
+<div class="end-sound-list compact-end-sounds">
+<div class="end-option active" data-end-sound="siren" onclick="setEndSound(this,'siren')">
+<div class="end-sound-main">
+<span class="radio-dot"></span>
+<span class="end-sound-name">Siren</span>
+<button class="preview-end-btn" onclick="event.stopPropagation(); previewEndingSound('siren')">
+                            Preview
+                        </button>
+</div>
+<i data-lucide="alarm-clock"></i>
+</div>
+<div class="end-option" data-end-sound="digitalClock" onclick="setEndSound(this,'digitalClock')">
+<div class="end-sound-main">
+<span class="radio-dot"></span>
+<span class="end-sound-name">Digital Clock</span>
+<button class="preview-end-btn" onclick="event.stopPropagation(); previewEndingSound('digitalClock')">
+                            Preview
+                        </button>
+</div>
+<i data-lucide="timer"></i>
+</div>
+<div class="end-option" data-end-sound="samsung" onclick="setEndSound(this,'samsung')">
+<div class="end-sound-main">
+<span class="radio-dot"></span>
+<span class="end-sound-name">Samsung</span>
+<button class="preview-end-btn" onclick="event.stopPropagation(); previewEndingSound('samsung')">
+                            Preview
+                        </button>
+</div>
+<i data-lucide="smartphone"></i>
+</div>
+<div class="end-option" data-end-sound="iphone" onclick="setEndSound(this,'iphone')">
+<div class="end-sound-main">
+<span class="radio-dot"></span>
+<span class="end-sound-name">iPhone</span>
+<button class="preview-end-btn" onclick="event.stopPropagation(); previewEndingSound('iphone')">
+                            Preview
+                        </button>
+</div>
+<i data-lucide="smartphone"></i>
+</div>
+<div class="end-option" data-end-sound="clock" onclick="setEndSound(this,'clock')">
+<div class="end-sound-main">
+<span class="radio-dot"></span>
+<span class="end-sound-name">Clock</span>
+<button class="preview-end-btn" onclick="event.stopPropagation(); previewEndingSound('clock')">
+                            Preview
+                        </button>
+</div>
+<i data-lucide="clock"></i>
+</div>
+<div class="end-option" data-end-sound="none" onclick="setEndSound(this,'none')">
+<div class="end-sound-main">
+<span class="radio-dot"></span>
+<span class="end-sound-name">No Sound</span>
+</div>
+<i data-lucide="volume-x"></i>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<div class="player-bar">
+<div class="player-left">
+<div class="player-art"></div>
+<div>
+<strong id="playerSessionName">Rain Session</strong>
+<span id="playerMixName">Rain</span>
+</div>
+</div>
+<div class="player-controls">
+<button class="player-btn">
+<i data-lucide="skip-back"></i>
+</button>
+<button class="player-btn big" onclick="toggleTimer()">
+<i data-lucide="play" id="playerPlayIcon"></i>
+</button>
+<button class="player-btn">
+<i data-lucide="skip-forward"></i>
+</button>
+</div>
+<div class="player-right">
+<i data-lucide="volume-2"></i>
+<input class="volume-bar" id="bottomMasterVolume" max="100" min="0" oninput="setMasterVolume(this.value)" type="range" value="70"/>
+<span id="masterVolumeText">70%</span>
+</div>
+</div>
+<div class="modal-overlay" id="sessionModal">
+<div class="modal">
+<div class="modal-header">
+<h3 id="modalTitle">Edit Session</h3>
+<button class="close-btn" onclick="closeModal()">
+                ×
+            </button>
+</div>
+<div class="form-grid">
+<div class="form-field full">
+<label>Session Name</label>
+<input class="input" id="modalSessionName" placeholder="Example: Rain Focus"/>
+</div>
+<div class="form-field">
+<label>Duration Minutes</label>
+<input class="input" id="modalDuration" min="1" type="number"/>
+</div>
+<div class="form-field">
+<label>Goal</label>
+<input class="input" id="modalGoal" placeholder="Example: Study, reset, read..."/>
+</div>
+<div class="form-field full">
+<label>Notes</label>
+<textarea class="textarea" id="modalNotes" placeholder="Optional notes..." style="min-height:110px;"></textarea>
+</div>
+</div>
+<div class="modal-actions">
+<button class="cancel-btn" onclick="closeModal()">
+                Cancel
+            </button>
+<button class="save-btn" id="modalSaveBtn" onclick="saveModalChanges()">
+                Save
+            </button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="timerPresetModal">
+<div class="modal">
+<div class="modal-header">
+<h3>Edit Timer Preset</h3>
+<button class="close-btn" onclick="closeTimerPresetModal()">
+                ×
+            </button>
+</div>
+<div class="form-grid">
+<div class="form-field full">
+<label>Minutes</label>
+<input class="input" id="editTimerPresetMinutesOnly" inputmode="numeric" min="1" pattern="[0-9]*" type="number"/>
+</div>
+</div>
+<div class="modal-actions">
+<button class="cancel-btn" onclick="closeTimerPresetModal()">
+                Cancel
+            </button>
+<button class="save-btn" onclick="saveEditedTimerPreset()">
+                Save Changes
+            </button>
+</div>
+</div>
+</div>
+<div class="toast" id="toast">
+    Saved
+</div>
+<script>
+const STORAGE_KEY = "routineSessionsYoutubeGaplessV2";
+
+const MAX_ACTIVE_AUDIOS = 5;
+
+/*
+    WHY TWO PLAYERS?
+    A single YouTube player cannot loop perfectly gapless because many Shorts have
+    a silent tail or YouTube pauses briefly when seekTo(0) happens.
+
+    This version creates 2 hidden YouTube players for every audio.
+    When player A is close to the end, player B starts before A finishes.
+    Then A fades out, B fades in, and A resets silently for the next loop.
+*/
+const PRELOAD_NEXT_BEFORE_END = 3.4;
+const CROSSFADE_MS = 450;
+const CHECK_RATE_MS = 40;
+
+const AUDIO_SOURCES = [
+    {
+        key:"rain",
+        name:"Rain",
+        videoId:"Mr9T-943BnE",
+        icon:"cloud-rain",
+        category:"Rain"
+    },
+    {
+        key:"rain2",
+        name:"Rain II",
+        videoId:"WQWhGP8w8mE",
+        icon:"cloud-drizzle",
+        category:"Rain"
+    },
+    {
+        key:"heavyRain",
+        name:"Heavy Rain",
+        videoId:"hXzc96kVs8s",
+        icon:"cloud-rain",
+        category:"Rain"
+    },
+    {
+        key:"winterStorm",
+        name:"Winter Storm",
+        videoId:"sGkh1W5cbH4",
+        icon:"snowflake",
+        category:"Storm"
+    },
+    {
+        key:"thunder",
+        name:"Thunder",
+        videoId:"Tz_1V-yzWmY",
+        icon:"cloud-lightning",
+        category:"Storm"
+    },
+    {
+        key:"waves",
+        name:"Waves",
+        videoId:"WHPEKLQID4U",
+        icon:"ship-wheel",
+        category:"Water"
+    },
+    {
+        key:"river",
+        name:"River",
+        videoId:"RwZ75skpcLI",
+        icon:"waves",
+        category:"Water"
+    },
+    {
+        key:"birds",
+        name:"Birds",
+        videoId:"t6_LYn4_JA4",
+        icon:"bird",
+        category:"Nature"
+    },
+    {
+        key:"birds2",
+        name:"Birds II",
+        videoId:"rYoZgpAEkFs",
+        icon:"bird",
+        category:"Nature"
+    },
+    {
+        key:"owl",
+        name:"Owl",
+        videoId:"rexUg94EfCI",
+        icon:"moon",
+        category:"Nature"
+    },
+    {
+        key:"fire",
+        name:"Fire",
+        videoId:"3DD4pgL5bS4",
+        icon:"flame",
+        category:"Warm"
+    },
+    {
+        key:"nightForest",
+        name:"Night Forest",
+        videoId:"3u2FkPfIwBc",
+        icon:"trees",
+        category:"Nature"
+    },
+    {
+        key:"spaceship",
+        name:"Spaceship",
+        videoId:"nmt17DsZf4o",
+        icon:"rocket",
+        category:"Ambient"
+    },
+    {
+        key:"war",
+        name:"War",
+        videoId:"cVWkboJHz7M",
+        icon:"shield-alert",
+        category:"Intense"
+    },
+    {
+        key:"keyboard",
+        name:"Keyboard",
+        videoId:"8pBFfBZrbJM",
+        icon:"keyboard",
+        category:"Work"
+    },
+    {
+        key:"clock",
+        name:"Clock",
+        videoId:"xyCQFLOSWGc",
+        icon:"clock",
+        category:"Focus"
+    },
+    {
+        key:"heaven",
+        name:"Heaven",
+        videoId:"RG1ydqEEa0c",
+        icon:"sparkles",
+        category:"Ambient"
+    }
+];
+
+const ENDING_SOUNDS = {
+    siren:{
+        name:"Siren",
+        videoId:"AnboJG5ZMWA"
+    },
+    digitalClock:{
+        name:"Digital Clock",
+        videoId:"9bFo7bX5Dng"
+    },
+    samsung:{
+        name:"Samsung",
+        videoId:"J6VTWi6OfrY"
+    },
+    iphone:{
+        name:"iPhone",
+        videoId:"6ZN69be827c"
+    },
+    clock:{
+        name:"Clock",
+        videoId:"e1sPb45JSPQ"
+    },
+    none:{
+        name:"No Sound",
+        videoId:null
+    }
+};
+
+
+const defaultVolumes = AUDIO_SOURCES.reduce((acc,item) => {
+    acc[item.key] = 70;
+    return acc;
+},{});
+
+const defaultState = {
+    name:"Rain Session",
+    goal:"Relax and focus",
+    duration:25,
+    remaining:25 * 60,
+    running:false,
+    endSound:"siren",
+    selectedAudios:["rain"],
+    audioLoop:true,
+    masterVolume:70,
+    volumes:{...defaultVolumes},
+    notes:"Rain in the background.\n\nBreathe. Reset. Continue.",
+    saved:[
+        {
+            name:"Rain Focus",
+            goal:"Focus with rain",
+            duration:50,
+            selectedAudios:["rain","thunder"],
+            notes:"Use rain and thunder as background audio. One task only."
+        },
+        {
+            name:"Waves Session",
+            goal:"Calm session",
+            duration:25,
+            selectedAudios:["waves","birds"],
+            notes:"Waves and birds in the background."
+        },
+        {
+            name:"Deep Work",
+            goal:"Work block",
+            duration:50,
+            selectedAudios:["keyboard","clock"],
+            notes:"Stable background sounds for work."
+        },
+        {
+            name:"Sleep Reset",
+            goal:"Wind down",
+            duration:30,
+            selectedAudios:["nightForest","fire","owl"],
+            notes:"Relax and slow down."
+        }
+    ],
+    userSavedSessions:[]
+};
+
+let state = loadState();
+let timerInterval = null;
+let modalMode = "edit";
+
+let youtubePlayers = {};
+let youtubeReady = {};
+let activePlayerSlot = {};
+let loopTimers = {};
+let isCrossfading = {};
+let pendingPlay = false;
+
+let endingSoundPlayers = {};
+let endingSoundReady = {};
+let timerMuted = false;
+let endingSoundActive = false;
+let endingSoundTimeouts = [];
+
+function clone(data){
+    return JSON.parse(JSON.stringify(data));
+}
+
+function loadState(){
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if(!saved){
+        return clone(defaultState);
+    }
+
+    try{
+        const parsed = JSON.parse(saved);
+
+        const merged = {
+            ...clone(defaultState),
+            ...parsed
+        };
+
+        if(!Array.isArray(merged.selectedAudios)){
+            merged.selectedAudios = ["rain"];
+        }
+
+        const validKeys = AUDIO_SOURCES.map(item => item.key);
+
+        merged.selectedAudios = merged.selectedAudios
+            .filter(key => validKeys.includes(key))
+            .slice(0,MAX_ACTIVE_AUDIOS);
+
+        if(!merged.selectedAudios.length){
+            merged.selectedAudios = ["rain"];
+        }
+
+        merged.volumes = {
+            ...defaultVolumes,
+            ...(parsed.volumes || {})
+        };
+
+        if(!Array.isArray(merged.userSavedSessions)){
+            merged.userSavedSessions = [];
+        }
+
+        /*
+            Keep default sessions separate.
+            If old localStorage had user-created sessions inside state.saved,
+            move non-default ones into userSavedSessions.
+        */
+        const defaultNames = defaultState.saved.map(item => item.name);
+
+        if(Array.isArray(parsed.saved) && !merged.userSavedSessions.length){
+            merged.userSavedSessions = parsed.saved
+                .filter(item => !defaultNames.includes(item.name))
+                .slice(0,10);
+        }
+
+        merged.saved = clone(defaultState.saved);
+
+        return merged;
+    }catch{
+        return clone(defaultState);
+    }
+}
+
+function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function applyTheme(){
+    const theme = localStorage.getItem("theme") || "theme-black";
+    document.body.className = theme;
+}
+
+/* ===== YOUTUBE DUAL PLAYER AUDIO ENGINE ===== */
+
+function onYouTubeIframeAPIReady(){
+    buildYouTubePlayers();
+    buildEndingSoundPlayers();
+}
+
+function buildYouTubePlayers(){
+    const holder = document.getElementById("youtubePlayers");
+
+    if(!holder || !window.YT || !YT.Player){
+        return;
+    }
+
+    holder.innerHTML = "";
+
+    AUDIO_SOURCES.forEach(source => {
+        youtubePlayers[source.key] = [];
+        youtubeReady[source.key] = [false,false];
+        activePlayerSlot[source.key] = 0;
+        isCrossfading[source.key] = false;
+
+        [0,1].forEach(slot => {
+            const div = document.createElement("div");
+            div.id = "yt_" + source.key + "_" + slot;
+            holder.appendChild(div);
+
+            youtubePlayers[source.key][slot] = new YT.Player(div.id, {
+                height:"1",
+                width:"1",
+                videoId:source.videoId,
+                playerVars:{
+                    autoplay:0,
+                    controls:0,
+                    disablekb:1,
+                    fs:0,
+                    loop:0,
+                    modestbranding:1,
+                    playsinline:1,
+                    rel:0
+                },
+                events:{
+                    onReady:function(){
+                        youtubeReady[source.key][slot] = true;
+
+                        try{
+                            youtubePlayers[source.key][slot].setVolume(0);
+                            youtubePlayers[source.key][slot].mute();
+                        }catch(error){}
+
+                        if(pendingPlay && state.running && state.selectedAudios.includes(source.key)){
+                            playAudioKey(source.key);
+                        }
+                    },
+                    onStateChange:function(event){
+                        if(event.data === YT.PlayerState.ENDED && state.selectedAudios.includes(source.key)){
+                            startNextPlayerForAudio(source.key);
+                        }
+                    }
+                }
+            });
+        });
+    });
+}
+
+function playerIsReady(key,slot){
+    return youtubePlayers[key] &&
+           youtubePlayers[key][slot] &&
+           youtubeReady[key] &&
+           youtubeReady[key][slot];
+}
+
+function targetVolume(key){
+    return Math.round(
+        Number(state.volumes[key] ?? 70) *
+        (Number(state.masterVolume ?? 70) / 100)
+    );
+}
+
+function setPlayerVolume(key,slot,volume){
+    if(!playerIsReady(key,slot)){
+        return;
+    }
+
+    try{
+        const player = youtubePlayers[key][slot];
+
+        if(volume <= 0){
+            player.setVolume(0);
+            player.mute();
+        }else{
+            player.unMute();
+            player.setVolume(Math.max(0,Math.min(100,Math.round(volume))));
+        }
+    }catch(error){}
+}
+
+function applyAudioVolume(key){
+    const activeSlot = activePlayerSlot[key] || 0;
+    const inactiveSlot = activeSlot === 0 ? 1 : 0;
+
+    setPlayerVolume(key,activeSlot,targetVolume(key));
+    setPlayerVolume(key,inactiveSlot,0);
+}
+
+function prepareInactivePlayer(key){
+    const activeSlot = activePlayerSlot[key] || 0;
+    const inactiveSlot = activeSlot === 0 ? 1 : 0;
+
+    if(!playerIsReady(key,inactiveSlot)){
+        return;
+    }
+
+    try{
+        const player = youtubePlayers[key][inactiveSlot];
+
+        player.mute();
+        player.setVolume(0);
+        player.seekTo(0.15,true);
+        player.pauseVideo();
+    }catch(error){}
+}
+
+function playAudioKey(key){
+    pendingPlay = true;
+
+    if(!state.selectedAudios.includes(key)){
+        return false;
+    }
+
+    const slot = activePlayerSlot[key] || 0;
+
+    if(!playerIsReady(key,slot)){
+        return false;
+    }
+
+    try{
+        const player = youtubePlayers[key][slot];
+
+        player.unMute();
+        player.setVolume(targetVolume(key));
+        player.playVideo();
+
+        prepareInactivePlayer(key);
+        scheduleDualLoop(key);
+
+        return true;
+    }catch(error){
+        return false;
+    }
+}
+
+function scheduleDualLoop(key){
+    clearLoopTimer(key);
+
+    loopTimers[key] = setInterval(() => {
+        if(
+            !state.running ||
+            !state.audioLoop ||
+            !state.selectedAudios.includes(key) ||
+            isCrossfading[key]
+        ){
+            return;
+        }
+
+        const slot = activePlayerSlot[key] || 0;
+
+        if(!playerIsReady(key,slot)){
+            return;
+        }
+
+        try{
+            const player = youtubePlayers[key][slot];
+            const duration = player.getDuration ? player.getDuration() : 0;
+            const current = player.getCurrentTime ? player.getCurrentTime() : 0;
+
+            if(!duration || duration < 3){
+                return;
+            }
+
+            /*
+                Start the second player BEFORE the first reaches its silent tail.
+                For very short clips, this starts earlier.
+            */
+            /*
+                Aggressive gapless logic:
+
+                If a clip is 8 seconds and the last 1-2 seconds are silent,
+                starting the next player at 6 seconds is too late.
+                So we start the next player much earlier.
+
+                For short Shorts, use about 40% of the clip as the overlap window.
+                For longer clips, use at least 3.4 seconds.
+            */
+            const restartWindow = Math.min(
+                duration - 0.8,
+                Math.max(PRELOAD_NEXT_BEFORE_END,duration * 0.40)
+            );
+
+            if(duration - current <= restartWindow){
+                startNextPlayerForAudio(key);
+            }
+        }catch(error){}
+    },CHECK_RATE_MS);
+}
+
+function startNextPlayerForAudio(key){
+    if(isCrossfading[key]){
+        return;
+    }
+
+    const activeSlot = activePlayerSlot[key] || 0;
+    const nextSlot = activeSlot === 0 ? 1 : 0;
+
+    if(!playerIsReady(key,activeSlot) || !playerIsReady(key,nextSlot)){
+        restartSinglePlayerEarly(key);
+        return;
+    }
+
+    isCrossfading[key] = true;
+    clearLoopTimer(key);
+
+    const currentPlayer = youtubePlayers[key][activeSlot];
+    const nextPlayer = youtubePlayers[key][nextSlot];
+    const fullVolume = targetVolume(key);
+
+    /*
+        Start the next copy immediately at useful volume.
+        We do NOT slowly fade it in from 0 over too long, because the old
+        YouTube Short may already be entering its silent tail.
+    */
+    try{
+        nextPlayer.seekTo(0.15,true);
+        nextPlayer.unMute();
+        nextPlayer.setVolume(fullVolume);
+        nextPlayer.playVideo();
+    }catch(error){
+        isCrossfading[key] = false;
+        restartSinglePlayerEarly(key);
+        return;
+    }
+
+    /*
+        Fade out the old copy quickly. If the old one is already silent,
+        the new one is already audible, so there should be no gap.
+    */
+    const steps = 6;
+    const stepMs = Math.max(35,Math.floor(CROSSFADE_MS / steps));
+    let step = 0;
+
+    const fade = setInterval(() => {
+        step++;
+
+        const progress = step / steps;
+        const oldVolume = Math.round(fullVolume * (1 - progress));
+
+        setPlayerVolume(key,activeSlot,oldVolume);
+        setPlayerVolume(key,nextSlot,fullVolume);
+
+        if(step >= steps){
+            clearInterval(fade);
+
+            try{
+                currentPlayer.pauseVideo();
+                currentPlayer.seekTo(0.15,true);
+                currentPlayer.mute();
+                currentPlayer.setVolume(0);
+            }catch(error){}
+
+            activePlayerSlot[key] = nextSlot;
+            isCrossfading[key] = false;
+
+            applyAudioVolume(key);
+            prepareInactivePlayer(key);
+            scheduleDualLoop(key);
+        }
+    },stepMs);
+}
+
+function restartSinglePlayerEarly(key){
+    const slot = activePlayerSlot[key] || 0;
+
+    if(!playerIsReady(key,slot)){
+        return;
+    }
+
+    clearLoopTimer(key);
+
+    try{
+        const player = youtubePlayers[key][slot];
+
+        player.seekTo(0.15,true);
+        player.unMute();
+        player.setVolume(targetVolume(key));
+        player.playVideo();
+
+        setTimeout(() => {
+            scheduleDualLoop(key);
+        },450);
+    }catch(error){}
+}
+
+function clearLoopTimer(key){
+    if(loopTimers[key]){
+        clearInterval(loopTimers[key]);
+        delete loopTimers[key];
+    }
+}
+
+function clearAllLoopTimers(){
+    Object.keys(loopTimers).forEach(key => clearLoopTimer(key));
+}
+
+function pauseAudio(key,reset = false){
+    clearLoopTimer(key);
+    isCrossfading[key] = false;
+
+    [0,1].forEach(slot => {
+        if(playerIsReady(key,slot)){
+            try{
+                const player = youtubePlayers[key][slot];
+
+                player.pauseVideo();
+
+                if(reset){
+                    player.seekTo(0.15,true);
+                }
+
+                player.mute();
+                player.setVolume(0);
+            }catch(error){}
+        }
+    });
+
+    activePlayerSlot[key] = 0;
+}
+
+function pauseAllAudios(){
+    Object.keys(youtubePlayers).forEach(key => {
+        pauseAudio(key,false);
+    });
+}
+
+function stopAllAudios(){
+    Object.keys(youtubePlayers).forEach(key => {
+        pauseAudio(key,true);
+    });
+}
+
+/* ===== AUDIO UI ===== */
+
+function getAudioName(key){
+    return AUDIO_SOURCES.find(source => source.key === key)?.name || key;
+}
+
+function getSelectedAudioNames(){
+    if(!state.selectedAudios.length){
+        return "No audio selected";
+    }
+
+    return state.selectedAudios.map(getAudioName).join(" + ");
+}
+
+function renderAllAudioGrid(){
+    const grid = document.getElementById("allAudioGrid");
+
+    if(!grid){
+        return;
+    }
+
+    grid.innerHTML = AUDIO_SOURCES.map(source => {
+        const active = state.selectedAudios.includes(source.key);
+        const disabled = !active && state.selectedAudios.length >= MAX_ACTIVE_AUDIOS;
+
+        return `
+            <button
+                class="default-audio-card ${active ? "active" : ""} ${disabled ? "disabled" : ""}"
+                data-default-audio="${source.key}"
+                onclick="quickSelectAudio('${source.key}')">
+                <i data-lucide="${source.icon}"></i>
+                <strong>${source.name}</strong>
+                <span>${source.category}</span>
+            </button>
+        `;
+    }).join("");
+}
+
+function updateDefaultCards(){
+    document.querySelectorAll(".default-audio-card").forEach(card => {
+        const key = card.dataset.defaultAudio;
+        const active = state.selectedAudios.includes(key);
+
+        card.classList.toggle("active", active);
+        card.classList.toggle("disabled", !active && state.selectedAudios.length >= MAX_ACTIVE_AUDIOS);
+    });
+
+    const note = document.getElementById("audioLimitNote");
+
+    if(note){
+        note.textContent = state.selectedAudios.length + " / " + MAX_ACTIVE_AUDIOS + " active audio sources";
+    }
+}
+
+function renderSelectedAudioPreview(){
+    const preview = document.getElementById("selectedAudioPreview");
+
+    if(!preview){
+        return;
+    }
+
+    if(!state.selectedAudios.length){
+        preview.innerHTML = `
+            <div class="selected-audio-pill">
+                <i data-lucide="volume-x"></i>
+                No audio selected
+            </div>
+        `;
+        return;
+    }
+
+    preview.innerHTML = state.selectedAudios.map(key => {
+        const source = AUDIO_SOURCES.find(item => item.key === key);
+
+        return `
+            <div class="selected-audio-pill">
+                <i data-lucide="${source?.icon || "volume-2"}"></i>
+                ${getAudioName(key)}
+            </div>
+        `;
+    }).join("");
+}
+
+function renderAudioControls(){
+    const stack = document.getElementById("audioControlStack");
+
+    if(!stack){
+        return;
+    }
+
+    if(!state.selectedAudios.length){
+        stack.innerHTML = `
+            <p class="audio-note" style="margin-top:0;">
+                Choose one or more audio sources above. You can mix multiple sounds together.
+            </p>
+        `;
+        return;
+    }
+
+    stack.innerHTML = state.selectedAudios.map(key => {
+        const source = AUDIO_SOURCES.find(item => item.key === key);
+        const volume = state.volumes[key] ?? 70;
+
+        return `
+            <div class="audio-control-row">
+
+                <i data-lucide="${source?.icon || "volume-2"}"></i>
+
+                <input
+                    class="audio-volume"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="${volume}"
+                    oninput="setSingleAudioVolume('${key}',this.value,true)">
+
+                <span>${getAudioName(key)} ${volume}%</span>
+
+            </div>
+        `;
+    }).join("");
+}
+
+function renderAudioPicker(){
+    const grid = document.getElementById("audioPickerGrid");
+
+    if(!grid){
+        return;
+    }
+
+    grid.innerHTML = AUDIO_SOURCES.map(source => {
+        const active = state.selectedAudios.includes(source.key);
+        const disabled = !active && state.selectedAudios.length >= MAX_ACTIVE_AUDIOS;
+
+        return `
+            <button
+                class="audio-picker-option ${active ? "active" : ""} ${disabled ? "disabled" : ""}"
+                onclick="toggleAudioFromModal('${source.key}')">
+
+                <i data-lucide="${source.icon}"></i>
+
+                <strong>${source.name}</strong>
+
+                <span>${source.category}</span>
+
+            </button>
+        `;
+    }).join("");
+
+    lucide.createIcons();
+}
+
+function setTextIfExists(id, value){
+    const el = document.getElementById(id);
+    if(el){
+        el.textContent = value;
+    }
+}
+
+function setValueIfExists(id, value){
+    const el = document.getElementById(id);
+    if(el){
+        el.value = value;
+    }
+}
+
+function syncAudioUI(){
+    renderAllAudioGrid();
+    updateDefaultCards();
+    renderSelectedAudioPreview();
+    renderAudioControls();
+
+    const audioText = getSelectedAudioNames();
+
+    document.getElementById("activeMixText").textContent = audioText;
+    setTextIfExists("detailSounds", audioText);
+    document.getElementById("playerMixName").textContent = audioText;
+    document.getElementById("activeSoundCount").textContent = state.selectedAudios.length + " Active";
+
+    lucide.createIcons();
+}
+
+function quickSelectAudio(key){
+    if(state.selectedAudios.includes(key)){
+        state.selectedAudios = state.selectedAudios.filter(item => item !== key);
+        pauseAudio(key,true);
+    }else{
+        if(state.selectedAudios.length >= MAX_ACTIVE_AUDIOS){
+            showToast("You can only have 5 active audios.");
+            return;
+        }
+
+        state.selectedAudios.push(key);
+    }
+
+    saveState();
+    updateTimerUI();
+
+    if(state.running){
+        timerMuted = false;
+        stopEndingSound();
+        playSelectedAudios();
+    }
+}
+
+function openAudioModal(){
+    renderAudioPicker();
+    document.getElementById("audioModal").classList.add("active");
+}
+
+function closeAudioModal(){
+    document.getElementById("audioModal").classList.remove("active");
+    updateTimerUI();
+
+    if(state.running){
+        timerMuted = false;
+        stopEndingSound();
+        playSelectedAudios();
+    }
+}
+
+function toggleAudioFromModal(key){
+    if(state.selectedAudios.includes(key)){
+        state.selectedAudios = state.selectedAudios.filter(item => item !== key);
+        pauseAudio(key,true);
+    }else{
+        if(state.selectedAudios.length >= MAX_ACTIVE_AUDIOS){
+            showToast("You can only have 5 active audios.");
+            return;
+        }
+
+        state.selectedAudios.push(key);
+    }
+
+    saveState();
+    renderAudioPicker();
+    syncAudioUI();
+
+    if(state.running){
+        timerMuted = false;
+        stopEndingSound();
+        playSelectedAudios();
+    }
+}
+
+function clearAudioSelection(){
+    state.selectedAudios.forEach(key => pauseAudio(key,true));
+    state.selectedAudios = [];
+
+    saveState();
+    renderAudioPicker();
+    syncAudioUI();
+}
+
+function setSingleAudioVolume(key,value,shouldSave = true){
+    state.volumes[key] = Number(value);
+    applyAudioVolume(key);
+
+    if(shouldSave){
+        saveState();
+        renderAudioControls();
+        lucide.createIcons();
+    }
+}
+
+function setMasterVolume(value){
+    state.masterVolume = Number(value);
+
+    const masterSlider = document.getElementById("masterAudioVolume");
+    const masterText = document.getElementById("masterAudioVolumeText");
+    const bottomSlider = document.getElementById("bottomMasterVolume");
+    const bottomText = document.getElementById("masterVolumeText");
+
+    if(masterSlider){
+        masterSlider.value = state.masterVolume;
+    }
+
+    if(bottomSlider){
+        bottomSlider.value = state.masterVolume;
+    }
+
+    if(masterText){
+        masterText.textContent = state.masterVolume + "%";
+    }
+
+    if(bottomText){
+        bottomText.textContent = state.masterVolume + "%";
+    }
+
+    state.selectedAudios.forEach(key => {
+        applyAudioVolume(key);
+    });
+
+    saveState();
+}
+
+function playSelectedAudios(){
+    if(!state.selectedAudios.length){
+        showToast("Choose an audio source first.");
+        return;
+    }
+
+    pendingPlay = true;
+
+    let started = 0;
+
+    state.selectedAudios.forEach(key => {
+        if(playAudioKey(key)){
+            started++;
+        }
+    });
+
+    if(started){
+        showToast("Audio started.");
+    }else{
+        showToast("Audio is loading. Try again in a second.");
+    }
+}
+
+function testSelectedAudio(){
+    playSelectedAudios();
+}
+
+function toggleAudioLoop(enabled){
+    state.audioLoop = enabled;
+    saveState();
+
+    if(enabled && state.running){
+        state.selectedAudios.forEach(key => scheduleDualLoop(key));
+    }else{
+        clearAllLoopTimers();
+    }
+
+    showToast(enabled ? "Audio loop enabled." : "Audio loop disabled.");
+}
+
+
+/* ===== TIMER ENDING SOUND ===== */
+
+function buildEndingSoundPlayers(){
+    const holder = document.getElementById("endingSoundPlayers");
+
+    if(!holder || !window.YT || !YT.Player){
+        return;
+    }
+
+    holder.innerHTML = "";
+    endingSoundPlayers = {};
+    endingSoundReady = {};
+
+    Object.keys(ENDING_SOUNDS).forEach(key => {
+        const sound = ENDING_SOUNDS[key];
+
+        if(!sound.videoId){
+            return;
+        }
+
+        const div = document.createElement("div");
+        div.id = "ending_" + key;
+        holder.appendChild(div);
+
+        endingSoundPlayers[key] = new YT.Player(div.id, {
+            height:"1",
+            width:"1",
+            videoId:sound.videoId,
+            playerVars:{
+                autoplay:0,
+                controls:0,
+                disablekb:1,
+                fs:0,
+                modestbranding:1,
+                playsinline:1,
+                rel:0
+            },
+            events:{
+                onReady:function(){
+                    endingSoundReady[key] = true;
+
+                    try{
+                        endingSoundPlayers[key].setVolume(100);
+                        endingSoundPlayers[key].mute();
+                    }catch(error){}
+                }
+            }
+        });
+    });
+}
+
+function getEndingSoundName(key){
+    return ENDING_SOUNDS[key]?.name || "No Sound";
+}
+
+function clearEndingSoundTimers(){
+    endingSoundTimeouts.forEach(timeout => clearTimeout(timeout));
+    endingSoundTimeouts = [];
+}
+
+function stopEndingSound(){
+    clearEndingSoundTimers();
+
+    Object.keys(endingSoundPlayers).forEach(key => {
+        const player = endingSoundPlayers[key];
+
+        if(player && endingSoundReady[key]){
+            try{
+                player.pauseVideo();
+                player.seekTo(0,true);
+                player.mute();
+            }catch(error){}
+        }
+    });
+
+    endingSoundActive = false;
+    updateMuteTimerButton();
+}
+
+function playEndingSoundTwice(){
+    stopEndingSound();
+
+    if(timerMuted || state.endSound === "none"){
+        return;
+    }
+
+    const key = state.endSound;
+    const player = endingSoundPlayers[key];
+
+    if(!player || !endingSoundReady[key]){
+        showToast("Ending sound is loading.");
+        return;
+    }
+
+    endingSoundActive = true;
+    updateMuteTimerButton();
+
+    function playOnce(delay){
+        const timeout = setTimeout(() => {
+            if(timerMuted || !endingSoundActive){
+                return;
+            }
+
+            try{
+                player.unMute();
+                player.setVolume(100);
+                player.seekTo(0,true);
+                player.playVideo();
+            }catch(error){}
+        },delay);
+
+        endingSoundTimeouts.push(timeout);
+    }
+
+    playOnce(0);
+    playOnce(2200);
+
+    const endTimeout = setTimeout(() => {
+        stopEndingSound();
+    },5200);
+
+    endingSoundTimeouts.push(endTimeout);
+}
+
+function muteTimerEndingSound(){
+    timerMuted = true;
+    stopEndingSound();
+    showToast("Timer ending sound muted.");
+}
+
+
+function syncEndSoundButtons(){
+    document.querySelectorAll(".end-option").forEach(option => {
+        option.classList.toggle("active", option.dataset.endSound === state.endSound);
+    });
+}
+
+function updateMuteTimerButton(){
+    const btn = document.getElementById("muteTimerBtn");
+
+    if(!btn){
+        return;
+    }
+
+    const shouldShow =
+        (state.running && state.remaining <= 5 && state.remaining > 0 && state.endSound !== "none") ||
+        endingSoundActive;
+
+    btn.classList.toggle("visible", shouldShow && !timerMuted);
+}
+
+/* ===== TIMER / SESSION ===== */
+
+function formatTime(seconds){
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return String(minutes).padStart(2,"0") + ":" + String(secs).padStart(2,"0");
+}
+
+function updateTimerUI(){
+    const totalSeconds = state.duration * 60;
+    const progress = totalSeconds ? ((totalSeconds - state.remaining) / totalSeconds) * 100 : 0;
+
+    document.getElementById("timerDisplay").textContent = formatTime(state.remaining);
+    document.getElementById("timerRing").style.setProperty("--p", progress);
+
+    document.getElementById("durationText").textContent = state.duration + " min";
+    setTextIfExists("detailTimer", state.duration + " min");
+
+    document.getElementById("sessionName").textContent = state.name;
+    setTextIfExists("detailName", state.name);
+    document.getElementById("playerSessionName").textContent = state.name;
+
+    document.getElementById("sessionGoal").textContent = state.goal;
+    setTextIfExists("detailGoal", state.goal);
+
+    setTextIfExists("detailEndSound", getEndingSoundName(state.endSound));
+
+    setValueIfExists("notesBox", state.notes);
+    updateNotesCount(false);
+
+    const btn = document.getElementById("startPauseBtn");
+    const icon = document.getElementById("playerPlayIcon");
+
+    if(state.running){
+        btn.innerHTML = `<i data-lucide="pause"></i> Pause`;
+        icon.setAttribute("data-lucide","pause");
+        document.getElementById("sessionStatusText").textContent = "Running";
+    }else{
+        btn.innerHTML = `<i data-lucide="play"></i> Start`;
+        icon.setAttribute("data-lucide","play");
+        document.getElementById("sessionStatusText").textContent = "Ready";
+    }
+
+    setMasterVolume(state.masterVolume || 70);
+    syncAudioUI();
+    renderSavedSessions();
+    syncEndSoundButtons();
+    updateMuteTimerButton();
+
+    lucide.createIcons();
+}
+
+function toggleTimer(){
+    state.running = !state.running;
+
+    if(state.running){
+        timerMuted = false;
+        stopEndingSound();
+        playSelectedAudios();
+
+        clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
+            state.remaining--;
+
+            if(state.remaining <= 0){
+                state.remaining = 0;
+                state.running = false;
+
+                clearInterval(timerInterval);
+                stopAllAudios();
+                playEndingSoundTwice();
+
+                showToast("Session complete.");
+            }
+
+            updateTimerUI();
+            saveState();
+        },1000);
+    }else{
+        clearInterval(timerInterval);
+        pauseAllAudios();
+    }
+
+    saveState();
+    updateTimerUI();
+}
+
+function resetTimer(){
+    state.running = false;
+
+    clearInterval(timerInterval);
+    stopAllAudios();
+    stopEndingSound();
+
+    state.remaining = state.duration * 60;
+
+    saveState();
+    updateTimerUI();
+    showToast("Session reset.");
+}
+
+function completeSession(){
+    state.running = false;
+
+    clearInterval(timerInterval);
+    stopAllAudios();
+    stopEndingSound();
+
+    state.remaining = 0;
+
+    saveState();
+    updateTimerUI();
+    showToast("Session completed.");
+}
+
+function setDuration(minutes){
+    state.duration = Number(minutes);
+    state.remaining = state.duration * 60;
+    state.running = false;
+
+    clearInterval(timerInterval);
+    pauseAllAudios();
+    stopEndingSound();
+
+    document.querySelectorAll(".preset").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    [...document.querySelectorAll(".preset")].forEach(btn => {
+        if(btn.textContent.trim().startsWith(String(minutes))){
+            btn.classList.add("active");
+        }
+    });
+
+    saveState();
+    updateTimerUI();
+}
+
+function setCustomDuration(){
+    const input = document.getElementById("customMinutes");
+    const minutes = Number(input.value);
+
+    if(!minutes || minutes < 1){
+        showToast("Add valid minutes first.");
+        return;
+    }
+
+    setDuration(minutes);
+    input.value = "";
+}
+
+function setEndSound(button,sound){
+    document.querySelectorAll(".end-option").forEach(option => {
+        option.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    state.endSound = sound;
+    timerMuted = false;
+    stopEndingSound();
+    saveState();
+    updateTimerUI();
+}
+
+function updateNotesCount(shouldSave = true){
+    const box = document.getElementById("notesBox");
+    const counter = document.getElementById("notesCount");
+
+    if(!box || !counter){
+        return;
+    }
+
+    const count = box.value.length;
+    counter.textContent = count + "/500";
+
+    if(shouldSave){
+        state.notes = box.value;
+        saveState();
+    }
+}
+
+function renderSavedSessions(){
+    const list = document.getElementById("savedSessionsList");
+
+    if(!list){
+        return;
+    }
+
+    const defaultSessions = Array.isArray(defaultState.saved)
+        ? defaultState.saved
+        : [];
+
+    if(!Array.isArray(state.userSavedSessions)){
+        state.userSavedSessions = [];
+    }
+
+    function getAudioText(audios){
+        return (Array.isArray(audios) ? audios : ["rain"])
+            .map(getAudioName)
+            .join(" + ");
+    }
+
+    function sessionIcon(index,type){
+        if(type === "user"){
+            return "bookmark";
+        }
+
+        return index === 0 ? "cloud-rain" :
+               index === 1 ? "waves" :
+               index === 2 ? "keyboard" :
+               "trees";
+    }
+
+    function itemHTML(item,index,type){
+        const active = item.name === state.name && item.duration === state.duration;
+        const audioText = getAudioText(item.selectedAudios);
+
+        return `
+            <div
+                class="saved-item ${active ? "active" : ""}"
+                onclick="loadSavedSession('${type}',${index})">
+
+                <div class="saved-icon">
+                    <i data-lucide="${sessionIcon(index,type)}"></i>
+                </div>
+
+                <div>
+                    <div class="saved-name">${item.name}</div>
+                    <div class="saved-meta">
+                        Session · ${item.duration} min · ${audioText}
+                    </div>
+                </div>
+
+                <div class="dots">
+                    <i data-lucide="more-vertical"></i>
+                </div>
+
+            </div>
+        `;
+    }
+
+    const defaultContent = defaultSessions
+        .map((item,index) => itemHTML(item,index,"default"))
+        .join("");
+
+    const savedContent = state.userSavedSessions.length
+        ? state.userSavedSessions.map((item,index) => itemHTML(item,index,"user")).join("")
+        : `<div class="saved-empty">No saved sessions yet. Use “Save Session” to add one here.</div>`;
+
+    list.innerHTML = `
+        <div class="saved-folder">
+
+            <div class="saved-folder-title">
+                <div class="saved-folder-title-left">
+                    <i data-lucide="folder"></i>
+                    <span>Default Sessions</span>
+                </div>
+
+                <span class="saved-folder-count">${defaultSessions.length}</span>
+            </div>
+
+            <div class="saved-folder-content">
+                ${defaultContent}
+            </div>
+
+        </div>
+
+        <div class="saved-folder">
+
+            <div class="saved-folder-title">
+                <div class="saved-folder-title-left">
+                    <i data-lucide="folder"></i>
+                    <span>Saved Sessions</span>
+                </div>
+
+                <span class="saved-folder-count">${state.userSavedSessions.length} / 10</span>
+            </div>
+
+            <div class="saved-folder-content">
+                ${savedContent}
+            </div>
+
+        </div>
+    `;
+}
+
+function loadSavedSession(type,index){
+    const source = type === "user"
+        ? state.userSavedSessions
+        : defaultState.saved;
+
+    const item = source[index];
+
+    if(!item){
+        return;
+    }
+
+    state.name = item.name;
+    state.goal = item.goal || "Session";
+    state.duration = item.duration || 25;
+    state.remaining = state.duration * 60;
+    state.running = false;
+    state.selectedAudios = Array.isArray(item.selectedAudios) ? [...item.selectedAudios].slice(0,MAX_ACTIVE_AUDIOS) : ["rain"];
+    state.notes = item.notes || "";
+
+    clearInterval(timerInterval);
+    stopAllAudios();
+    stopEndingSound();
+
+    saveState();
+    updateTimerUI();
+    showToast("Session loaded.");
+}
+
+function openEditModal(){
+    modalMode = "edit";
+
+    document.getElementById("modalTitle").textContent = "Edit Session";
+    document.getElementById("modalSessionName").value = state.name;
+    document.getElementById("modalDuration").value = state.duration;
+    document.getElementById("modalGoal").value = state.goal;
+    document.getElementById("modalNotes").value = state.notes;
+    document.getElementById("modalSaveBtn").textContent = "Save Changes";
+
+    document.getElementById("sessionModal").classList.add("active");
+}
+
+function openSaveModal(){
+    modalMode = "save";
+
+    document.getElementById("modalTitle").textContent = "Save Session Setup";
+    document.getElementById("modalSessionName").value = state.name;
+    document.getElementById("modalDuration").value = state.duration;
+    document.getElementById("modalGoal").value = state.goal;
+    document.getElementById("modalNotes").value = state.notes;
+    document.getElementById("modalSaveBtn").textContent = "Save Setup";
+
+    document.getElementById("sessionModal").classList.add("active");
+}
+
+function closeModal(){
+    document.getElementById("sessionModal").classList.remove("active");
+}
+
+function saveModalChanges(){
+    const name = document.getElementById("modalSessionName").value.trim();
+    const duration = Number(document.getElementById("modalDuration").value);
+    const goal = document.getElementById("modalGoal").value.trim();
+    const notes = document.getElementById("modalNotes").value.trim();
+
+    if(!name || !duration || duration < 1){
+        showToast("Add a name and valid duration.");
+        return;
+    }
+
+    state.name = name;
+    state.duration = duration;
+    state.remaining = duration * 60;
+    state.goal = goal || "Session";
+    state.notes = notes;
+    state.running = false;
+
+    clearInterval(timerInterval);
+    stopAllAudios();
+    stopEndingSound();
+
+    if(modalMode === "save"){
+        const setup = {
+            name:state.name,
+            goal:state.goal,
+            duration:state.duration,
+            selectedAudios:[...state.selectedAudios],
+            notes:state.notes
+        };
+
+        if(!Array.isArray(state.userSavedSessions)){
+            state.userSavedSessions = [];
+        }
+
+        const existingIndex = state.userSavedSessions.findIndex(item => item.name === setup.name);
+
+        if(existingIndex >= 0){
+            state.userSavedSessions[existingIndex] = setup;
+        }else{
+            if(state.userSavedSessions.length >= 10){
+                showToast("You can only save 10 sessions.");
+                return;
+            }
+
+            state.userSavedSessions.unshift(setup);
+        }
+
+        showToast("Session saved.");
+    }else{
+        showToast("Session updated.");
+    }
+
+    saveState();
+    closeModal();
+    updateTimerUI();
+}
+
+function openSettingsToast(){
+    showToast("More session settings coming soon.");
+}
+
+function showToast(message){
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.classList.add("active");
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(() => {
+        toast.classList.remove("active");
+    },2200);
+}
+
+applyTheme();
+updateTimerUI();
+
+if(window.YT && YT.Player){
+    buildYouTubePlayers();
+    buildEndingSoundPlayers();
+}
+</script>
+<script>
+/* === FINAL FIX: MINUTES-ONLY CUSTOM PRESET CREATE BUTTON === */
+(function(){
+    const CUSTOM_TIMER_KEY = "routineSessionsCustomTimerPresetsMinutesOnlyV2";
+    const MAX_CUSTOM_TIMERS = 5;
+
+    function toast(message){
+        if(typeof showToast === "function"){
+            showToast(message);
+            return;
+        }
+
+        alert(message);
+    }
+
+    function readPresets(){
+        try{
+            const saved = JSON.parse(localStorage.getItem(CUSTOM_TIMER_KEY) || "[]");
+
+            if(!Array.isArray(saved)){
+                return [];
+            }
+
+            return saved
+                .map(item => ({ minutes:Number(item.minutes) || 0 }))
+                .filter(item => item.minutes > 0)
+                .slice(0,MAX_CUSTOM_TIMERS);
+        }catch(error){
+            return [];
+        }
+    }
+
+    function writePresets(presets){
+        const clean = presets
+            .map(item => ({ minutes:Number(item.minutes) || 0 }))
+            .filter(item => item.minutes > 0)
+            .slice(0,MAX_CUSTOM_TIMERS);
+
+        localStorage.setItem(CUSTOM_TIMER_KEY, JSON.stringify(clean));
+
+        if(typeof state !== "undefined"){
+            state.customTimerPresets = clean;
+
+            try{
+                saveState();
+            }catch(error){}
+        }
+    }
+
+    function getMinutesInput(){
+        return document.getElementById("customPresetMinutesOnly");
+    }
+
+    function getEditInput(){
+        return document.getElementById("editTimerPresetMinutesOnly");
+    }
+
+    function render(){
+        const grid = document.getElementById("customTimerPresetGrid");
+        const count = document.getElementById("customTimerCount");
+
+        if(!grid){
+            return;
+        }
+
+        const presets = readPresets();
+
+        if(count){
+            count.textContent = presets.length + " / " + MAX_CUSTOM_TIMERS;
+        }
+
+        grid.innerHTML = presets.map((preset,index) => {
+            return `
+                <div
+                    class="preset custom-timer-preset"
+                    role="button"
+                    tabindex="0"
+                    onclick="setDuration(${preset.minutes})">
+
+                    <div class="custom-timer-main-value">
+                        <strong>${preset.minutes}m</strong>
+                        <span>${preset.minutes} min</span>
+                    </div>
+
+                    <div class="custom-timer-preset-actions">
+
+                        <button
+                            type="button"
+                            class="custom-timer-mini-btn"
+                            onclick="event.stopPropagation(); openEditTimerPreset(${index})"
+                            title="Edit">
+                            ✎
+                        </button>
+
+                        <button
+                            type="button"
+                            class="custom-timer-mini-btn delete"
+                            onclick="event.stopPropagation(); removeCustomTimerPreset(${index})"
+                            title="Remove">
+                            ×
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+        }).join("");
+
+        if(window.lucide && typeof lucide.createIcons === "function"){
+            lucide.createIcons();
+        }
+    }
+
+    window.renderCustomTimerPresets = render;
+
+    window.createCustomTimerPreset = function(){
+        const input = getMinutesInput();
+
+        if(!input){
+            toast("Timer preset input is missing.");
+            return;
+        }
+
+        const minutes = Math.round(Number(input.value));
+
+        if(!minutes || minutes < 1){
+            toast("Add valid minutes first.");
+            return;
+        }
+
+        const presets = readPresets();
+
+        if(presets.length >= MAX_CUSTOM_TIMERS){
+            toast("You can only create 5 timer presets.");
+            return;
+        }
+
+        presets.push({ minutes });
+        writePresets(presets);
+
+        input.value = "";
+        render();
+
+        toast("Timer preset created.");
+    };
+
+    window.removeCustomTimerPreset = function(index){
+        const presets = readPresets();
+
+        presets.splice(index,1);
+        writePresets(presets);
+
+        render();
+        toast("Timer preset removed.");
+    };
+
+    window.openEditTimerPreset = function(index){
+        const presets = readPresets();
+        const preset = presets[index];
+
+        if(!preset){
+            return;
+        }
+
+        window.__editingCustomTimerIndex = index;
+
+        const input = getEditInput();
+
+        if(input){
+            input.value = preset.minutes;
+        }
+
+        const modal = document.getElementById("timerPresetModal");
+
+        if(modal){
+            modal.classList.add("active");
+        }
+    };
+
+    window.closeTimerPresetModal = function(){
+        window.__editingCustomTimerIndex = null;
+
+        const modal = document.getElementById("timerPresetModal");
+
+        if(modal){
+            modal.classList.remove("active");
+        }
+    };
+
+    window.saveEditedTimerPreset = function(){
+        const index = window.__editingCustomTimerIndex;
+
+        if(index === null || typeof index === "undefined"){
+            return;
+        }
+
+        const input = getEditInput();
+        const minutes = Math.round(Number(input ? input.value : 0));
+
+        if(!minutes || minutes < 1){
+            toast("Add valid minutes first.");
+            return;
+        }
+
+        const presets = readPresets();
+
+        presets[index] = { minutes };
+        writePresets(presets);
+
+        closeTimerPresetModal();
+        render();
+
+        toast("Timer preset updated.");
+    };
+
+    document.addEventListener("DOMContentLoaded", function(){
+        const createButton = document.querySelector(".custom-timer-create-btn");
+
+        if(createButton){
+            createButton.onclick = function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                createCustomTimerPreset();
+            };
+        }
+
+        render();
+    });
+
+    setTimeout(function(){
+        const createButton = document.querySelector(".custom-timer-create-btn");
+
+        if(createButton){
+            createButton.onclick = function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                createCustomTimerPreset();
+            };
+        }
+
+        render();
+    },100);
+
+    setTimeout(render,700);
+})();
+</script>
+
+<script>
+/* === CURRENT SESSION ACTIVE AUDIO TEST TOGGLE ONLY === */
+(function(){
+    window.audioTestMode = false;
+
+    function updateTestAudioButton(){
+        const btn = document.getElementById("testAudioBtn");
+
+        if(!btn){
+            return;
+        }
+
+        if(window.audioTestMode){
+            btn.classList.add("testing");
+            btn.innerHTML = `<i data-lucide="square"></i> Stop Test`;
+        }else{
+            btn.classList.remove("testing");
+            btn.innerHTML = `<i data-lucide="play"></i> Test Audio`;
+        }
+
+        if(window.lucide && typeof lucide.createIcons === "function"){
+            lucide.createIcons();
+        }
+    }
+
+    window.toggleTestAudio = function(){
+        if(window.audioTestMode){
+            window.audioTestMode = false;
+
+            try{
+                stopAllAudios();
+            }catch(error){}
+
+            updateTestAudioButton();
+            showToast("Audio test stopped.");
+            return;
+        }
+
+        if(!state.selectedAudios || !state.selectedAudios.length){
+            showToast("Choose an audio source first.");
+            return;
+        }
+
+        window.audioTestMode = true;
+
+        try{
+            playSelectedAudios();
+        }catch(error){
+            showToast("Audio is loading. Try again in a second.");
+        }
+
+        updateTestAudioButton();
+    };
+
+    const previousToggleTimer = window.toggleTimer;
+
+    if(typeof previousToggleTimer === "function"){
+        window.toggleTimer = function(){
+            window.audioTestMode = false;
+            updateTestAudioButton();
+            previousToggleTimer();
+        };
+    }
+
+    setTimeout(updateTestAudioButton,100);
+})();
+</script>
+
+</body>
+</html>

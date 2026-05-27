@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payouts - Coming Soon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+:root{
+    --bg-primary:#0d1117;
+    --bg-secondary:#111827;
+
+    --bg-card:rgba(20,25,35,.72);
+
+    --text-primary:#ffffff;
+    --text-secondary:#8b949e;
+
+    --border-color:rgba(255,255,255,.08);
+
+    --accent-main:#667eea;
+    --accent-soft:#764ba2;
+}
+
+.theme-black{
+    --bg-primary:#0d1117;
+    --bg-secondary:#111827;
+    --bg-card:rgba(20,25,35,.72);
+
+    --accent-main:#667eea;
+    --accent-soft:#764ba2;
+}
+
+.theme-darkblue{
+    --bg-primary:#071120;
+    --bg-secondary:#0f1c2e;
+    --bg-card:rgba(10,20,35,.88);
+
+    --accent-main:#3b82f6;
+    --accent-soft:#2563eb;
+}
+
+.theme-purple{
+    --bg-primary:#14071f;
+    --bg-secondary:#221033;
+    --bg-card:rgba(30,15,50,.88);
+
+    --accent-main:#8b5cf6;
+    --accent-soft:#6d28d9;
+}
+
+.theme-darkred{
+    --bg-primary:#090303;
+    --bg-secondary:#140707;
+    --bg-card:rgba(20,8,8,.92);
+
+    --accent-main:#8b5a5a;
+    --accent-soft:#5b1d1d;
+}
+
+.theme-darkbrown{
+    --bg-primary:#1a120d;
+    --bg-secondary:#241812;
+    --bg-card:rgba(35,25,18,.92);
+
+    --accent-main:#9a735a;
+    --accent-soft:#5c4033;
+}
+
+.theme-white{
+    --bg-primary:#f3f4f6;
+    --bg-secondary:#ffffff;
+    --bg-card:rgba(255,255,255,.85);
+
+    --text-primary:#111827;
+    --text-secondary:#6b7280;
+
+    --border-color:rgba(0,0,0,.08);
+
+    --accent-main:#3b82f6;
+    --accent-soft:#2563eb;
+}
+
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+
+width:230px;
+height:100%;
+
+background:var(--bg-card);
+
+border-right:1px solid var(--border-color);
+
+padding:24px 18px;
+
+display:flex;
+flex-direction:column;
+
+z-index:100;
+
+backdrop-filter:blur(12px);
+}
+
+.sidebar-divider{
+height:1px;
+
+width:100%;
+
+background:var(--border-color);
+
+margin-bottom:14px;
+
+opacity:.8;
+}
+
+.sidebar-link{
+padding:14px 18px;
+
+border-radius:14px;
+
+margin-bottom:8px;
+
+text-decoration:none;
+
+color:var(--text-secondary);
+
+font-size:15px;
+font-weight:600;
+
+transition:.25s;
+}
+
+.sidebar-link:hover{
+background:rgba(255,255,255,.04);
+
+color:var(--text-primary);
+}
+
+.sidebar-link.active{
+background:linear-gradient(
+135deg,
+var(--accent-main),
+var(--accent-soft)
+);
+
+color:white;
+
+box-shadow:0 0 20px rgba(102,126,234,.25);
+}
+
+.sidebar-logo{
+text-decoration:none;
+
+color:#fff;
+
+font-size:1.3rem;
+font-weight:800;
+
+padding:14px 18px;
+
+border-radius:18px;
+
+background:linear-gradient(
+135deg,
+var(--accent-soft),
+var(--bg-secondary)
+);
+
+text-align:center;
+
+margin-bottom:24px;
+}
+.header-controls { display: none !important; }
+.footer { padding-left: 0 !important; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+body{
+font-family:'Inter',sans-serif;
+
+background:var(--bg-primary);
+
+color:var(--text-primary);
+
+min-height:100vh;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+padding:40px;
+padding-left:270px;
+
+position:relative;
+
+overflow:hidden;
+}
+body::before{
+content:'';
+
+position:fixed;
+inset:0;
+
+background:
+radial-gradient(circle at top left,
+rgba(255,255,255,.05),
+transparent 30%),
+
+radial-gradient(circle at bottom right,
+rgba(255,255,255,.03),
+transparent 35%);
+
+pointer-events:none;
+
+z-index:0;
+}
+.back-btn{
+background:var(--bg-card);
+
+color:var(--text-primary);
+
+border:1px solid var(--border-color);
+
+padding:12px 22px;
+border-radius:14px;
+
+display:inline-block;
+
+text-decoration:none;
+
+transition:.25s;
+}
+.payouts-container{
+
+width:100%;
+max-width:1300px;
+
+padding:40px;
+
+background:transparent;
+border:none;
+
+backdrop-filter:none;
+
+text-align:left;
+}
+
+.page-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:30px;
+}
+
+.page-header h1{
+font-size:2rem;
+margin-bottom:8px;
+}
+
+.page-header p{
+margin:0;
+}
+
+.header-pill{
+
+padding:10px 18px;
+
+border-radius:999px;
+
+background:linear-gradient(
+135deg,
+var(--accent-main),
+var(--accent-soft)
+);
+
+font-size:.85rem;
+font-weight:700;
+}
+
+.payout-stats-grid{
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+
+gap:18px;
+
+margin-bottom:28px;
+}
+
+.payout-card{
+
+background:var(--bg-card);
+
+border:1px solid var(--border-color);
+
+border-radius:24px;
+
+padding:24px;
+
+backdrop-filter:blur(14px);
+}
+
+.payout-card h2{
+font-size:2rem;
+margin:14px 0 8px;
+}
+
+.payout-label{
+color:var(--text-secondary);
+font-size:.8rem;
+text-transform:uppercase;
+letter-spacing:1px;
+}
+
+.green h2{
+color:#22c55e;
+}
+
+.blue h2{
+color:#60a5fa;
+}
+
+.orange h2{
+color:#f59e0b;
+}
+
+.breakdown-section,
+.history-section,
+.eligibility-section{
+
+background:var(--bg-card);
+
+border:1px solid var(--border-color);
+
+border-radius:28px;
+
+padding:28px;
+
+margin-bottom:25px;
+
+backdrop-filter:blur(14px);
+}
+
+.section-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:22px;
+}
+
+.section-header span{
+color:var(--text-secondary);
+font-size:.8rem;
+}
+
+.firm-grid{
+
+display:grid;
+grid-template-columns:repeat(3,1fr);
+
+gap:18px;
+}
+
+.firm-card{
+
+background:rgba(255,255,255,.03);
+
+border:1px solid var(--border-color);
+
+border-radius:20px;
+
+padding:22px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.green-text{
+color:#22c55e;
+font-weight:800;
+font-size:1.3rem;
+}
+
+.history-table{
+width:100%;
+border-collapse:collapse;
+}
+
+.history-table th,
+.history-table td{
+
+padding:16px;
+text-align:left;
+
+border-bottom:1px solid var(--border-color);
+}
+
+.history-table th{
+color:var(--text-secondary);
+font-size:.8rem;
+text-transform:uppercase;
+}
+
+.empty-state{
+text-align:center;
+color:var(--text-secondary);
+}
+
+.eligibility-card{
+
+background:rgba(255,255,255,.03);
+
+border:1px solid var(--border-color);
+
+border-radius:22px;
+
+padding:24px;
+}
+
+.eligibility-top{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:18px;
+}
+
+.eligibility-percent{
+font-size:2rem;
+font-weight:800;
+color:#22c55e;
+}
+
+.progress-bar{
+
+width:100%;
+height:14px;
+
+background:rgba(255,255,255,.05);
+
+border-radius:999px;
+
+overflow:hidden;
+
+margin-bottom:18px;
+}
+
+.progress-fill{
+
+height:100%;
+width:0%;
+
+background:linear-gradient(
+90deg,
+#22c55e,
+#4ade80
+);
+
+border-radius:999px;
+}
+
+.eligibility-info{
+
+display:flex;
+justify-content:space-between;
+
+color:var(--text-secondary);
+}
+
+@media(max-width:1100px){
+
+.payout-stats-grid,
+.firm-grid{
+    grid-template-columns:1fr 1fr;
+}
+
+}
+
+@media(max-width:700px){
+
+.payout-stats-grid,
+.firm-grid{
+    grid-template-columns:1fr;
+}
+
+.page-header,
+.section-header,
+.eligibility-top,
+.eligibility-info{
+    flex-direction:column;
+    gap:12px;
+    align-items:flex-start;
+}
+
+}
+.container{
+
+background:var(--bg-card);
+
+border:1px solid var(--border-color);
+
+backdrop-filter:blur(12px);
+
+border-radius:24px;
+
+padding:50px;
+
+width:100%;
+
+animation:fade .6s ease;
+
+position:relative;
+z-index:1;
+}
+        @keyframes fade { from { opacity:0; transform:translateY(20px);} to { opacity:1; transform:translateY(0);} }
+        .icon { font-size:4rem; margin-bottom:20px; animation:float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100% { transform:translateY(0);} 50% { transform:translateY(-10px);} }
+        h1 { font-size:1.8rem; margin-bottom:10px; }
+       p { color:var(--text-secondary); margin-bottom:25px; line-height:1.5; }
+        .back-btn{
+background:var(--bg-card);
+
+color:var(--text-primary);
+
+border:1px solid var(--border-color); }
+        .back-btn:hover { transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,0,0,0.3); border-color:var(--accent-main);}
+    </style>
+</head>
+<body>
+<div class="sidebar">
+
+<a href="../index.html"
+class="sidebar-logo">
+Dashboard
+</a>
+
+<a href="trading.html"
+class="sidebar-link">
+Trading Hub
+</a>
+
+<div class="sidebar-divider"></div>
+
+<a href="calendar.html"
+class="sidebar-link">
+Calendar
+</a>
+
+<a href="journal.html"
+class="sidebar-link">
+Journal
+</a>
+
+<a href="propfirms.html"
+class="sidebar-link">
+Prop Firms
+</a>
+
+<a href="analytics.html"
+class="sidebar-link">
+Analytics
+</a>
+
+<a href="payouts.html"
+class="sidebar-link active">
+Payouts
+</a>
+
+<a href="rules.html"
+class="sidebar-link">
+Rules
+</a>
+
+</div>
+<div class="container payouts-container">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Payout Dashboard</h1>
+            <p>
+                Track funded profits, payout progress and withdrawal history.
+            </p>
+        </div>
+
+        <div class="header-pill">
+            💰 Live Synced
+        </div>
+
+    </div>
+
+
+    <div class="payout-stats-grid">
+
+        <div class="payout-card">
+            <span class="payout-label">
+                Total Withdrawn
+            </span>
+
+            <h2 id="totalWithdrawn">
+                $0
+            </h2>
+
+            <small>
+                Lifetime payouts
+            </small>
+        </div>
+
+
+        <div class="payout-card green">
+            <span class="payout-label">
+                This Month
+            </span>
+
+            <h2 id="monthPayout">
+                $0
+            </h2>
+
+            <small>
+                Current month performance
+            </small>
+        </div>
+
+
+        <div class="payout-card blue">
+            <span class="payout-label">
+                Estimated Next Payout
+            </span>
+
+            <h2 id="estimatedPayout">
+                $0
+            </h2>
+
+            <small>
+                Based on current profits
+            </small>
+        </div>
+
+
+        <div class="payout-card orange">
+            <span class="payout-label">
+                Consistency Score
+            </span>
+
+            <h2 id="consistencyScore">
+                0%
+            </h2>
+
+            <small>
+                Risk stability tracking
+            </small>
+        </div>
+        </div>
+        <div class="breakdown-section">
+
+    <div class="section-header">
+        <h3>Prop Firm Breakdown</h3>
+        <span>Auto-calculated from journal trades</span>
+    </div>
+
+    <div class="firm-grid">
+
+        <div class="firm-card">
+            <div>
+                <h4>Apex</h4>
+                <small>Funded Profit</small>
+            </div>
+
+            <div class="firm-profit green-text">
+                $0
+            </div>
+        </div>
+
+        <div class="firm-card">
+            <div>
+                <h4>Topstep</h4>
+                <small>Funded Profit</small>
+            </div>
+
+            <div class="firm-profit green-text">
+                $0
+            </div>
+        </div>
+
+        <div class="firm-card">
+            <div>
+                <h4>TradeDay</h4>
+                <small>Funded Profit</small>
+            </div>
+
+            <div class="firm-profit green-text">
+                $0
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="history-section">
+
+    <div class="section-header">
+        <h3>Payout History</h3>
+        <span>Recent simulated withdrawals</span>
+    </div>
+
+    <table class="history-table">
+
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Firm</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td colspan="4" class="empty-state">
+                    No payouts yet
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<div class="eligibility-section">
+
+    <div class="section-header">
+        <h3>Payout Eligibility</h3>
+        <span>Real-time payout readiness</span>
+    </div>
+
+    <div class="eligibility-card">
+
+        <div class="eligibility-top">
+
+            <div>
+                <h4>Estimated Eligibility</h4>
+                <p>Based on current cloud-synced trades.</p>
+            </div>
+
+            <div class="eligibility-percent">
+                0%
+            </div>
+
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <div class="eligibility-info">
+            <div>Green Days: 0</div>
+            <div>Net Profit: $0</div>
+        </div>
+
+    </div>
+
+</div>
+</div>
+<script type="module">
+
+import {
+    auth,
+    onAuthStateChanged
+} from "../Scripts/firebase.js";
+
+onAuthStateChanged(auth, (user) => {
+
+    if(!user){
+
+        window.location.href =
+        "../Auth/login.html";
+
+        return;
+    }
+
+    window.currentUser = user;
+
+});
+
+</script>
+<script type="module"
+
+src="../Scripts/app.js"></script>
+<script type="module">
+
+import {
+    applyTheme,
+    loadTheme
+} from "../Scripts/theme.js";
+
+window.applyTheme = applyTheme;
+
+loadTheme();
+
+</script>
+<script type="module"
+src="../Scripts/auth-check.js">
+</script>
+</body>
+</html>

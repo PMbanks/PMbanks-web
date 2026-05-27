@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --bg-primary: #0d0d0d; --bg-secondary: #111111; --bg-card: #1a1a1a; --text-primary: #ffffff; --text-secondary: #999999; --accent-primary: #00ff88; --accent-secondary: #00b8ff; --accent-warn: #ffaa00; --border-color: #333333; }
+        .theme-white { --bg-primary:#f5f5f5; --bg-secondary:#ffffff; --bg-card:#ffffff; --text-primary:#1a1a1a; --text-secondary:#666666; --border-color:#e0e0e0; --accent-primary:#00c853; --accent-secondary:#0091ea; --accent-warn:#ff9800; }
+        .theme-darkblue { --bg-primary:#0a1628; --bg-secondary:#142238; --bg-card:#1e3a5f; --text-primary:#e0e0e0; --text-secondary:#8ab4d8; --border-color:#2a4a7a; --accent-primary:#00e676; --accent-secondary:#42a5f5; --accent-warn:#ffa726; }
+        .theme-black { --bg-primary:#0d0d0d; --bg-secondary:#111111; --bg-card:#1a1a1a; --text-primary:#ffffff; --text-secondary:#999999; --border-color:#333333; --accent-primary:#00ff88; --accent-secondary:#00b8ff; --accent-warn:#ffaa00; }
+        .theme-purple { --bg-primary:#1a0a2e; --bg-secondary:#2d1b4e; --bg-card:#3d2b5e; --text-primary:#e8d5f5; --text-secondary:#b794d4; --border-color:#4a2c7a; --accent-primary:#69f0ae; --accent-secondary:#7c4dff; --accent-warn:#ffb74d; }
+        .theme-darkred { --bg-primary:#1a0505; --bg-secondary:#2b0a0a; --bg-card:#3d1212; --text-primary:#ffe6e6; --text-secondary:#a87b7b; --border-color:#5c1a1a; --accent-primary:#66bb6a; --accent-secondary:#64b5f6; --accent-warn:#ffb74d; }
+        .theme-darkbrown { --bg-primary:#1e120e; --bg-secondary:#331f17; --bg-card:#4a2d22; --text-primary:#e8dcd4; --text-secondary:#a89480; --border-color:#5c3a26; --accent-primary:#81c784; --accent-secondary:#64b5f6; --accent-warn:#ffb74d; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; padding: 20px; transition: all 0.3s ease; position: relative; }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 90px; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px); border-right: 1px solid rgba(48, 54, 61, 0.5); display: flex; flex-direction: column; align-items: center; padding: 20px 0; z-index: 1000; overflow-y: auto; }
+        .sidebar-item { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 14px; font-size: 1.3rem; text-decoration: none; color: #8b949e; margin-bottom: 10px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-item:hover { background: rgba(33, 38, 45, 0.8); color: #fff; transform: scale(1.1) translateX(2px); }
+        .sidebar-item.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+        .sidebar-big { font-size: 1.8rem !important; background: linear-gradient(135deg, #667eea, #764ba2); color: white; margin-bottom: 25px; }
+        body { padding-left: 110px !important; }
+        
+        .gym-container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 15px; }
+        .header h1 { font-size: 1.6rem; font-weight: 800; background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .theme-btn, .reset-btn, .social-link { background: rgba(26, 26, 26, 0.7); backdrop-filter: blur(10px); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        .theme-btn:hover, .social-link:hover { border-color: var(--accent-primary); color: var(--accent-primary); transform: translateY(-2px); }
+        .reset-btn:hover { border-color: var(--accent-warn); color: var(--accent-warn); transform: translateY(-2px); }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .welcome-text h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .welcome-text h2 span {
+            color: var(--accent-primary);
+        }
+        .welcome-text p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .stats-badge {
+            display: flex;
+            gap: 20px;
+        }
+        .stat-badge {
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 18px;
+            border-radius: 12px;
+        }
+        .stat-badge .value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+        }
+        .stat-badge .label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+
+        /* Dashboard Grid - New Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .card {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+        .card h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Create Routine Card - Top importance */
+        .routine-card {
+            background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,184,255,0.05));
+            border: 1px solid var(--accent-primary);
+            text-align: center;
+        }
+        .routine-card h3 {
+            justify-content: center;
+        }
+        .routine-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        /* Weather Widget */
+        .weather-widget { text-align: center; }
+        .weather-search { display: flex; gap: 8px; margin-bottom: 12px; }
+        .weather-search input { flex: 1; background: #222; border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 10px; border-radius: 8px; font-size: 0.8rem; }
+        .weather-search button { background: var(--accent-primary); color: #000; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.75rem; }
+        .weather-info { padding: 10px; }
+        .weather-temp { font-size: 2rem; font-weight: 800; color: var(--accent-primary); }
+        .weather-condition { font-size: 0.8rem; color: var(--text-secondary); }
+        .weather-location { font-size: 0.85rem; font-weight: 600; }
+
+        /* Schedule Workout */
+        .schedule-day {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .schedule-day-today { background: rgba(0,255,136,0.1); border: 1px solid var(--accent-primary); }
+        .schedule-day-title { font-size: 0.75rem; font-weight: 700; color: var(--accent-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .muscle-badge { display: inline-block; background: rgba(0,255,136,0.15); padding: 3px 8px; border-radius: 15px; font-size: 0.65rem; color: var(--accent-primary); margin-right: 4px; margin-bottom: 4px; }
+        .exercise-item-small { font-size: 0.65rem; color: var(--text-secondary); padding: 3px 0; }
+        .no-workout { font-size: 0.7rem; color: var(--text-secondary); text-align: center; padding: 8px; }
+
+        /* Goals */
+        .goal-item {
+            margin-bottom: 12px;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-wrap: wrap; gap: 4px; }
+        .goal-name { font-weight: 600; font-size: 0.75rem; }
+        .goal-stats { font-size: 0.65rem; color: var(--text-secondary); }
+        .progress-bar-container { background: #333; border-radius: 8px; height: 5px; overflow: hidden; margin: 6px 0; }
+        .progress-bar { background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); height: 100%; border-radius: 8px; transition: width 0.3s ease; }
+        .goal-edit-input { background: #333; border: 1px solid var(--border-color); color: var(--text-primary); padding: 3px 6px; border-radius: 5px; font-size: 0.65rem; width: 50px; }
+        .goal-checkbox { width: 14px; height: 14px; accent-color: var(--accent-primary); cursor: pointer; }
+        .add-goal-btn { background: transparent; border: 1px dashed var(--accent-primary); color: var(--accent-primary); padding: 6px; border-radius: 8px; width: 100%; cursor: pointer; font-size: 0.7rem; margin-top: 8px; }
+
+        /* Weight History - Smaller */
+        .weight-widget { max-height: 120px; overflow-y: auto; }
+        .weight-mini-row { display: flex; justify-content: space-between; padding: 5px 8px; background: rgba(0,0,0,0.2); border-radius: 6px; margin-bottom: 4px; font-size: 0.7rem; }
+        .manage-btn { background: transparent; border: 1px solid var(--accent-secondary); color: var(--accent-secondary); padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; cursor: pointer; margin-top: 10px; width: 100%; }
+
+        /* Consistency Chart - Bigger */
+        .chart-container { height: 200px; }
+        .consistency-stats { display: flex; justify-content: space-between; margin-top: 12px; gap: 8px; }
+        .consistency-stat { background: rgba(0,0,0,0.2); padding: 6px; border-radius: 8px; text-align: center; flex: 1; }
+        .consistency-stat .value { font-size: 1rem; font-weight: 800; color: var(--accent-primary); }
+        .consistency-stat .label { font-size: 0.6rem; color: var(--text-secondary); }
+        .mark-workout-btn { width: 100%; padding: 8px; background: var(--accent-primary); color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.75rem; margin-top: 10px; }
+
+        footer { text-align: center; color: var(--text-secondary); font-size: 0.7rem; margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-card); padding: 25px; border-radius: 18px; width: 90%; max-width: 400px; border: 1px solid var(--accent-secondary); }
+        .add-weight-form { display: flex; gap: 8px; margin-bottom: 15px; }
+        .add-weight-form input { flex: 1; background: #252525; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 8px; }
+        .btn-primary { background: var(--accent-primary); color: #000; border: none; padding: 8px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; font-size: 0.8rem; }
+        .btn-secondary { background: transparent; border: 1px solid var(--text-secondary); color: var(--text-secondary); padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+        
+        @media (max-width: 1000px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 700px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            body { padding-left: 20px !important; }
+            .sidebar { display: none; }
+            .welcome-section { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="../index.html" class="sidebar-item sidebar-big" title="Main Menu">🏠</a>
+        <a href="gym.html" class="sidebar-item sidebar-big active" title="Gym Hub">💪</a>
+        <div style="width: 50%; border-top: 1px solid rgba(48, 54, 61, 0.5); margin: 10px 0;"></div>
+        <a href="routine.html" class="sidebar-item" title="Create Routine">📋</a>
+    </div>
+
+    <div class="gym-container">
+        <div class="header">
+            <h1>💪 GYM DASHBOARD</h1>
+            <div class="header-controls">
+                <button class="theme-btn" id="themeBtn">🎨 Themes</button>
+                <button class="reset-btn" onclick="clearGymData()">🗑️ Reset</button>
+                <a href="https://www.instagram.com/eddwinnq/" target="_blank" class="social-link">📷 @eddwinnq</a>
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="welcome-text">
+                <h2>Hi, <span id="userNameDisplay">Guest</span>!</h2>
+                <p id="currentDayDisplay"></p>
+            </div>
+            <div class="stats-badge">
+                <div class="stat-badge">
+                    <div class="value" id="streakCount">0</div>
+                    <div class="label">Day Streak</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="value" id="totalWorkouts">0</div>
+                    <div class="label">Total Workouts</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="value" id="stat-bw">--</div>
+                    <div class="label">Weight (KG)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- LEFT COLUMN -->
+            <div class="left-column" style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- Create Routine Card - TOP IMPORTANCE -->
+                <div class="card routine-card">
+                    <a href="routine.html">
+                        <h3>📋 CREATE ROUTINE</h3>
+                        <p style="font-size:0.75rem; margin-top:5px;">Build custom exercises & schedule your weekly split</p>
+                        <div style="margin-top:10px; color:var(--accent-secondary); font-weight:600;">Click to Open →</div>
+                    </a>
+                </div>
+
+                <!-- Weather Card -->
+                <div class="card">
+                    <h3>🌤️ Weather</h3>
+                    <div class="weather-widget">
+                        <div class="weather-search">
+                            <input type="text" id="cityInput" placeholder="City, Country" value="Novosibirsk">
+                            <button onclick="fetchWeather()">Search</button>
+                        </div>
+                        <div id="weatherInfo" class="weather-info">
+                            <div class="weather-location">--</div>
+                            <div class="weather-temp">--°C</div>
+                            <div class="weather-condition">--</div>
+                            <div class="weather-detail">💧 --% | 🌬️ -- km/h</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weight History Card - Smaller -->
+                <div class="card">
+                    <h3>⚖️ Weight History</h3>
+                    <div id="weight-list-widget" class="weight-widget">No weights yet</div>
+                    <button class="manage-btn" onclick="openWeightModal()">Manage Weight</button>
+                </div>
+            </div>
+
+            <!-- MIDDLE COLUMN -->
+            <div class="middle-column" style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- Schedule Workout Card -->
+                <div class="card">
+                    <h3>📅 Schedule</h3>
+                    <div id="scheduleContainer"></div>
+                </div>
+
+                <!-- Consistency Chart Card - Bigger -->
+                <div class="card">
+                    <h3>📊 Consistency</h3>
+                    <div class="chart-container">
+                        <canvas id="consistencyChart"></canvas>
+                    </div>
+                    <div class="consistency-stats">
+                        <div class="consistency-stat">
+                            <div class="value" id="weeklyPercent">0%</div>
+                            <div class="label">This Week</div>
+                        </div>
+                        <div class="consistency-stat">
+                            <div class="value" id="monthlyPercent">0%</div>
+                            <div class="label">This Month</div>
+                        </div>
+                        <div class="consistency-stat">
+                            <div class="value" id="bestStreak">0</div>
+                            <div class="label">Best Streak</div>
+                        </div>
+                    </div>
+                    <button class="mark-workout-btn" onclick="markWorkoutDone()">✅ Mark Today's Workout Done</button>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="right-column" style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- Goals Card -->
+                <div class="card">
+                    <h3>🎯 Goals</h3>
+                    <div id="goals-list"></div>
+                    <button class="add-goal-btn" onclick="addNewGoal()">+ Add New Goal</button>
+                </div>
+            </div>
+        </div>
+
+        <footer><p>Stay Consistent 💪</p></footer>
+    </div>
+
+    <!-- Weight Modal -->
+    <div id="weightModal" class="modal">
+        <div class="modal-content">
+            <div id="setup-view" style="text-align:center;">
+                <h3 style="margin-bottom:12px;">⚖️ Set Your Weight</h3>
+                <p style="margin-bottom:15px; color:var(--text-secondary); font-size:0.8rem;">Enter your current weight in KG</p>
+                <input type="number" id="initial-weight-input" placeholder="e.g. 75.5" step="0.1" style="width:100%; padding:8px; background:#252525; border:1px solid #333; color:#fff; border-radius:8px; margin-bottom:15px; text-align:center;">
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-primary" onclick="saveInitialWeight()">Save</button>
+                    <button class="btn-secondary" onclick="skipWeightSetup()">Skip</button>
+                </div>
+            </div>
+            <div id="history-view" style="display:none;">
+                <h3 style="margin-bottom:12px;">📈 Weight Tracker</h3>
+                <div class="add-weight-form">
+                    <input type="number" id="new-weight-input" placeholder="Weight (KG)" step="0.1">
+                    <button class="btn-primary" onclick="addNewWeight()" style="margin-top:0; width:auto;">Add</button>
+                </div>
+                <div id="weight-list-modal" style="max-height: 200px; overflow-y: auto;"></div>
+                <button class="btn-secondary" style="width:100%; margin-top:12px;" onclick="closeWeightModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Modal -->
+    <div id="themeModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:15px;">Select Theme</h3>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+                <div style="width:50px; height:50px; border-radius:50%; background:#0d0d0d; cursor:pointer; border:2px solid transparent; margin:0 auto;" data-theme="black"></div>
+                <div style="width:50px; height:50px; border-radius:50%; background:#f5f5f5; cursor:pointer; border:2px solid transparent; margin:0 auto;" data-theme="white"></div>
+                <div style="width:50px; height:50px; border-radius:50%; background:#0a1628; cursor:pointer; border:2px solid transparent; margin:0 auto;" data-theme="darkblue"></div>
+                <div style="width:50px; height:50px; border-radius:50%; background:#1a0a2e; cursor:pointer; border:2px solid transparent; margin:0 auto;" data-theme="purple"></div>
+                <div style="width:50px; height:50px; border-radius:50%; background:#1a0505; cursor:pointer; border:2px solid transparent; margin:0 auto;" data-theme="darkred"></div>
+                <div style="width:50px; height:50px; border-radius:50%; background:#1e120e; cursor:pointer; border:2px solid transparent; margin:0 auto;" data-theme="darkbrown"></div>
+            </div>
+            <button class="btn-secondary" style="margin-top:15px;" onclick="closeThemeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // ============ USERNAME ============
+        function loadUserName() {
+            const userName = localStorage.getItem('userName') || 'Guest';
+            document.getElementById('userNameDisplay').textContent = userName;
+        }
+        
+        // ============ CURRENT DAY ============
+        function updateCurrentDay() {
+            const now = new Date();
+            const options = { weekday: 'long', month: 'short', day: 'numeric' };
+            document.getElementById('currentDayDisplay').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateCurrentDay();
+        function openThemeModal() { document.getElementById('themeModal').classList.add('active'); }
+        function closeThemeModal() { document.getElementById('themeModal').classList.remove('active'); }
+        
+        document.getElementById('themeBtn').addEventListener('click', openThemeModal);
+        document.querySelectorAll('[data-theme]').forEach(el => {
+            el.addEventListener('click', () => {
+                applyTheme(el.dataset.theme);
+                closeThemeModal();
+            });
+        });
+        
+        window.addEventListener('click', function(e) { 
+            if (e.target.classList && e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+        
+        // ============ GOALS ============
+        let goalsData = JSON.parse(localStorage.getItem('gymGoals'));
+        if (!goalsData || goalsData.length === 0) {
+            goalsData = [
+                { name: 'Bench Press', current: 180, target: 230, unit: 'kg' },
+                { name: 'Squat', current: 220, target: 270, unit: 'kg' },
+                { name: 'Deadlift', current: 260, target: 315, unit: 'kg' },
+                { name: 'Pull Ups', current: 5, target: 20, unit: 'reps' }
+            ];
+        }
+        
+        function saveGoals() { localStorage.setItem('gymGoals', JSON.stringify(goalsData)); }
+        
+        function loadGoals() {
+            const container = document.getElementById('goals-list');
+            if (!container) return;
+            container.innerHTML = '';
+            goalsData.forEach((goal, index) => {
+                const percentage = Math.min(100, (goal.current / goal.target) * 100);
+                const div = document.createElement('div');
+                div.className = 'goal-item';
+                div.innerHTML = `
+                    <div class="goal-header">
+                        <span class="goal-name">${escapeHtml(goal.name)}</span>
+                        <span class="goal-stats">${goal.current}/${goal.target} ${goal.unit}</span>
+                        <input type="checkbox" class="goal-checkbox" ${percentage >= 100 ? 'checked' : ''} onchange="toggleGoalComplete(${index}, this.checked)">
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${percentage}%;"></div>
+                    </div>
+                    <div class="goal-header">
+                        <input type="number" class="goal-edit-input" value="${goal.current}" step="1" onchange="updateGoalCurrent(${index}, this.value)">
+                        <input type="number" class="goal-edit-input" value="${goal.target}" step="1" onchange="updateGoalTarget(${index}, this.value)">
+                        <input type="text" class="goal-edit-input" value="${escapeHtml(goal.name)}" onchange="updateGoalName(${index}, this.value)" style="width:70px;">
+                        <button onclick="deleteGoal(${index})" style="background:transparent; border:none; color:var(--accent-red); cursor:pointer;">🗑️</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'; }); }
+        function updateGoalCurrent(index, value) { goalsData[index].current = parseFloat(value) || 0; saveGoals(); loadGoals(); }
+        function updateGoalTarget(index, value) { goalsData[index].target = parseFloat(value) || 1; saveGoals(); loadGoals(); }
+        function updateGoalName(index, value) { goalsData[index].name = value || 'Goal'; saveGoals(); loadGoals(); }
+        function toggleGoalComplete(index, isChecked) { if (isChecked) goalsData[index].current = goalsData[index].target; saveGoals(); loadGoals(); }
+        function deleteGoal(index) { goalsData.splice(index, 1); saveGoals(); loadGoals(); }
+        function addNewGoal() { goalsData.push({ name: 'New Goal', current: 0, target: 100, unit: 'kg' }); saveGoals(); loadGoals(); }
+        
+        // ============ WEIGHT ============
+        let weightHistory = JSON.parse(localStorage.getItem('gymWeightHistory')) || [];
+        
+        function openWeightModal() {
+            document.getElementById('weightModal').classList.add('active');
+            const sv = document.getElementById('setup-view'), hv = document.getElementById('history-view');
+            if (weightHistory.length === 0) { sv.style.display = 'block'; hv.style.display = 'none'; }
+            else { sv.style.display = 'none'; hv.style.display = 'block'; renderWeightListModal(); }
+        }
+        function closeWeightModal() { document.getElementById('weightModal').classList.remove('active'); }
+        function saveInitialWeight() {
+            const kg = parseFloat(document.getElementById('initial-weight-input').value);
+            if (!kg || kg < 30 || kg > 300) return alert('Enter valid weight (30-300 KG)');
+            weightHistory = [{ kg: kg, date: new Date().toISOString() }];
+            localStorage.setItem('gymWeightHistory', JSON.stringify(weightHistory));
+            updateDashboardWidget(); closeWeightModal();
+        }
+        function skipWeightSetup() { closeWeightModal(); }
+        function addNewWeight() {
+            const kg = parseFloat(document.getElementById('new-weight-input').value);
+            if (!kg || kg < 30 || kg > 300) return alert('Enter valid weight (30-300 KG)');
+            weightHistory.unshift({ kg: kg, date: new Date().toISOString() });
+            localStorage.setItem('gymWeightHistory', JSON.stringify(weightHistory));
+            document.getElementById('new-weight-input').value = '';
+            renderWeightListModal(); updateDashboardWidget();
+        }
+        function renderWeightListModal() {
+            const l = document.getElementById('weight-list-modal');
+            if (!l) return;
+            l.innerHTML = '';
+            weightHistory.forEach((e, i) => {
+                const d = new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const div = document.createElement('div');
+                div.className = 'weight-mini-row';
+                div.innerHTML = `<span>${d}</span><span>${e.kg} KG <button onclick="editWeight(${i})" style="background:transparent; border:none; color:var(--accent-secondary); cursor:pointer;">✏️</button><button onclick="deleteWeight(${i})" style="background:transparent; border:none; color:var(--accent-red); cursor:pointer;">🗑️</button></span>`;
+                l.appendChild(div);
+            });
+        }
+        function editWeight(i) { const nk = prompt('Edit weight (KG):', weightHistory[i].kg); if (nk && !isNaN(nk) && nk > 30 && nk < 300) { weightHistory[i].kg = parseFloat(nk); localStorage.setItem('gymWeightHistory', JSON.stringify(weightHistory)); renderWeightListModal(); updateDashboardWidget(); } }
+        function deleteWeight(i) { if (confirm('Delete this entry?')) { weightHistory.splice(i, 1); localStorage.setItem('gymWeightHistory', JSON.stringify(weightHistory)); if (weightHistory.length === 0) { document.getElementById('setup-view').style.display = 'block'; document.getElementById('history-view').style.display = 'none'; } else { renderWeightListModal(); } updateDashboardWidget(); } }
+        function updateDashboardWidget() {
+            const w = document.getElementById('weight-list-widget'), sb = document.getElementById('stat-bw');
+            if (!w || !sb) return;
+            if (weightHistory.length > 0) {
+                sb.textContent = weightHistory[0].kg;
+                w.innerHTML = '';
+                weightHistory.slice(0, 5).forEach(e => {
+                    const d = new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    const div = document.createElement('div');
+                    div.className = 'weight-mini-row';
+                    div.innerHTML = `<span>${d}</span><span>${e.kg} KG</span>`;
+                    w.appendChild(div);
+                });
+            } else { sb.textContent = '--'; w.innerHTML = 'No weights yet'; }
+        }
+        
+        // ============ SCHEDULE ============
+        let workoutHistory = JSON.parse(localStorage.getItem('gymWorkoutHistory')) || {};
+        
+        function updateSchedule() {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const today = new Date();
+            const todayName = days[today.getDay()];
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowName = days[tomorrow.getDay()];
+            
+            const workoutDays = JSON.parse(localStorage.getItem('gymWorkoutDays')) || {};
+            const exercisesDB = JSON.parse(localStorage.getItem('gymExercises')) || {};
+            const container = document.getElementById('scheduleContainer');
+            
+            function renderDay(dayName, isToday) {
+                const dayData = workoutDays[dayName];
+                const isRest = !dayData || !dayData.muscles || dayData.muscles.length === 0;
+                const wasDone = workoutHistory[new Date().toDateString()] && isToday;
+                let html = `<div class="schedule-day ${isToday ? 'schedule-day-today' : ''}">
+                    <div class="schedule-day-title">${isToday ? '🔴 TODAY' : '⏩ NEXT DAY'} - ${dayName} ${wasDone ? '✅' : ''}</div>`;
+                if (isRest) { html += '<div class="no-workout">Rest Day</div>'; }
+                else {
+                    let musclesHtml = '<div>';
+                    for (let m of dayData.muscles) musclesHtml += `<span class="muscle-badge">${m}</span>`;
+                    musclesHtml += '</div><div>';
+                    for (let m of dayData.muscles) {
+                        const exercises = (dayData.exercises && dayData.exercises[m]) || exercisesDB[m] || [];
+                        for (let ex of exercises) musclesHtml += `<div class="exercise-item-small">🏋️ ${ex.name}</div>`;
+                    }
+                    musclesHtml += '</div>';
+                    html += musclesHtml;
+                }
+                html += '</div>';
+                return html;
+            }
+            container.innerHTML = renderDay(todayName, true) + renderDay(tomorrowName, false);
+        }
+        
+        // ============ CONSISTENCY CHART ============
+        let consistencyChart = null;
+        
+        function loadConsistencyData() {
+            const workouts = JSON.parse(localStorage.getItem('gymWorkoutHistory')) || {};
+            const last7Days = [], last7Labels = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                last7Labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                last7Days.push(workouts[date.toDateString()] ? 1 : 0);
+            }
+            const totalWorkouts = Object.keys(workouts).length;
+            document.getElementById('totalWorkouts').textContent = totalWorkouts;
+            
+            let currentStreak = 0, bestStreak = 0, tempStreak = 0;
+            for (let i = 0; i < 30; i++) {
+                const date = new Date(); date.setDate(date.getDate() - i);
+                if (workouts[date.toDateString()]) { tempStreak++; if (tempStreak > bestStreak) bestStreak = tempStreak; if (i === 0) currentStreak = tempStreak; }
+                else { tempStreak = 0; }
+            }
+            document.getElementById('streakCount').textContent = currentStreak;
+            document.getElementById('bestStreak').textContent = bestStreak;
+            
+            const weekWorkouts = last7Days.filter(v => v === 1).length;
+            document.getElementById('weeklyPercent').textContent = Math.round((weekWorkouts / 7) * 100) + '%';
+            let monthWorkouts = 0;
+            for (let i = 0; i < 30; i++) { const date = new Date(); date.setDate(date.getDate() - i); if (workouts[date.toDateString()]) monthWorkouts++; }
+            document.getElementById('monthlyPercent').textContent = Math.round((monthWorkouts / 30) * 100) + '%';
+            
+            if (consistencyChart) consistencyChart.destroy();
+            const ctx = document.getElementById('consistencyChart').getContext('2d');
+            consistencyChart = new Chart(ctx, {
+                type: 'bar', data: { labels: last7Labels, datasets: [{ label: 'Workout', data: last7Days, backgroundColor: last7Days.map(v => v === 1 ? 'rgba(0,200,83,0.8)' : 'rgba(255,82,82,0.5)'), borderRadius: 6, barPercentage: 0.6 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 1, ticks: { stepSize: 1, callback: v => v === 1 ? '✅' : '' } } } }
+            });
+        }
+        
+        function markWorkoutDone() {
+            const today = new Date().toDateString();
+            workoutHistory[today] = true;
+            localStorage.setItem('gymWorkoutHistory', JSON.stringify(workoutHistory));
+            loadConsistencyData();
+            updateSchedule();
+            alert('✅ Workout marked as completed!');
+        }
+        
+        // ============ WEATHER API ============
+        async function fetchWeather() {
+            const city = document.getElementById('cityInput').value;
+            if (!city) return;
+            const weatherInfo = document.getElementById('weatherInfo');
+            weatherInfo.innerHTML = '<div class="weather-location">Loading...</div><div class="weather-temp">--°C</div><div class="weather-condition">--</div>';
+            try {
+                const response = await fetch(`https://wttr.in/${encodeURIComponent(city)}?format=j1`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const current = data.current_condition[0];
+                    const location = data.nearest_area[0];
+                    const temp = current.temp_C;
+                    const condition = current.weatherDesc[0].value;
+                    const humidity = current.humidity;
+                    const windSpeed = current.windspeedKmph;
+                    weatherInfo.innerHTML = `
+                        <div class="weather-location">${location.areaName[0].value}, ${location.country[0].value}</div>
+                        <div class="weather-temp">${temp}°C</div>
+                        <div class="weather-condition">${condition}</div>
+                        <div class="weather-detail">💧 ${humidity}% | 🌬️ ${windSpeed} km/h</div>
+                    `;
+                } else throw new Error();
+            } catch (error) {
+                weatherInfo.innerHTML = `<div class="weather-location">Unable to fetch</div><div class="weather-temp">--°C</div><div class="weather-condition">Try another city</div>`;
+            }
+        }
+        
+        function clearGymData() {
+            if (confirm('⚠️ Delete ALL gym data?')) {
+                if (confirm('⚠️ FINAL WARNING: Cannot be undone. Continue?')) {
+                    localStorage.removeItem('gymGoals'); localStorage.removeItem('gymWeightHistory');
+                    localStorage.removeItem('gymExercises'); localStorage.removeItem('gymWorkoutDays');
+                    localStorage.removeItem('gymWorkoutHistory'); location.reload();
+                }
+            }
+        }
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            loadUserName();
+            loadGoals();
+            updateDashboardWidget();
+            updateSchedule();
+            loadConsistencyData();
+            fetchWeather();
+            if (weightHistory.length === 0) setTimeout(() => openWeightModal(), 500);
+        });
+        
+        window.openWeightModal = openWeightModal; window.closeWeightModal = closeWeightModal;
+        window.saveInitialWeight = saveInitialWeight; window.skipWeightSetup = skipWeightSetup;
+        window.addNewWeight = addNewWeight; window.editWeight = editWeight; window.deleteWeight = deleteWeight;
+        window.updateGoalCurrent = updateGoalCurrent; window.updateGoalTarget = updateGoalTarget;
+        window.updateGoalName = updateGoalName; window.toggleGoalComplete = toggleGoalComplete;
+        window.deleteGoal = deleteGoal; window.addNewGoal = addNewGoal; window.clearGymData = clearGymData;
+        window.fetchWeather = fetchWeather; window.markWorkoutDone = markWorkoutDone;
+    </script>
+<script type="module"
+src="../Scripts/app.js"></script>
+
+<script type="module">
+
+import {
+    applyTheme,
+    loadTheme
+} from "../Scripts/theme.js";
+
+window.applyTheme = applyTheme;
+
+loadTheme();
+
+</script>
+<script type="module"
+src="../Scripts/auth-check.js">
+</script>
+</body>
+</html>

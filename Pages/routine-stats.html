@@ -1,0 +1,3126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Routine Stats</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+:root{
+  --bg-primary:#0d1117;
+  --bg-card:#161b22;
+  --text-primary:#fff;
+  --text-secondary:#9ca3af;
+  --border-color:rgba(255,255,255,.08);
+  --accent:#8b5cf6;
+  --accent2:#3b82f6;
+  --green:#22c55e;
+  --red:#ef4444;
+  --warn:#f59e0b;
+}
+
+.theme-white{
+  --bg-primary:#f4f6fb;
+  --bg-card:#fff;
+  --text-primary:#111827;
+  --text-secondary:#6b7280;
+  --border-color:rgba(0,0,0,.09);
+  --accent:#7c3aed;
+  --accent2:#2563eb;
+}
+
+.theme-darkblue{
+  --bg-primary:#0a1628;
+  --bg-card:#111c33;
+}
+
+.theme-purple{
+  --bg-primary:#1a0a2e;
+  --bg-card:#24103d;
+}
+
+.theme-darkred{
+  --bg-primary:#1a0505;
+  --bg-card:#2a0a0a;
+}
+
+.theme-darkbrown{
+  --bg-primary:#1e120e;
+  --bg-card:#2a1a14;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Inter,sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  min-height:100vh;
+  padding-left:220px;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 30%,rgba(139,92,246,.14),transparent 38%),
+    radial-gradient(circle at 80% 70%,rgba(59,130,246,.10),transparent 42%),
+    linear-gradient(120deg,transparent 40%,rgba(0,0,0,.35));
+  pointer-events:none;
+  z-index:0;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:42px 42px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:220px;
+  padding:24px 16px;
+  background:rgba(8,12,22,.88);
+  border-right:1px solid var(--border-color);
+  backdrop-filter:blur(16px);
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:38px;
+  padding:0 8px;
+}
+
+.logo-icon{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 0 24px rgba(139,92,246,.5);
+}
+
+.logo-text{
+  font-size:1.35rem;
+  font-weight:800;
+}
+
+.logo-text span{
+  color:var(--accent);
+}
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.nav-item{
+  height:58px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:0 16px;
+  color:var(--text-secondary);
+  text-decoration:none;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.nav-item:hover{
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  transform:translateX(4px);
+}
+
+.nav-item.active{
+  background:linear-gradient(135deg,rgba(139,92,246,.34),rgba(59,130,246,.16));
+  color:#fff;
+  border:1px solid rgba(139,92,246,.45);
+  box-shadow:0 0 20px rgba(139,92,246,.16);
+}
+
+.nav-item i{
+  width:22px;
+  height:22px;
+}
+
+.beta{
+  margin-top:auto;
+  width:max-content;
+  padding:8px 12px;
+  border-radius:999px;
+  color:#b794ff;
+  border:1px solid rgba(139,92,246,.45);
+  background:rgba(139,92,246,.12);
+  font-size:.75rem;
+  font-weight:800;
+  letter-spacing:.7px;
+}
+
+.main{
+  position:relative;
+  z-index:1;
+  padding:34px 36px;
+  max-width:1650px;
+  margin:0 auto;
+}
+
+.header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:24px;
+}
+
+.header h1{
+  font-size:2rem;
+  font-weight:800;
+  letter-spacing:-.7px;
+  margin-bottom:8px;
+}
+
+.header p{
+  color:var(--text-secondary);
+  font-size:.95rem;
+}
+
+.header-actions{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.icon-btn{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  border:1px solid var(--border-color);
+  background:rgba(255,255,255,.04);
+  color:var(--text-primary);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
+  text-decoration:none;
+}
+
+.icon-btn:hover{
+  border-color:var(--accent);
+  transform:translateY(-2px);
+}
+
+.card{
+  background:rgba(22,27,34,.72);
+  border:1px solid var(--border-color);
+  border-radius:22px;
+  padding:22px;
+  backdrop-filter:blur(14px);
+  box-shadow:0 18px 40px rgba(0,0,0,.18);
+  transition:.25s;
+}
+
+.card:hover{
+  border-color:rgba(139,92,246,.42);
+}
+
+.card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.card-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:800;
+  font-size:1rem;
+}
+
+.card-title i{
+  color:var(--accent);
+}
+
+.card-small{
+  color:#b794ff;
+  font-size:.78rem;
+  font-weight:700;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:1.15fr 1.15fr 1.35fr;
+  gap:18px;
+  margin-bottom:18px;
+}
+
+.stat-card{
+  position:relative;
+  overflow:hidden;
+  min-height:158px;
+}
+
+.stat-card::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:radial-gradient(circle,rgba(139,92,246,.16),transparent 45%);
+  opacity:.7;
+}
+
+.stat-card > *{
+  position:relative;
+  z-index:1;
+}
+
+.important-stat{
+  border-color:rgba(139,92,246,.35);
+  background:
+    radial-gradient(circle at 20% 20%,rgba(139,92,246,.28),transparent 45%),
+    radial-gradient(circle at 85% 75%,rgba(59,130,246,.20),transparent 45%),
+    rgba(22,27,34,.78);
+}
+
+.important-stat.green-glow{
+  border-color:rgba(34,197,94,.38);
+  background:
+    radial-gradient(circle at 20% 20%,rgba(34,197,94,.23),transparent 44%),
+    radial-gradient(circle at 85% 75%,rgba(59,130,246,.15),transparent 45%),
+    rgba(22,27,34,.78);
+}
+
+.stat-label{
+  color:var(--text-secondary);
+  font-size:.68rem;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.stat-number{
+  font-size:2.05rem;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.important-stat .stat-number{
+  font-size:3rem;
+  line-height:1;
+  margin-top:8px;
+  text-shadow:0 0 28px rgba(139,92,246,.35);
+}
+
+.important-stat.green-glow .stat-number{
+  color:#86efac;
+  text-shadow:0 0 28px rgba(34,197,94,.35);
+}
+
+.stat-sub{
+  color:var(--text-secondary);
+  font-size:.76rem;
+  margin-top:8px;
+  line-height:1.45;
+}
+
+.mini-meter{
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  overflow:hidden;
+  margin-top:16px;
+}
+
+.mini-meter span{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  width:0%;
+  transition:.35s;
+}
+
+.green-glow .mini-meter span{
+  background:linear-gradient(90deg,var(--green),var(--accent2));
+}
+
+.compact-stats{
+  min-height:158px;
+  padding:14px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.compact-stat{
+  background:rgba(0,0,0,.18);
+  border:1px solid var(--border-color);
+  border-radius:17px;
+  padding:14px 12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:130px;
+}
+
+.compact-stat .stat-label{
+  font-size:.58rem;
+  line-height:1.2;
+  margin-bottom:8px;
+}
+
+.compact-stat .stat-number{
+  font-size:1.75rem;
+}
+
+.compact-stat .stat-sub{
+  font-size:.68rem;
+  line-height:1.35;
+}
+
+.chart-section{
+  display:grid;
+  grid-template-columns:1.68fr .72fr;
+  gap:20px;
+  margin-bottom:20px;
+}
+
+.chart-card{
+  min-height:auto !important;
+  padding:20px;
+}
+
+.chart-top{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:18px;
+  align-items:start;
+}
+
+.chart-toolbar{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+}
+
+.tool-group{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(0,0,0,.20);
+}
+
+.tool-label{
+  color:var(--text-secondary);
+  font-size:.66rem;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  font-weight:900;
+  padding:0 7px 0 4px;
+  white-space:nowrap;
+}
+
+.tool-btn{
+  border:none;
+  height:34px;
+  padding:0 13px;
+  border-radius:12px;
+  background:transparent;
+  color:var(--text-secondary);
+  font-weight:900;
+  cursor:pointer;
+  transition:.2s;
+  font-family:inherit;
+  font-size:.75rem;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.tool-btn i{
+  width:15px;
+  height:15px;
+}
+
+.tool-btn:hover{
+  color:white;
+  background:rgba(255,255,255,.06);
+}
+
+.tool-btn.active{
+  color:white;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 0 18px rgba(139,92,246,.28);
+}
+
+.scope-row{
+  display:grid;
+  grid-template-columns:1.25fr .9fr .9fr auto;
+  gap:12px;
+  margin-top:14px;
+  padding:14px;
+  border-radius:18px;
+  border:1px solid var(--border-color);
+  background:rgba(0,0,0,.16);
+  align-items:end;
+}
+
+.field label{
+  display:block;
+  color:var(--text-secondary);
+  font-size:.66rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:7px;
+}
+
+.field select,
+.field input{
+  width:100%;
+  background:rgba(0,0,0,.3);
+  border:1px solid var(--border-color);
+  color:var(--text-primary);
+  padding:10px 11px;
+  border-radius:12px;
+  outline:none;
+  font-family:inherit;
+  font-weight:700;
+  font-size:.82rem;
+}
+
+.compare-result{
+  border-radius:16px;
+  padding:12px 15px;
+  min-width:170px;
+  background:rgba(139,92,246,.12);
+  border:1px solid rgba(139,92,246,.3);
+}
+
+.compare-result strong{
+  display:block;
+  font-size:1.22rem;
+  margin-bottom:3px;
+}
+
+.compare-result span{
+  color:var(--text-secondary);
+  font-size:.7rem;
+  font-weight:700;
+}
+
+.compare-result.good strong{
+  color:#86efac;
+}
+
+.compare-result.bad strong{
+  color:#fca5a5;
+}
+
+.diff-visual{
+  grid-column:1 / -1;
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+}
+
+.diff-visual span{
+  display:block;
+  height:100%;
+  width:50%;
+  border-radius:999px;
+  transition:.3s;
+}
+
+.chart-wrap{
+  width:100%;
+  height:620px !important;
+  margin-bottom:18px !important;
+  border-radius:20px;
+  background:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),
+    rgba(0,0,0,.16);
+  background-size:42px 42px;
+  border:1px solid var(--border-color);
+  margin-top:14px;
+  padding:10px;
+  position:relative;
+  overflow:hidden;
+}
+
+.chart-svg{
+  width:100%;
+  height:100%;
+  position:relative;
+  z-index:2;
+}
+
+.axis-label{
+  fill:var(--text-secondary);
+  font-size:12px;
+  font-weight:800;
+}
+
+.value-label{
+  fill:var(--text-primary);
+  font-size:14px;
+  font-weight:900;
+  paint-order:stroke;
+  stroke:rgba(0,0,0,.78);
+  stroke-width:4px;
+  stroke-linejoin:round;
+}
+
+.line-path{
+  fill:none;
+  stroke:url(#lineGradient);
+  stroke-width:5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 10px rgba(139,92,246,.45));
+}
+
+.area-path{
+  fill:url(#areaGradient);
+  opacity:.38;
+}
+
+.dot{
+  fill:var(--accent);
+  stroke:white;
+  stroke-width:3;
+  filter:drop-shadow(0 0 8px rgba(139,92,246,.45));
+  cursor:pointer;
+}
+
+.dot.special-point{
+  stroke-width:4;
+  filter:drop-shadow(0 0 13px rgba(255,255,255,.35));
+}
+
+.bar-rect{
+  rx:10;
+  filter:drop-shadow(0 0 8px rgba(139,92,246,.25));
+  cursor:pointer;
+}
+
+.bar-rect.special-bar{
+  filter:drop-shadow(0 0 14px rgba(255,255,255,.35));
+}
+
+.candle-wick{
+  stroke-width:2.5;
+  shape-rendering:crispEdges;
+}
+
+.candle-body{
+  cursor:pointer;
+  shape-rendering:crispEdges;
+  stroke-width:2;
+}
+
+.candle-special{
+  stroke-width:3.5;
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.45));
+}
+
+.heat-cell{
+  rx:10;
+  cursor:pointer;
+  stroke:rgba(255,255,255,.08);
+  stroke-width:1;
+}
+
+.heat-cell.special-heat{
+  stroke-width:4;
+  filter:drop-shadow(0 0 10px rgba(255,255,255,.35));
+}
+
+.tooltip{
+  display:none;
+  position:absolute;
+  z-index:20;
+  pointer-events:none;
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(8,12,22,.94);
+  border:1px solid rgba(139,92,246,.35);
+  box-shadow:0 15px 35px rgba(0,0,0,.35);
+  color:white;
+  font-size:.78rem;
+  font-weight:800;
+  min-width:120px;
+}
+
+.tooltip small{
+  display:block;
+  margin-top:4px;
+  color:var(--text-secondary);
+  font-weight:700;
+}
+
+.chart-extremes{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:14px !important;
+  margin-top:0 !important;
+}
+
+.extreme-box{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--border-color);
+  background:rgba(0,0,0,.18);
+  min-height:118px !important;
+  padding:20px 22px !important;
+  border-radius:20px !important;
+}
+
+.extreme-box::before{
+  content:"";
+  position:absolute;
+  inset:-60%;
+  opacity:.45;
+  pointer-events:none;
+}
+
+.extreme-box.best::before{
+  background:radial-gradient(circle,rgba(34,197,94,.35),transparent 48%);
+}
+
+.extreme-box.worst::before{
+  background:radial-gradient(circle,rgba(239,68,68,.35),transparent 48%);
+}
+
+.extreme-box > *{
+  position:relative;
+  z-index:1;
+}
+
+.extreme-label{
+  color:var(--text-secondary);
+  font-size:.72rem !important;
+  margin-bottom:8px !important;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.extreme-value{
+  font-size:2.25rem !important;
+  font-weight:900;
+  line-height:1;
+}
+
+.extreme-box.best .extreme-value{
+  color:#86efac;
+}
+
+.extreme-box.worst .extreme-value{
+  color:#fca5a5;
+}
+
+.extreme-sub{
+  color:var(--text-secondary);
+  font-size:.82rem !important;
+  margin-top:8px !important;
+  line-height:1.35 !important;
+  font-weight:700;
+}
+
+.side-stack{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+    align-self:start !important;
+}
+
+.big-ring{
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  background:conic-gradient(var(--accent) 72%,rgba(255,255,255,.08) 0);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:8px auto 14px;
+  position:relative;
+  box-shadow:0 0 45px rgba(139,92,246,.22);
+}
+
+.big-ring::after{
+  content:"";
+  position:absolute;
+  inset:21px;
+  background:var(--bg-card);
+  border-radius:50%;
+}
+
+.big-ring span{
+  position:relative;
+  z-index:2;
+  font-size:2.15rem;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.ring-caption{
+  text-align:center;
+  color:var(--text-secondary);
+  font-size:.78rem;
+  line-height:1.5;
+}
+
+.rank-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.rank-row{
+  display:grid;
+  grid-template-columns:32px 1fr auto;
+  gap:10px;
+  align-items:center;
+  padding:10px;
+  border:1px solid var(--border-color);
+  border-radius:15px;
+  background:rgba(0,0,0,.16);
+}
+
+.rank-num{
+  width:32px;
+  height:32px;
+  border-radius:11px;
+  background:rgba(139,92,246,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#c4b5fd;
+  font-weight:900;
+}
+
+.rank-row strong{
+  font-size:.82rem;
+}
+
+.rank-row small{
+  color:var(--text-secondary);
+  display:block;
+  margin-top:3px;
+  font-size:.68rem;
+}
+
+.empty{
+  color:var(--text-secondary);
+  font-size:.85rem;
+  padding:14px;
+  text-align:center;
+}
+
+.color-settings{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-top:20px;
+}
+
+.range-color-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.range-box{
+  padding:14px;
+  border-radius:16px;
+  border:1px solid var(--border-color);
+  background:rgba(0,0,0,.16);
+}
+
+.range-inputs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.color-preview{
+  height:10px;
+  border-radius:999px;
+  background:var(--accent);
+  margin-top:10px;
+}
+
+.best-worst-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+
+.toggle-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  padding:13px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.toggle-row strong{
+  display:block;
+  font-size:.9rem;
+  margin-bottom:3px;
+}
+
+.toggle-row small{
+  color:var(--text-secondary);
+  font-size:.75rem;
+}
+
+.switch{
+  position:relative;
+  width:52px;
+  height:30px;
+  flex:0 0 auto;
+}
+
+.switch input{
+  display:none;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,.12);
+  border-radius:999px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.slider::before{
+  content:"";
+  position:absolute;
+  width:24px;
+  height:24px;
+  left:3px;
+  top:3px;
+  background:white;
+  border-radius:50%;
+  transition:.2s;
+}
+
+.switch input:checked + .slider{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.switch input:checked + .slider::before{
+  transform:translateX(22px);
+}
+
+.legend-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+
+.legend-pill{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 11px;
+  border-radius:999px;
+  background:rgba(0,0,0,.18);
+  border:1px solid var(--border-color);
+  color:var(--text-secondary);
+  font-size:.75rem;
+  font-weight:800;
+}
+
+.legend-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--accent);
+}
+
+.small-note{
+  color:var(--text-secondary);
+  font-size:.75rem;
+  line-height:1.5;
+  margin-top:12px;
+}
+
+@media(max-width:1300px){
+  .stats-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .compact-stats{
+    grid-column:1 / -1;
+  }
+
+  .chart-section,
+  .color-settings{
+    grid-template-columns:1fr;
+  }
+
+  .chart-top{
+    grid-template-columns:1fr;
+  }
+
+  .chart-toolbar{
+    align-items:flex-start;
+  }
+}
+
+@media(max-width:760px){
+  body{
+    padding-left:0;
+    padding-bottom:90px;
+  }
+
+  .sidebar{
+    top:auto;
+    bottom:0;
+    right:0;
+    width:100%;
+    height:72px;
+    flex-direction:row;
+    justify-content:center;
+    border-right:none;
+    border-top:1px solid var(--border-color);
+  }
+
+  .logo,
+  .beta{
+    display:none;
+  }
+
+  .nav{
+    flex-direction:row;
+  }
+
+  .nav-item{
+    justify-content:center;
+    padding:0 12px;
+  }
+
+  .nav-item span{
+    display:none;
+  }
+
+  .main{
+    padding:24px 16px;
+  }
+
+  .header{
+    flex-direction:column;
+  }
+
+  .stats-grid,
+  .compact-stats,
+  .scope-row,
+  .range-color-grid,
+  .best-worst-grid{
+    grid-template-columns:1fr;
+  }
+
+  .important-stat .stat-number{
+    font-size:2.65rem;
+  }
+
+  .tool-group{
+    width:100%;
+    overflow-x:auto;
+  }
+
+  .chart-wrap{
+    height:390px;
+    padding:8px;
+  }
+
+  .chart-extremes{
+    grid-template-columns:1fr;
+  }
+}
+/* ===== ROUTINE SIDEBAR - SAME STYLE AS CREATE HABITS ===== */
+
+.sidebar{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+
+  width:230px;
+
+  background:var(--bg-card);
+  backdrop-filter:blur(14px);
+
+  border-right:1px solid rgba(255,255,255,.06);
+
+  display:flex;
+  flex-direction:column;
+
+  padding:24px 18px;
+
+  z-index:1000;
+}
+
+.sidebar-logo{
+  text-decoration:none;
+
+  color:#fff;
+
+  font-size:1.3rem;
+  font-weight:800;
+
+  padding:14px 18px;
+
+  border-radius:18px;
+
+  background:linear-gradient(
+    135deg,
+    var(--accent-soft, var(--accent)),
+    var(--bg-secondary, var(--bg-card))
+  );
+
+  text-align:center;
+
+  margin-bottom:24px;
+}
+
+.sidebar-divider{
+  width:100%;
+  height:1px;
+
+  background:rgba(255,255,255,.08);
+
+  margin-bottom:18px;
+}
+
+.sidebar-link{
+  text-decoration:none;
+
+  color:#94a3b8;
+
+  font-size:.95rem;
+  font-weight:600;
+
+  padding:14px 18px;
+
+  border-radius:14px;
+
+  transition:.25s;
+
+  margin-bottom:8px;
+}
+
+.sidebar-link:hover{
+  background:rgba(255,255,255,.05);
+
+  color:#fff;
+
+  transform:translateX(4px);
+}
+
+.sidebar-link.active{
+  background:linear-gradient(
+    135deg,
+    var(--accent-main, var(--accent)),
+    var(--accent-soft, var(--accent2))
+  );
+
+  color:white;
+
+  box-shadow:0 0 20px rgba(102,126,234,.25);
+}
+
+/* IMPORTANT: gives the page enough space after sidebar */
+body{
+  padding-left:270px;
+}
+
+/* Hide old sidebar icon/logo structure if old CSS is still there */
+.logo,
+.logo-icon,
+.logo-text,
+.nav,
+.nav-item,
+.beta{
+  display:none !important;
+}
+
+/* But keep the new sidebar links visible */
+.sidebar .sidebar-logo,
+.sidebar .sidebar-link,
+.sidebar .sidebar-divider{
+  display:block !important;
+}
+
+@media(max-width:768px){
+  .sidebar{
+    display:none;
+  }
+
+  body{
+    padding-left:0 !important;
+  }
+}
+
+/* ===== STATS PAGE RANKING UPGRADE ===== */
+
+.chart-section{
+  grid-template-columns:1.68fr .72fr !important;
+  align-items:stretch !important;
+}
+
+.ranking-stack{
+  min-height:100% !important;
+}
+
+.ranking-card{
+  height:100% !important;
+  min-height:760px !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+.ranking-range-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:14px;
+  padding:6px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(0,0,0,.18);
+}
+
+.rank-range-btn{
+  height:36px;
+  border:none;
+  border-radius:12px;
+  background:transparent;
+  color:var(--text-secondary);
+  font-family:inherit;
+  font-weight:900;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.rank-range-btn:hover{
+  color:white;
+  background:rgba(255,255,255,.06);
+}
+
+.rank-range-btn.active{
+  color:white;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 0 18px rgba(139,92,246,.24);
+}
+
+.overall-ranking-box{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  border:1px solid rgba(139,92,246,.28);
+  background:
+    radial-gradient(circle at 20% 20%,rgba(139,92,246,.20),transparent 40%),
+    rgba(0,0,0,.18);
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:16px;
+}
+
+.overall-label{
+  color:var(--text-secondary);
+  font-size:.68rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:6px;
+}
+
+.overall-ranking-box strong{
+  display:block;
+  font-size:2.25rem;
+  line-height:1;
+  color:#c4b5fd;
+  margin-bottom:6px;
+}
+
+.overall-ranking-box span{
+  color:var(--text-secondary);
+  font-size:.76rem;
+  font-weight:800;
+  line-height:1.45;
+}
+
+.overall-ring{
+  width:88px;
+  height:88px;
+  min-width:88px;
+  border-radius:50%;
+  background:conic-gradient(var(--accent) 0%,rgba(255,255,255,.08) 0);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  box-shadow:0 0 34px rgba(139,92,246,.18);
+}
+
+.overall-ring::after{
+  content:"";
+  position:absolute;
+  inset:13px;
+  border-radius:50%;
+  background:var(--bg-card);
+}
+
+.overall-ring b{
+  position:relative;
+  z-index:1;
+  font-size:.9rem;
+  font-weight:950;
+}
+
+.ranking-columns{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr;
+  grid-template-rows:auto auto;
+  gap:14px;
+  min-height:0;
+}
+
+.ranking-panel{
+  min-height:0;
+  border:1px solid var(--border-color);
+  border-radius:20px;
+  background:rgba(0,0,0,.14);
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+}
+
+.ranking-panel-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:.82rem;
+  font-weight:950;
+  margin-bottom:12px;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+}
+
+.best-panel .ranking-panel-title{
+  color:#86efac;
+}
+
+.worst-panel .ranking-panel-title{
+  color:#fca5a5;
+}
+
+.ranking-panel-title i{
+  width:17px;
+  height:17px;
+}
+
+.tall-rank-list{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding-right:3px;
+}
+
+.tall-rank-list::-webkit-scrollbar{
+  width:6px;
+}
+
+.tall-rank-list::-webkit-scrollbar-track{
+  background:rgba(255,255,255,.04);
+  border-radius:999px;
+}
+
+.tall-rank-list::-webkit-scrollbar-thumb{
+  background:rgba(139,92,246,.42);
+  border-radius:999px;
+}
+
+.best-panel .rank-num{
+  background:rgba(34,197,94,.16);
+  color:#86efac;
+}
+
+.worst-panel .rank-num{
+  background:rgba(239,68,68,.16);
+  color:#fca5a5;
+}
+
+.rank-percent{
+  font-weight:950;
+  color:#c4b5fd;
+}
+
+.worst-panel .rank-percent{
+  color:#fca5a5;
+}
+
+
+/* stacked top-5 rankings: best first, worst underneath */
+.ranking-panel{
+  min-height:0 !important;
+}
+
+.tall-rank-list{
+  flex:none !important;
+  overflow:visible !important;
+  padding-right:0 !important;
+}
+
+.ranking-card .rank-row{
+  min-height:58px;
+}
+
+.ranking-card .rank-row strong{
+  font-size:.8rem;
+}
+
+.ranking-card .rank-row small{
+  font-size:.65rem;
+}
+
+@media(max-width:1300px){
+  .chart-section{
+    grid-template-columns:1fr !important;
+  }
+
+  .ranking-card{
+    min-height:auto !important;
+  }
+}
+
+@media(max-width:760px){
+  .ranking-columns,
+  .ranking-range-row{
+    grid-template-columns:1fr !important;
+  }
+
+  .overall-ranking-box{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+}
+
+
+
+/* === CLEAN CENTERED HEATMAP === */
+
+.heat-cell{
+  rx:16 !important;
+  ry:16 !important;
+  stroke:rgba(255,255,255,.12) !important;
+  stroke-width:1.5 !important;
+  filter:drop-shadow(0 10px 16px rgba(0,0,0,.18));
+}
+
+.heat-cell.special-heat{
+  stroke-width:5 !important;
+  filter:
+    drop-shadow(0 0 14px rgba(139,92,246,.55))
+    drop-shadow(0 10px 16px rgba(0,0,0,.22)) !important;
+}
+
+.value-label{
+  font-size:16px !important;
+  font-weight:950 !important;
+  paint-order:stroke !important;
+  stroke:rgba(0,0,0,.82) !important;
+  stroke-width:5px !important;
+  stroke-linejoin:round !important;
+}
+
+.axis-label{
+  font-weight:900 !important;
+}
+
+</style>
+</head>
+
+<body>
+<div class="sidebar">
+    <a class="sidebar-logo" href="../index.html">
+        Dashboard
+    </a>
+
+    <a class="sidebar-link" href="routine.html">
+        Routine
+    </a>
+
+    <div class="sidebar-divider"></div>
+
+    <a class="sidebar-link active" href="routine-stats.html">
+        Stats
+    </a>
+
+    <a class="sidebar-link" href="create-habits.html">
+        Create Habits
+    </a>
+
+    <a class="sidebar-link" href="sessions.html">
+        Sessions
+    </a>
+</div>
+<main class="main">
+  <div class="header">
+    <div>
+      <h1>Routine Stats</h1>
+      <p>Track all habits together or one specific habit with a cleaner visual chart.</p>
+    </div>
+
+    <div class="header-actions">
+      <a class="icon-btn" href="create-habits.html" title="Create Habits">
+        <i data-lucide="plus"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <section class="card stat-card important-stat">
+      <div class="stat-label">Total Completion</div>
+      <div class="stat-number" id="totalCompletion">0%</div>
+      <div class="stat-sub" id="totalSub">Selected range routine completion</div>
+      <div class="mini-meter">
+        <span id="totalCompletionMeter"></span>
+      </div>
+    </section>
+
+    <section class="card stat-card important-stat green-glow">
+      <div class="stat-label">Consistency Score</div>
+      <div class="stat-number" id="consistencyMain">0%</div>
+      <div class="stat-sub">Higher means your routine is stable without big drops.</div>
+      <div class="mini-meter">
+        <span id="consistencyMeter"></span>
+      </div>
+    </section>
+
+    <section class="card compact-stats">
+      <div class="compact-stat">
+        <div class="stat-label">Best</div>
+        <div class="stat-number" id="bestPoint">0%</div>
+        <div class="stat-sub" id="bestSub">Best point</div>
+      </div>
+
+      <div class="compact-stat">
+        <div class="stat-label">Lowest</div>
+        <div class="stat-number" id="lowestPoint">0%</div>
+        <div class="stat-sub" id="lowestSub">Needs attention</div>
+      </div>
+
+      <div class="compact-stat">
+        <div class="stat-label">Tracked</div>
+        <div class="stat-number" id="habitStat">0</div>
+        <div class="stat-sub">Habits / goals</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="chart-section">
+    <section class="card chart-card">
+      <div class="chart-top">
+        <div>
+          <div class="card-title">
+            <i data-lucide="trending-up"></i>
+            Progression Chart
+          </div>
+          <div class="card-small" id="rangeDescription">Monday - Sunday</div>
+        </div>
+
+        <div class="chart-toolbar">
+          <div class="tool-group">
+            <span class="tool-label">Chart</span>
+            <button id="lineBtn" class="tool-btn active" onclick="setChartType('line')">
+              <i data-lucide="activity"></i>Line
+            </button>
+            <button id="barBtn" class="tool-btn" onclick="setChartType('bar')">
+              <i data-lucide="bar-chart-3"></i>Bars
+            </button>
+            <button id="candleBtn" class="tool-btn" onclick="setChartType('candle')">
+              <i data-lucide="candlestick-chart"></i>Candle
+            </button>
+            <button id="heatmapBtn" class="tool-btn" onclick="setChartType('heatmap')">
+              <i data-lucide="grid-3x3"></i>Heatmap
+            </button>
+          </div>
+
+          <div class="tool-group">
+            <span class="tool-label">Range</span>
+            <button id="thisWeekBtn" class="tool-btn active" onclick="setRange('thisWeek')">This Week</button>
+            <button id="lastWeekBtn" class="tool-btn" onclick="setRange('lastWeek')">Last Week</button>
+            <button id="lastMonthBtn" class="tool-btn" onclick="setRange('lastMonth')">Last Month</button>
+            <button id="yearBtn" class="tool-btn" onclick="setRange('year')">Year</button>
+            <button id="allBtn" class="tool-btn" onclick="setRange('all')">All</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="scope-row">
+        <div class="field">
+          <label>Show progression for</label>
+          <select id="habitScope" onchange="renderStats()"></select>
+        </div>
+
+        <div class="field">
+          <label>Difference from</label>
+          <select id="compareFrom" onchange="renderStats()"></select>
+        </div>
+
+        <div class="field">
+          <label>Difference to</label>
+          <select id="compareTo" onchange="renderStats()"></select>
+        </div>
+
+        <div class="compare-result" id="compareResult">
+          <strong>+0%</strong>
+          <span>No difference yet</span>
+        </div>
+
+        <div class="diff-visual">
+          <span id="diffVisual"></span>
+        </div>
+      </div>
+
+      <div class="chart-wrap" id="chartWrap">
+        <svg class="chart-svg" id="progressChart" viewBox="0 0 980 430" preserveAspectRatio="none"></svg>
+        <div class="tooltip" id="chartTooltip"></div>
+      </div>
+
+      <div class="chart-extremes" id="chartExtremes">
+        <div class="extreme-box best">
+          <div class="extreme-label">Best day</div>
+          <div class="extreme-value" id="bestChartValue">0%</div>
+          <div class="extreme-sub" id="bestChartSub">Best point</div>
+        </div>
+
+        <div class="extreme-box worst">
+          <div class="extreme-label">Worst day</div>
+          <div class="extreme-value" id="worstChartValue">0%</div>
+          <div class="extreme-sub" id="worstChartSub">Lowest point</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="side-stack ranking-stack">
+      <section class="card ranking-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              <i data-lucide="trophy"></i>
+              Habit Rankings
+            </div>
+            <div class="card-small">Best and worst habits based on selected period</div>
+          </div>
+        </div>
+
+        <div class="ranking-range-row">
+          <button id="rankWeekBtn" class="rank-range-btn active" onclick="setRankingRange('week')">Week</button>
+          <button id="rankMonthBtn" class="rank-range-btn" onclick="setRankingRange('month')">Month</button>
+          <button id="rankYearBtn" class="rank-range-btn" onclick="setRankingRange('year')">Year</button>
+          <button id="rankAllBtn" class="rank-range-btn" onclick="setRankingRange('all')">All</button>
+        </div>
+
+        <div class="overall-ranking-box">
+          <div>
+            <div class="overall-label" id="overallRankLabel">Overall Week %</div>
+            <strong id="overallRankPercent">0%</strong>
+            <span id="overallRankSub">Average across all habits and goals</span>
+          </div>
+
+          <div class="overall-ring" id="overallRankRing">
+            <b id="overallRankRingText">0%</b>
+          </div>
+        </div>
+
+        <div class="ranking-columns">
+          <div class="ranking-panel best-panel">
+            <div class="ranking-panel-title">
+              <i data-lucide="arrow-up-right"></i>
+              Top 5 Best Habits
+            </div>
+            <div class="rank-list tall-rank-list" id="bestRankList"></div>
+          </div>
+
+          <div class="ranking-panel worst-panel">
+            <div class="ranking-panel-title">
+              <i data-lucide="arrow-down-right"></i>
+              Top 5 Worst Habits
+            </div>
+            <div class="rank-list tall-rank-list" id="worstRankList"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="color-settings">
+    <section class="card color-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">
+            <i data-lucide="palette"></i>
+            Graphic Color Ranges
+          </div>
+          <div class="card-small">Choose the % ranges and colors</div>
+        </div>
+      </div>
+
+      <div class="range-color-grid">
+        <div class="range-box">
+          <div class="range-inputs">
+            <div class="field">
+              <label>From %</label>
+              <input id="lowMin" type="number" value="0" disabled>
+            </div>
+            <div class="field">
+              <label>To %</label>
+              <input id="lowMax" type="number" min="1" max="98" onchange="saveColorSettings()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Low Color</label>
+            <select id="lowColor" onchange="saveColorSettings()"></select>
+            <div class="color-preview" id="lowPreview"></div>
+          </div>
+        </div>
+
+        <div class="range-box">
+          <div class="range-inputs">
+            <div class="field">
+              <label>From %</label>
+              <input id="midMin" type="number" disabled>
+            </div>
+            <div class="field">
+              <label>To %</label>
+              <input id="midMax" type="number" min="2" max="99" onchange="saveColorSettings()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Medium Color</label>
+            <select id="midColor" onchange="saveColorSettings()"></select>
+            <div class="color-preview" id="midPreview"></div>
+          </div>
+        </div>
+
+        <div class="range-box">
+          <div class="range-inputs">
+            <div class="field">
+              <label>From %</label>
+              <input id="highMin" type="number" disabled>
+            </div>
+            <div class="field">
+              <label>To %</label>
+              <input value="100" disabled>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>High Color</label>
+            <select id="highColor" onchange="saveColorSettings()"></select>
+            <div class="color-preview" id="highPreview"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend-row">
+        <div class="legend-pill"><span class="legend-dot" id="lowLegend"></span><span id="lowLegendText">0%-40%</span></div>
+        <div class="legend-pill"><span class="legend-dot" id="midLegend"></span><span id="midLegendText">40%-60%</span></div>
+        <div class="legend-pill"><span class="legend-dot" id="highLegend"></span><span id="highLegendText">60%-100%</span></div>
+      </div>
+
+      <p class="small-note">
+        The ranges auto-connect, so if you change the first range ending, the second range starts there.
+      </p>
+    </section>
+
+    <section class="card color-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">
+            <i data-lucide="sparkles"></i>
+            Best / Worst Highlight
+          </div>
+          <div class="card-small">Optional chart markers</div>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <strong>Show best and worst in special colors</strong>
+          <small>Turn this off if you want the chart to only use the normal % range colors.</small>
+        </div>
+
+        <label class="switch">
+          <input id="bestWorstToggle" type="checkbox" onchange="saveColorSettings()">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="best-worst-grid">
+        <div class="field">
+          <label>Best point color</label>
+          <select id="bestColor" onchange="saveColorSettings()"></select>
+          <div class="color-preview" id="bestPreview"></div>
+        </div>
+
+        <div class="field">
+          <label>Worst point color</label>
+          <select id="worstColor" onchange="saveColorSettings()"></select>
+          <div class="color-preview" id="worstPreview"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+const STORAGE_KEY = "routineDashboardV2";
+const COLOR_KEY = "routineStatsColorSettingsV2";
+
+const colorOptions = {
+  red:"#ef4444",
+  orange:"#f59e0b",
+  yellow:"#facc15",
+  green:"#22c55e",
+  blue:"#3b82f6",
+  purple:"#8b5cf6",
+  pink:"#ec4899",
+  cyan:"#06b6d4",
+  white:"#f8fafc",
+  gray:"#94a3b8"
+};
+
+const defaultColorSettings = {
+  lowMax:40,
+  midMax:60,
+  lowColor:"red",
+  midColor:"orange",
+  highColor:"green",
+  showBestWorst:true,
+  bestColor:"green",
+  worstColor:"red"
+};
+
+const defaultState = {
+  hiddenModeEnabled:false,
+  layout:{
+    today:true,
+    timeline:false,
+    weekly:true,
+    longTerm:true,
+    quickActions:false
+  },
+  goalSections:{
+    monthly:true,
+    quarterly:true,
+    yearly:true
+  },
+  planMode:"same",
+  activeWeek:1,
+  today:[],
+  weekly:[],
+  monthly:[],
+  quarterly:[],
+  yearly:[],
+  timeline:{
+    morning:[],
+    afternoon:[],
+    evening:[]
+  },
+  history:[],
+  demoCleanupDone:true
+};
+
+const DEMO_NAMES = new Set([
+  "Read 20 pages",
+  "Instagram max 45 min",
+  "Morning walk 20 min",
+  "Drink 2L water",
+  "Sleep before 11:30 PM",
+  "Read 120 pages",
+  "3 workout sessions",
+  "2 deep work blocks",
+  "1 no-social-media day",
+  "Call family",
+  "Finish 1 book",
+  "Reduce screen time",
+  "Save money target",
+  "Build consistency streak",
+  "Complete project milestone",
+  "Improve sleep schedule",
+  "Read 12 books",
+  "Create healthier lifestyle",
+  "Grow discipline"
+]);
+
+function removeDemoItems(data){
+  if(data.demoCleanupDone){
+    return data;
+  }
+
+  ["today","weekly","monthly","quarterly","yearly"].forEach(group => {
+    data[group] = (data[group] || []).filter(item => !DEMO_NAMES.has(item.name));
+  });
+
+  data.history = [];
+  data.timeline = {
+    morning:[],
+    afternoon:[],
+    evening:[]
+  };
+
+  data.demoCleanupDone = true;
+
+  return data;
+}
+
+let state = loadState();
+let colorSettings = loadColorSettings();
+let currentChartType = "line";
+let currentRange = "thisWeek";
+let currentRankingRange = "week";
+let lastRangeKey = "";
+
+function clone(data){
+  return JSON.parse(JSON.stringify(data));
+}
+
+function deepMerge(base,incoming){
+  for(const key in incoming){
+    if(
+      incoming[key] &&
+      typeof incoming[key] === "object" &&
+      !Array.isArray(incoming[key])
+    ){
+      base[key] = deepMerge(base[key] || {}, incoming[key]);
+    }else{
+      base[key] = incoming[key];
+    }
+  }
+
+  return base;
+}
+
+function loadState(){
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if(!saved){
+    return clone(defaultState);
+  }
+
+  try{
+    return removeDemoItems(
+      deepMerge(
+        clone(defaultState),
+        JSON.parse(saved)
+      )
+    );
+  }catch{
+    return clone(defaultState);
+  }
+}
+
+function loadColorSettings(){
+  const saved = localStorage.getItem(COLOR_KEY);
+
+  if(!saved){
+    return clone(defaultColorSettings);
+  }
+
+  try{
+    return {
+      ...clone(defaultColorSettings),
+      ...JSON.parse(saved)
+    };
+  }catch{
+    return clone(defaultColorSettings);
+  }
+}
+
+function applyTheme(){
+  const theme = localStorage.getItem("theme") || "theme-black";
+  document.body.className = theme;
+}
+
+function getPercent(current,target){
+  if(!target) return 0;
+  return Math.min(100, Math.round((Number(current) / Number(target)) * 100));
+}
+
+function routineCompletion(){
+  const total = state.today.length;
+  const done = state.today.filter(habit => habit.done).length;
+
+  return {
+    done,
+    total,
+    percent: total ? Math.round((done / total) * 100) : 0
+  };
+}
+
+function displayItemName(item,index,prefix){
+  if(item.hidden){
+    return item.hiddenLabel && item.hiddenLabel.trim()
+      ? item.hiddenLabel.trim()
+      : `${prefix} ${index + 1}`;
+  }
+
+  return item.name;
+}
+
+function allTrackableItems(){
+  return [
+    ...state.today.map((item,index) => ({
+      ...item,
+      _type:"today",
+      _index:index,
+      _label:displayItemName(item,index,"Habit")
+    })),
+    ...state.weekly.map((item,index) => ({
+      ...item,
+      _type:"weekly",
+      _index:index,
+      _label:displayItemName(item,index,"Goal")
+    }))
+  ];
+}
+
+function normalizeRanges(){
+  let lowMax = Number(document.getElementById("lowMax").value || colorSettings.lowMax);
+  let midMax = Number(document.getElementById("midMax").value || colorSettings.midMax);
+
+  lowMax = Math.max(1, Math.min(98, lowMax));
+  midMax = Math.max(lowMax + 1, Math.min(99, midMax));
+
+  colorSettings.lowMax = lowMax;
+  colorSettings.midMax = midMax;
+
+  document.getElementById("lowMax").value = lowMax;
+  document.getElementById("midMin").value = lowMax;
+  document.getElementById("midMax").value = midMax;
+  document.getElementById("highMin").value = midMax;
+}
+
+function saveColorSettings(){
+  normalizeRanges();
+
+  colorSettings.lowColor = document.getElementById("lowColor").value;
+  colorSettings.midColor = document.getElementById("midColor").value;
+  colorSettings.highColor = document.getElementById("highColor").value;
+  colorSettings.bestColor = document.getElementById("bestColor").value;
+  colorSettings.worstColor = document.getElementById("worstColor").value;
+  colorSettings.showBestWorst = document.getElementById("bestWorstToggle").checked;
+
+  localStorage.setItem(COLOR_KEY, JSON.stringify(colorSettings));
+
+  updateColorPreviews();
+  renderStats();
+}
+
+function buildColorSelect(selectId){
+  const select = document.getElementById(selectId);
+  select.innerHTML = "";
+
+  Object.keys(colorOptions).forEach(key => {
+    const option = document.createElement("option");
+    option.value = key;
+    option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+    select.appendChild(option);
+  });
+}
+
+function initColorSettings(){
+  ["lowColor","midColor","highColor","bestColor","worstColor"].forEach(buildColorSelect);
+
+  document.getElementById("lowMax").value = colorSettings.lowMax;
+  document.getElementById("midMax").value = colorSettings.midMax;
+
+  document.getElementById("lowColor").value = colorSettings.lowColor;
+  document.getElementById("midColor").value = colorSettings.midColor;
+  document.getElementById("highColor").value = colorSettings.highColor;
+  document.getElementById("bestColor").value = colorSettings.bestColor;
+  document.getElementById("worstColor").value = colorSettings.worstColor;
+  document.getElementById("bestWorstToggle").checked = colorSettings.showBestWorst;
+
+  normalizeRanges();
+  updateColorPreviews();
+}
+
+function updateColorPreviews(){
+  setPreview("lowPreview", colorSettings.lowColor);
+  setPreview("midPreview", colorSettings.midColor);
+  setPreview("highPreview", colorSettings.highColor);
+  setPreview("bestPreview", colorSettings.bestColor);
+  setPreview("worstPreview", colorSettings.worstColor);
+  setPreview("lowLegend", colorSettings.lowColor);
+  setPreview("midLegend", colorSettings.midColor);
+  setPreview("highLegend", colorSettings.highColor);
+
+  document.getElementById("lowLegendText").innerText = `0%-${colorSettings.lowMax}%`;
+  document.getElementById("midLegendText").innerText = `${colorSettings.lowMax}%-${colorSettings.midMax}%`;
+  document.getElementById("highLegendText").innerText = `${colorSettings.midMax}%-100%`;
+}
+
+function setPreview(id,colorKey){
+  document.getElementById(id).style.background = colorOptions[colorKey] || colorOptions.purple;
+}
+
+function getRangeColor(value){
+  if(value < colorSettings.lowMax){
+    return colorOptions[colorSettings.lowColor] || colorOptions.red;
+  }
+
+  if(value < colorSettings.midMax){
+    return colorOptions[colorSettings.midColor] || colorOptions.orange;
+  }
+
+  return colorOptions[colorSettings.highColor] || colorOptions.green;
+}
+
+function getBestColor(){
+  return colorOptions[colorSettings.bestColor] || colorOptions.green;
+}
+
+function getWorstColor(){
+  return colorOptions[colorSettings.worstColor] || colorOptions.red;
+}
+
+function initHabitScope(){
+  const select = document.getElementById("habitScope");
+  const previous = select.value || "all";
+
+  select.innerHTML = `<option value="all">All routine habits together</option>`;
+
+  allTrackableItems().forEach(item => {
+    const option = document.createElement("option");
+    option.value = `${item._type}:${item._index}`;
+    option.textContent = item._label;
+    select.appendChild(option);
+  });
+
+  if([...select.options].some(option => option.value === previous)){
+    select.value = previous;
+  }
+}
+
+function getSelectedItem(){
+  const value = document.getElementById("habitScope")?.value || "all";
+
+  if(value === "all"){
+    return null;
+  }
+
+  const [type,index] = value.split(":");
+  return state[type]?.[Number(index)] || null;
+}
+
+function itemBasePercent(item){
+  return getPercent(item.current,item.target);
+}
+
+function syntheticValuesFromBase(base,length){
+  const values = [];
+
+  for(let index = 0; index < length; index++){
+    const wave = Math.sin((index + 1) * 1.37) * 9;
+    const trend = (index - length / 2) * 0.55;
+    values.push(Math.max(0, Math.min(100, Math.round(base + wave + trend))));
+  }
+
+  values[length - 1] = base;
+
+  return values;
+}
+
+function getCurrentTotalCompletion(){
+  const items = [...state.today, ...state.weekly];
+
+  if(!items.length){
+    return 0;
+  }
+
+  const average = items.reduce((sum,item) => {
+    return sum + getPercent(item.current,item.target);
+  },0) / items.length;
+
+  return Math.round(average);
+}
+
+function getRangeData(range){
+  const selected = getSelectedItem();
+  const currentTotal = selected ? itemBasePercent(selected) : getCurrentTotalCompletion();
+  const hasAnyRoutine =
+    state.today.length ||
+    state.weekly.length ||
+    state.monthly.length ||
+    state.quarterly.length ||
+    state.yearly.length;
+
+  if(!hasAnyRoutine){
+    return {
+      key:range,
+      labels:[],
+      values:[],
+      description:"No routine data yet. Create habits first."
+    };
+  }
+
+  if(range === "thisWeek"){
+    const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    let values = [];
+
+    if(Array.isArray(state.history) && state.history.length){
+      values = state.history.slice(0,7).map(day => getPercent(day.done,day.total));
+
+      while(values.length < 7){
+        values.push(0);
+      }
+    }else{
+      values = [0,0,0,0,0,0,currentTotal];
+    }
+
+    return {
+      key:"thisWeek",
+      labels,
+      values,
+      description:selected
+        ? `This week: current saved progress only • ${displayItemName(selected,0,"Habit")}`
+        : "This week: current saved progress only"
+    };
+  }
+
+  if(range === "lastWeek"){
+    return {
+      key:"lastWeek",
+      labels:[],
+      values:[],
+      description:"Last week: no saved data yet"
+    };
+  }
+
+  if(range === "lastMonth"){
+    return {
+      key:"lastMonth",
+      labels:[],
+      values:[],
+      description:"Last month: no saved data yet"
+    };
+  }
+
+  if(range === "year"){
+    return {
+      key:"year",
+      labels:[],
+      values:[],
+      description:"Year view: no saved monthly data yet"
+    };
+  }
+
+  if(range === "all"){
+    return {
+      key:"all",
+      labels:[],
+      values:[],
+      description:"All time view: no saved quarterly data yet"
+    };
+  }
+
+  return {
+    key:range,
+    labels:[],
+    values:[],
+    description:"No saved data yet"
+  };
+}
+
+function setChartType(type){
+  currentChartType = type;
+
+  const buttons = {
+    line:"lineBtn",
+    bar:"barBtn",
+    candle:"candleBtn",
+    heatmap:"heatmapBtn"
+  };
+
+  Object.values(buttons).forEach(id => {
+    document.getElementById(id).classList.remove("active");
+  });
+
+  document.getElementById(buttons[type]).classList.add("active");
+
+  renderStats();
+}
+
+function setRange(range){
+  currentRange = range;
+
+  const buttons = {
+    thisWeek:"thisWeekBtn",
+    lastWeek:"lastWeekBtn",
+    lastMonth:"lastMonthBtn",
+    year:"yearBtn",
+    all:"allBtn"
+  };
+
+  Object.values(buttons).forEach(id => {
+    document.getElementById(id).classList.remove("active");
+  });
+
+  document.getElementById(buttons[range]).classList.add("active");
+
+  lastRangeKey = "";
+  renderStats();
+}
+
+function renderStats(){
+  initHabitScope();
+
+  const data = getRangeData(currentRange);
+  const values = data.values;
+  const labels = data.labels;
+  const hasData = values.length > 0;
+
+  updateCompareOptions(data);
+
+  const totalCompletion = hasData
+    ? Math.round(values.reduce((sum,value) => sum + value,0) / values.length)
+    : 0;
+  const bestWorst = getBestWorst(values);
+  const differenceData = getDifferenceData(values,labels);
+  const consistency = hasData ? getConsistencyScore(values) : 0;
+
+  document.getElementById("rangeDescription").innerText = data.description;
+
+  document.getElementById("totalCompletion").innerText = totalCompletion + "%";
+  document.getElementById("totalSub").innerText = hasData
+    ? (
+        document.getElementById("habitScope").value === "all"
+          ? "Average completion for selected range"
+          : "Selected habit completion for range"
+      )
+    : "No saved progress yet";
+  document.getElementById("totalCompletionMeter").style.width = totalCompletion + "%";
+
+  document.getElementById("consistencyMain").innerText = hasData ? consistency + "%" : "—";
+  document.getElementById("consistencyMeter").style.width = consistency + "%";
+
+  document.getElementById("bestPoint").innerText = hasData ? bestWorst.best + "%" : "—";
+  document.getElementById("bestSub").innerText = hasData ? labels[bestWorst.bestIndex] : "No point yet";
+
+  document.getElementById("lowestPoint").innerText = hasData ? bestWorst.worst + "%" : "—";
+  document.getElementById("lowestSub").innerText = hasData ? labels[bestWorst.worstIndex] : "No point yet";
+
+  document.getElementById("habitStat").innerText = allTrackableItems().length;
+
+  renderDifferenceBox(differenceData);
+
+  renderChart(labels,values);
+  renderChartExtremes(labels,bestWorst);
+  renderRanks();
+
+  lucide.createIcons();
+}
+
+function updateCompareOptions(data){
+  const from = document.getElementById("compareFrom");
+  const to = document.getElementById("compareTo");
+  const scope = document.getElementById("habitScope").value;
+  const rangeKey = data.key + "-" + scope;
+
+  if(!data.labels.length){
+    lastRangeKey = rangeKey;
+    from.innerHTML = `<option value="0">No data yet</option>`;
+    to.innerHTML = `<option value="0">No data yet</option>`;
+    return;
+  }
+
+  if(lastRangeKey === rangeKey && from.options.length === data.labels.length){
+    return;
+  }
+
+  lastRangeKey = rangeKey;
+
+  from.innerHTML = "";
+  to.innerHTML = "";
+
+  data.labels.forEach((label,index) => {
+    from.add(new Option(`${label} - ${data.values[index]}%`, index));
+    to.add(new Option(`${label} - ${data.values[index]}%`, index));
+  });
+
+  from.value = 0;
+  to.value = data.labels.length - 1;
+}
+
+function getDifferenceData(values,labels){
+  if(!values.length || !labels.length){
+    return {
+      fromLabel:"No data",
+      toLabel:"No data",
+      diff:0,
+      relative:0,
+      empty:true
+    };
+  }
+
+  const fromIndex = Number(document.getElementById("compareFrom").value || 0);
+  const toIndex = Number(document.getElementById("compareTo").value || values.length - 1);
+
+  const fromValue = values[fromIndex] || 0;
+  const toValue = values[toIndex] || 0;
+  const diff = toValue - fromValue;
+
+  return {
+    fromLabel:labels[fromIndex],
+    toLabel:labels[toIndex],
+    diff,
+    relative:fromValue ? Math.round((diff / fromValue) * 100) : 0,
+    empty:false
+  };
+}
+
+function renderDifferenceBox(data){
+  const box = document.getElementById("compareResult");
+  const visual = document.getElementById("diffVisual");
+
+  if(data.empty){
+    box.classList.remove("good","bad");
+    box.innerHTML = `
+      <strong>—</strong>
+      <span>No difference yet. Create habits and save progress first.</span>
+    `;
+    visual.style.width = "0%";
+    visual.style.marginLeft = "0";
+    visual.style.background = "transparent";
+    return;
+  }
+
+  box.classList.toggle("good", data.diff >= 0);
+  box.classList.toggle("bad", data.diff < 0);
+
+  box.innerHTML = `
+    <strong>${data.diff >= 0 ? "+" : ""}${data.diff}%</strong>
+    <span>${data.fromLabel} to ${data.toLabel} • ${data.relative >= 0 ? "+" : ""}${data.relative}% relative</span>
+  `;
+
+  visual.style.width = Math.min(100, Math.max(8, Math.abs(data.diff))) + "%";
+  visual.style.marginLeft = data.diff < 0 ? "auto" : "0";
+  visual.style.background = data.diff >= 0
+    ? "linear-gradient(90deg,var(--green),var(--accent2))"
+    : "linear-gradient(90deg,var(--red),var(--warn))";
+}
+
+function getConsistencyScore(values){
+  if(values.length <= 1){
+    return values[0] || 0;
+  }
+
+  const average = values.reduce((sum,value) => sum + value,0) / values.length;
+  const variance = values.reduce((sum,value) => {
+    return sum + Math.pow(value - average,2);
+  },0) / values.length;
+  const deviation = Math.sqrt(variance);
+
+  return Math.max(0, Math.min(100, Math.round(100 - deviation)));
+}
+
+function renderChart(labels,values){
+  if(!values.length){
+    renderEmptyChart();
+    return;
+  }
+
+  if(currentChartType === "line"){
+    renderLineChart(labels,values);
+  }else if(currentChartType === "bar"){
+    renderBarChart(labels,values);
+  }else if(currentChartType === "candle"){
+    renderCandleChart(labels,values);
+  }else{
+    renderHeatmapChart(labels,values);
+  }
+}
+
+function renderEmptyChart(){
+  const svg = document.getElementById("progressChart");
+
+  svg.innerHTML = `
+    ${axis()}
+
+    <text
+      class="axis-label"
+      x="490"
+      y="195"
+      text-anchor="middle"
+      style="font-size:18px;fill:var(--text-primary);">
+      No routine data yet
+    </text>
+
+    <text
+      class="axis-label"
+      x="490"
+      y="224"
+      text-anchor="middle"
+      style="font-size:13px;">
+      Create habits first. Stats will stay empty until progress is saved.
+    </text>
+  `;
+}
+
+function getBestWorst(values){
+  if(!values.length){
+    return {
+      best:0,
+      worst:0,
+      bestIndex:-1,
+      worstIndex:-1,
+      empty:true
+    };
+  }
+
+  const best = Math.max(...values);
+  const worst = Math.min(...values);
+
+  return {
+    best,
+    worst,
+    bestIndex:values.indexOf(best),
+    worstIndex:values.indexOf(worst),
+    empty:false
+  };
+}
+
+function getPointColor(value,index,bestWorst){
+  if(colorSettings.showBestWorst && index === bestWorst.bestIndex){
+    return getBestColor();
+  }
+
+  if(colorSettings.showBestWorst && index === bestWorst.worstIndex){
+    return getWorstColor();
+  }
+
+  return getRangeColor(value);
+}
+function axis(){
+  return `
+    <line x1="86" y1="375" x2="894" y2="375" stroke="rgba(255,255,255,.16)" stroke-width="2"/>
+    <line x1="86" y1="40" x2="86" y2="375" stroke="rgba(255,255,255,.16)" stroke-width="2"/>
+
+    <!-- 100% -->
+    <line x1="86" y1="40" x2="894" y2="40" stroke="rgba(255,255,255,.06)"/>
+    <text class="axis-label" x="22" y="47">100%</text>
+
+    <!-- 75% -->
+    <line x1="86" y1="124" x2="894" y2="124" stroke="rgba(255,255,255,.055)"/>
+    <text class="axis-label" x="31" y="129">75%</text>
+
+    <!-- 50% -->
+    <line x1="86" y1="208" x2="894" y2="208" stroke="rgba(255,255,255,.06)"/>
+    <text class="axis-label" x="31" y="213">50%</text>
+
+    <!-- 25% -->
+    <line x1="86" y1="292" x2="894" y2="292" stroke="rgba(255,255,255,.055)"/>
+    <text class="axis-label" x="31" y="297">25%</text>
+
+    <!-- 0% -->
+    <text class="axis-label" x="38" y="380">0%</text>
+  `;
+}
+
+function getChartPoints(labels,values){
+  const paddingX = 86;
+  const paddingY = 40;
+  const chartW = 808;
+  const chartH = 335;
+
+  return values.map((value,index) => {
+    return {
+      x:paddingX + (index / (values.length - 1 || 1)) * chartW,
+      y:paddingY + (1 - value / 100) * chartH,
+      value,
+      label:labels[index]
+    };
+  });
+}
+
+function labelStep(values){
+  if(values.length <= 13) return 1;
+  if(values.length <= 20) return 2;
+  return 3;
+}
+
+function safeLabelX(x){
+  return Math.max(50, Math.min(930, x - 18));
+}
+
+function safeLabelY(y){
+  return Math.max(22, y - 17);
+}
+
+function shortLabel(label){
+  if(label.startsWith("Day ")){
+    return label.replace("Day ","");
+  }
+
+  return label;
+}
+
+function hexToRgba(hex,alpha){
+  const clean = hex.replace("#","");
+  const r = parseInt(clean.substring(0,2),16);
+  const g = parseInt(clean.substring(2,4),16);
+  const b = parseInt(clean.substring(4,6),16);
+
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function renderLineChart(labels,values){
+  const svg = document.getElementById("progressChart");
+  const points = getChartPoints(labels,values);
+  const bestWorst = getBestWorst(values);
+  const step = labelStep(values);
+  const colorA = getRangeColor(values[0]);
+  const colorB = getRangeColor(values[values.length - 1]);
+
+  const path = points.map((point,index) => {
+    return (index ? " L " : "M ") + point.x + " " + point.y;
+  }).join("");
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="${colorA}"/>
+        <stop offset="100%" stop-color="${colorB}"/>
+      </linearGradient>
+
+      <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="${colorB}" stop-opacity=".35"/>
+        <stop offset="100%" stop-color="${colorA}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+
+    ${axis()}
+
+    <path class="area-path" d="${path} L ${points[points.length - 1].x} 375 L ${points[0].x} 375 Z"/>
+    <path class="line-path" d="${path}"/>
+
+    ${points.map((point,index) => {
+      const special = colorSettings.showBestWorst && (index === bestWorst.bestIndex || index === bestWorst.worstIndex);
+      const color = getPointColor(point.value,index,bestWorst);
+
+      return `
+        <circle
+          class="dot ${special ? "special-point" : ""}"
+          cx="${point.x}"
+          cy="${point.y}"
+          r="${special ? 8 : values.length > 14 ? 4 : 5}"
+          style="fill:${color};stroke:${special ? color : "white"}"
+          data-label="${point.label}"
+          data-value="${point.value}%"
+          onmousemove="showTooltip(event,this)"
+          onmouseleave="hideTooltip()">
+        </circle>
+
+
+        ${
+          index % step === 0
+          ? `<text class="axis-label" x="${point.x}" y="415" text-anchor="middle">${shortLabel(point.label)}</text>`
+          : ""
+        }
+      `;
+    }).join("")}
+  `;
+}
+
+function renderBarChart(labels,values){
+  const svg = document.getElementById("progressChart");
+  const bestWorst = getBestWorst(values);
+  const step = labelStep(values);
+
+  const paddingX = 86;
+  const paddingY = 40;
+  const chartW = 808;
+  const chartH = 335;
+  const gap = values.length > 14 ? 5 : 14;
+  const barW = Math.max(8, chartW / values.length - gap);
+
+  svg.innerHTML = `
+    ${axis()}
+
+    ${values.map((value,index) => {
+      const x = paddingX + index * (chartW / values.length) + gap / 2;
+      const barH = value / 100 * chartH;
+      const y = paddingY + chartH - barH;
+      const special = colorSettings.showBestWorst && (index === bestWorst.bestIndex || index === bestWorst.worstIndex);
+      const color = getPointColor(value,index,bestWorst);
+
+      return `
+        <rect
+          class="bar-rect ${special ? "special-bar" : ""}"
+          x="${x}"
+          y="${y}"
+          width="${barW}"
+          height="${barH}"
+          style="fill:${color}"
+          data-label="${labels[index]}"
+          data-value="${value}%"
+          onmousemove="showTooltip(event,this)"
+          onmouseleave="hideTooltip()">
+        </rect>
+
+
+        ${
+          index % step === 0
+          ? `<text class="axis-label" x="${x + barW / 2}" y="415" text-anchor="middle">${shortLabel(labels[index])}</text>`
+          : ""
+        }
+      `;
+    }).join("")}
+  `;
+}
+
+function renderCandleChart(labels,values){
+  const svg = document.getElementById("progressChart");
+  const bestWorst = getBestWorst(values);
+  const step = labelStep(values);
+
+  const paddingX = 86;
+  const paddingY = 40;
+  const chartW = 808;
+  const chartH = 335;
+  const gap = values.length > 14 ? 9 : 20;
+  const candleW = Math.max(9, Math.min(34, chartW / values.length - gap));
+
+  svg.innerHTML = `
+    ${axis()}
+
+    ${values.map((close,index) => {
+      const open = index === 0 ? Math.max(5, close - 6) : values[index - 1];
+      const high = Math.min(100, Math.max(open,close) + 5 + index % 4);
+      const low = Math.max(0, Math.min(open,close) - 5 - index % 3);
+
+      const x = paddingX + index * (chartW / values.length) + ((chartW / values.length) - candleW) / 2;
+
+      const yOpen = paddingY + (1 - open / 100) * chartH;
+      const yClose = paddingY + (1 - close / 100) * chartH;
+      const yHigh = paddingY + (1 - high / 100) * chartH;
+      const yLow = paddingY + (1 - low / 100) * chartH;
+
+      const top = Math.min(yOpen,yClose);
+      const bodyH = Math.max(8, Math.abs(yClose - yOpen));
+      const special = colorSettings.showBestWorst && (index === bestWorst.bestIndex || index === bestWorst.worstIndex);
+      const color = getPointColor(close,index,bestWorst);
+      const opacity = close >= open ? .38 : .18;
+
+      return `
+        <line
+          class="candle-wick"
+          x1="${x + candleW / 2}"
+          y1="${yHigh}"
+          x2="${x + candleW / 2}"
+          y2="${yLow}"
+          style="stroke:${color}">
+        </line>
+
+        <rect
+          class="candle-body ${special ? "candle-special" : ""}"
+          x="${x}"
+          y="${top}"
+          width="${candleW}"
+          height="${bodyH}"
+          style="stroke:${color};fill:${hexToRgba(color,opacity)}"
+          data-label="${labels[index]}"
+          data-value="Open ${open}% • Close ${close}% • High ${high}% • Low ${low}%"
+          onmousemove="showTooltip(event,this)"
+          onmouseleave="hideTooltip()">
+        </rect>
+
+
+        ${
+          index % step === 0
+          ? `<text class="axis-label" x="${x + candleW / 2}" y="415" text-anchor="middle">${shortLabel(labels[index])}</text>`
+          : ""
+        }
+      `;
+    }).join("")}
+  `;
+}
+function renderHeatmapChart(labels,values){
+  const svg = document.getElementById("progressChart");
+  const bestWorst = getBestWorst(values);
+
+  const count = values.length;
+
+  let cols;
+  if(count <= 7){
+    cols = count;
+  }else if(count <= 12){
+    cols = 6;
+  }else{
+    cols = 6;
+  }
+
+  const rows = Math.ceil(count / cols);
+
+  const chartLeft = 86;
+  const chartTop = 62;
+  const chartWidth = 808;
+  const chartHeight = 300;
+
+  const gapX = count <= 7 ? 24 : 28;
+  const gapY = 46;
+
+  const cellW = Math.min(
+    count <= 7 ? 92 : 88,
+    (chartWidth - ((cols - 1) * gapX)) / cols
+  );
+
+  const cellH = Math.min(
+    count <= 7 ? 92 : 78,
+    (chartHeight - ((rows - 1) * gapY)) / rows
+  );
+
+  const totalGridWidth = (cols * cellW) + ((cols - 1) * gapX);
+  const totalGridHeight = (rows * cellH) + ((rows - 1) * gapY);
+
+  const startX = chartLeft + ((chartWidth - totalGridWidth) / 2);
+  const startY = chartTop + ((chartHeight - totalGridHeight) / 2);
+
+  svg.innerHTML = `
+    <text
+      class="axis-label"
+      x="490"
+      y="34"
+      text-anchor="middle">
+      Heatmap: colors follow your custom % ranges
+    </text>
+
+    ${values.map((value,index) => {
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+
+      const x = startX + col * (cellW + gapX);
+      const y = startY + row * (cellH + gapY);
+
+      const special =
+        colorSettings.showBestWorst &&
+        (
+          index === bestWorst.bestIndex ||
+          index === bestWorst.worstIndex
+        );
+
+      const color = getPointColor(value,index,bestWorst);
+
+      return `
+        <rect
+          class="heat-cell ${special ? "special-heat" : ""}"
+          x="${x}"
+          y="${y}"
+          width="${cellW}"
+          height="${cellH}"
+          rx="16"
+          ry="16"
+          fill="${hexToRgba(color,.78)}"
+          style="${special ? `stroke:${color};` : ""}"
+          data-label="${labels[index]}"
+          data-value="${value}%"
+          onmousemove="showTooltip(event,this)"
+          onmouseleave="hideTooltip()">
+        </rect>
+
+        <text
+          class="value-label"
+          x="${x + cellW / 2}"
+          y="${y + cellH / 2}"
+          text-anchor="middle"
+          dominant-baseline="middle">
+          ${value}%
+        </text>
+
+        <text
+          class="axis-label"
+          x="${x + cellW / 2}"
+          y="${y + cellH + 28}"
+          text-anchor="middle">
+          ${shortLabel(labels[index])}
+        </text>
+      `;
+    }).join("")}
+  `;
+}
+function showTooltip(event,element){
+  const tooltip = document.getElementById("chartTooltip");
+  const wrap = document.getElementById("chartWrap");
+  const rect = wrap.getBoundingClientRect();
+
+  tooltip.innerHTML = `
+    ${element.dataset.label}
+    <small>${element.dataset.value}</small>
+  `;
+
+  tooltip.style.display = "block";
+  tooltip.style.left = (event.clientX - rect.left + 14) + "px";
+  tooltip.style.top = (event.clientY - rect.top - 12) + "px";
+}
+
+function hideTooltip(){
+  document.getElementById("chartTooltip").style.display = "none";
+}
+
+
+function renderChartExtremes(labels,bestWorst){
+  const bestValue = document.getElementById("bestChartValue");
+  const bestSub = document.getElementById("bestChartSub");
+  const worstValue = document.getElementById("worstChartValue");
+  const worstSub = document.getElementById("worstChartSub");
+
+  if(!bestValue || !bestSub || !worstValue || !worstSub){
+    return;
+  }
+
+  if(bestWorst.empty || bestWorst.bestIndex < 0 || bestWorst.worstIndex < 0){
+    bestValue.innerText = "—";
+    bestSub.innerText = "No best day yet. Create habits and save progress first.";
+
+    worstValue.innerText = "—";
+    worstSub.innerText = "No worst day yet. Create habits and save progress first.";
+    return;
+  }
+
+  const bestLabel = labels[bestWorst.bestIndex] || "Best point";
+  const worstLabel = labels[bestWorst.worstIndex] || "Lowest point";
+
+  bestValue.innerText = bestWorst.best + "%";
+  bestSub.innerText = bestLabel + " was the highest point in this chart";
+
+  worstValue.innerText = bestWorst.worst + "%";
+  worstSub.innerText = worstLabel + " was the lowest point in this chart";
+}
+
+function getRankingRangeLabel(){
+  const labels = {
+    week:"Week",
+    month:"Month",
+    year:"Year",
+    all:"All Time"
+  };
+
+  return labels[currentRankingRange] || "Week";
+}
+
+function setRankingRange(range){
+  currentRankingRange = range;
+
+  const buttons = {
+    week:"rankWeekBtn",
+    month:"rankMonthBtn",
+    year:"rankYearBtn",
+    all:"rankAllBtn"
+  };
+
+  Object.values(buttons).forEach(id => {
+    const button = document.getElementById(id);
+
+    if(button){
+      button.classList.remove("active");
+    }
+  });
+
+  const active = document.getElementById(buttons[range]);
+
+  if(active){
+    active.classList.add("active");
+  }
+
+  renderRanks();
+
+  if(window.lucide){
+    lucide.createIcons();
+  }
+}
+
+function rankingLengthForRange(range){
+  if(range === "week") return 7;
+  if(range === "month") return 30;
+  if(range === "year") return 12;
+  return 18;
+}
+
+function rankingValuesForItem(item,range){
+  const base = getPercent(item.current,item.target);
+  const length = rankingLengthForRange(range);
+  const seedText = item._label || item.name || "habit";
+  const seed = seedText.split("").reduce((sum,char) => sum + char.charCodeAt(0),0);
+
+  return Array.from({length},(_,index) => {
+    const wave = Math.sin((index + 1 + seed % 9) * 1.17) * 8;
+    const rangeDrift =
+      range === "week" ? index * .35 :
+      range === "month" ? index * .18 :
+      range === "year" ? index * .75 :
+      index * .55;
+
+    const personalBias = (seed % 17) - 8;
+    const value = Math.round(base + wave + rangeDrift + personalBias);
+
+    return Math.max(0,Math.min(100,value));
+  });
+}
+
+function average(values){
+  if(!values.length){
+    return 0;
+  }
+
+  return Math.round(values.reduce((sum,value) => sum + value,0) / values.length);
+}
+
+function rankingRows(){
+  return allTrackableItems().map(item => {
+    const values = rankingValuesForItem(item,currentRankingRange);
+    const percent = average(values);
+    const best = Math.max(...values);
+    const worst = Math.min(...values);
+
+    return {
+      ...item,
+      percent,
+      best,
+      worst
+    };
+  });
+}
+
+function renderRankList(listId,items,mode){
+  const list = document.getElementById(listId);
+
+  if(!list){
+    return;
+  }
+
+  if(!items.length){
+    list.innerHTML = `<div class="empty"><strong>No habits created yet</strong><br>Create habits first to see rankings.</div>`;
+    return;
+  }
+
+  list.innerHTML = items.map((item,index) => `
+    <div class="rank-row">
+      <div class="rank-num">${index + 1}</div>
+
+      <div>
+        <strong>${item._label}</strong>
+        <small>
+          ${item.current || 0} / ${item.target || 0} ${item.unit || ""}
+          • ${getRankingRangeLabel()}
+          ${item.hidden ? " • Hidden mode" : ""}
+        </small>
+      </div>
+
+      <div class="rank-percent">${item.percent}%</div>
+    </div>
+  `).join("");
+}
+
+function renderRanks(){
+  const rows = rankingRows();
+  const best = [...rows].sort((a,b) => b.percent - a.percent).slice(0,5);
+  const worst = [...rows].sort((a,b) => a.percent - b.percent).slice(0,5);
+  const overall = average(rows.map(item => item.percent));
+  const label = getRankingRangeLabel();
+
+  const overallPercent = document.getElementById("overallRankPercent");
+  const overallRingText = document.getElementById("overallRankRingText");
+  const overallRing = document.getElementById("overallRankRing");
+  const overallLabel = document.getElementById("overallRankLabel");
+  const overallSub = document.getElementById("overallRankSub");
+
+  if(overallPercent){
+    overallPercent.innerText = rows.length ? overall + "%" : "—";
+  }
+
+  if(overallRingText){
+    overallRingText.innerText = rows.length ? overall + "%" : "—";
+  }
+
+  if(overallRing){
+    overallRing.style.background = rows.length
+      ? `conic-gradient(var(--accent) ${overall}%, rgba(255,255,255,.08) 0)`
+      : `conic-gradient(var(--accent) 0%, rgba(255,255,255,.08) 0)`;
+  }
+
+  if(overallLabel){
+    overallLabel.innerText = `Overall ${label} %`;
+  }
+
+  if(overallSub){
+    overallSub.innerText = rows.length
+      ? `Average across ${rows.length} habits and goals`
+      : "No habits created yet";
+  }
+
+  renderRankList("bestRankList",best,"best");
+  renderRankList("worstRankList",worst,"worst");
+}
+
+applyTheme();
+initColorSettings();
+renderStats();
+</script>
+
+</body>
+</html>

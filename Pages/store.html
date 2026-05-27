@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Store</title>
+<style>
+body{
+    background:#0d1117;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+.item{
+    margin:20px;
+    padding:20px;
+    border:1px solid #333;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.item:hover{
+    background:#222;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🛒 Store</h1>
+
+<div class="item" onclick="buy('🔥')">🔥 Fire Avatar</div>
+<div class="item" onclick="buy('💎')">💎 Diamond Avatar</div>
+<div class="item" onclick="buy('👑')">👑 King Avatar</div>
+
+<br>
+<button onclick="goBack()">⬅ Back</button>
+
+<script>
+function buy(icon){
+    localStorage.setItem("avatar", icon);
+    alert("Equipped " + icon);
+}
+
+function goBack(){
+    window.location.href = "index.html";
+}
+</script>
+<script type="module"
+src="../Scripts/app.js"></script>
+
+<script type="module">
+
+import {
+    auth,
+    onAuthStateChanged
+} from "../Scripts/firebase.js";
+const DEV_MODE = true;
+onAuthStateChanged(auth, (user) => {
+if (!user && !DEV_MODE) {
+
+    window.location.href =
+    "../Auth/login.html";
+
+    return;
+}
+});
+
+</script>
+<script type="module">
+
+import {
+    applyTheme,
+    loadTheme
+} from "../Scripts/theme.js";
+
+window.applyTheme = applyTheme;
+
+loadTheme();
+
+</script>
+<script type="module"
+src="../Scripts/auth-check.js">
+</script>
+</body>
+</html>

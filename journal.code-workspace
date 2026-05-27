@@ -1,0 +1,24 @@
+{
+    "folders": [
+        {
+            "name": "Pages",
+            "path": "Pages"
+        },
+        {
+            "name": "Scripts",
+            "path": "Scripts"
+        },
+        {
+            "name": "Styles",
+            "path": "Styles"
+        },
+        {
+            "name": "Data",
+            "path": "Data"
+        },
+        {
+            "name": "Assets",
+            "path": "Assets"
+        }
+    ]
+}
