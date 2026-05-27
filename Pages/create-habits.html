@@ -1662,7 +1662,7 @@ function loadState(){
 
     hydrateExistingItems(merged);
 
-    return removeDemoItems(merged);
+   return merged;
   }catch{
     return clone(defaultState);
   }

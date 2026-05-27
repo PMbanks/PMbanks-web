@@ -73,10 +73,124 @@ function toggleHabit(index){const habit=state.today[index];habit.done=!habit.don
 function syncTodayIntoHistory(){const completion=routineCompletion();if(!completion.total)return;const index=currentDayIndex();if(!Array.isArray(state.history))state.history=[];const labels=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];while(state.history.length<7)state.history.push({date:labels[state.history.length],done:0,total:completion.total});state.history[index].done=completion.done;state.history[index].total=completion.total}
 function updateWeeklyGoal(index,value){const goal=state.weekly[index];let next=Number(value);if(Number.isNaN(next))next=0;if(next<0)next=0;if(next>Number(goal.target))next=Number(goal.target);goal.current=next;saveState();render()}
 function stepWeeklyGoal(index,amount){const goal=state.weekly[index];let next=Number(goal.current||0)+amount;const target=Number(goal.target||0);if(next<0)next=0;if(next>target)next=target;goal.current=next;saveState();render()}
+function updateLongTermGoal(type,index,value){
+    const goal = state[type][index];
+
+    let next = Number(value);
+
+    if(Number.isNaN(next)){
+        next = 0;
+    }
+
+    if(next < 0){
+        next = 0;
+    }
+
+    if(next > Number(goal.target)){
+        next = Number(goal.target);
+    }
+
+    goal.current = next;
+
+    saveState();
+    render();
+}
+
+function stepLongTermGoal(type,index,amount){
+    const goal = state[type][index];
+
+    let next = Number(goal.current || 0) + amount;
+    const target = Number(goal.target || 0);
+
+    if(next < 0){
+        next = 0;
+    }
+
+    if(next > target){
+        next = target;
+    }
+
+    goal.current = next;
+
+    saveState();
+    render();
+}
 function renderToday(){const list=document.getElementById("todayList");list.innerHTML="";if(!state.today.length){list.innerHTML=emptyMessage("No habits created yet","Your daily habits will show here once you create them.")}else{state.today.forEach((habit,index)=>{const row=document.createElement("div");row.className="item-row"+(habit.done?" done":"");row.innerHTML=`<div class="checkbox ${habit.done?"done":""}" onclick="toggleHabit(${index})">${habit.done?"✓":""}</div><div><div class="item-name">${displayItemName(habit,index,"today")}</div><div class="item-sub">${habit.done?"Completed":"Pending"}${habit.hidden?" • Hidden mode":""}</div></div><div class="item-value">${habit.current||0} / ${habit.target||0} ${habit.unit||""}</div>`;list.appendChild(row)})}const c=routineCompletion();document.getElementById("completedTop").innerText=c.done;document.getElementById("totalTop").innerText=c.total;document.getElementById("todayDoneText").innerText=`${c.done} / ${c.total} completed`;document.getElementById("todayPercent").innerText=`${c.percent}%`;document.getElementById("todayProgress").style.width=c.percent+"%"}
 function renderWeekly(){const list=document.getElementById("weeklyList");list.innerHTML="";if(!state.weekly.length){list.innerHTML=emptyMessage("No habits created yet","Your weekly goals will show here once you create them.");return}state.weekly.forEach((goal,index)=>{const percent=getPercent(goal.current,goal.target);const done=percent>=100;const row=document.createElement("div");row.className="week-goal"+(done?" done":"");row.innerHTML=`<div class="week-circle"></div><div><div class="item-name">${displayItemName(goal,index,"weekly")}</div><div class="goal-progress"><span style="width:${percent}%"></span></div></div><div><div class="week-actions"><button class="week-step-btn" onclick="stepWeeklyGoal(${index},-1)">−</button><input class="week-input" type="number" value="${goal.current||0}" min="0" max="${goal.target||0}" onchange="updateWeeklyGoal(${index},this.value)"><button class="week-step-btn" onclick="stepWeeklyGoal(${index},1)">+</button></div><div class="week-unit">/ ${goal.target||0} ${goal.unit||""}</div></div>`;list.appendChild(row)})}
 function renderWeekChart(){const bars=document.getElementById("weekBars");bars.innerHTML="";if(!state.today.length&&!state.history.length){bars.innerHTML=`<div class="chart-empty" style="grid-column:1 / -1;"><i data-lucide="bar-chart-3"></i><strong>No habits created yet</strong><span>Your week chart will start once you create and complete habits.</span></div>`}else{const history=cleanHistory();const labels=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];for(let index=0;index<7;index++){const day=history[index]||{date:labels[index],done:0,total:state.today.length||0};const percent=getPercent(day.done,day.total);const height=day.total?Math.max(percent,8):8;const barWrap=document.createElement("div");barWrap.className="day-bar-wrap";barWrap.innerHTML=`<div class="day-bar" title="${day.date}: ${percent}%" style="height:${height}%;opacity:${day.total?"1":".25"}"></div><div class="day-label">${day.date.slice(0,1)}</div>`;bars.appendChild(barWrap)}}const avg=weeklyAverage();document.getElementById("weekCompletionTotal").innerText=avg+"%";document.getElementById("weekRingText").innerText=avg+"%";document.getElementById("weekTotalRing").style.background=`conic-gradient(var(--accent) ${avg}%, rgba(255,255,255,.10) 0)`;document.getElementById("weeklyTop").innerText=avg+"%";document.getElementById("streakTop").innerText=currentStreak()}
-function renderLongTerm(){[{type:"monthly",title:"Your monthly goals will show here once created."},{type:"quarterly",title:"Your quarterly goals will show here once created."},{type:"yearly",title:"Your yearly goals will show here once created."}].forEach(section=>{const box=document.getElementById(section.type+"Goals");const goals=state[section.type]||[];if(!goals.length){box.innerHTML=emptyMessage("No habits created yet",section.title);return}box.innerHTML=goals.map((goal,index)=>{const percent=getPercent(goal.current,goal.target);return `<div class="ring-row"><div class="ring" style="--p:${percent}"></div><div class="item-name">${displayItemName(goal,index,section.type)}</div><div class="item-value">${percent}%</div></div>`}).join("")})}
+function renderLongTerm(){
+    [
+        {
+            type:"monthly",
+            title:"Your monthly goals will show here once created."
+        },
+        {
+            type:"quarterly",
+            title:"Your quarterly goals will show here once created."
+        },
+        {
+            type:"yearly",
+            title:"Your yearly goals will show here once created."
+        }
+    ].forEach(section => {
+        const box = document.getElementById(section.type + "Goals");
+        const goals = state[section.type] || [];
+
+        if(!goals.length){
+            box.innerHTML = emptyMessage("No habits created yet", section.title);
+            return;
+        }
+
+        box.innerHTML = goals.map((goal,index) => {
+            const percent = getPercent(goal.current, goal.target);
+
+            return `
+                <div class="ring-row">
+                    <div class="ring" style="--p:${percent}"></div>
+
+                    <div>
+                        <div class="item-name">
+                            ${displayItemName(goal,index,section.type)}
+                        </div>
+
+                        <div class="goal-progress">
+                            <span style="width:${percent}%"></span>
+                        </div>
+
+                        <div class="item-sub" style="margin-top:7px;">
+                            ${percent}% complete
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="week-actions">
+                            <button class="week-step-btn" onclick="stepLongTermGoal('${section.type}',${index},-1)">
+                                −
+                            </button>
+
+                            <input
+                                class="week-input"
+                                type="number"
+                                value="${goal.current || 0}"
+                                min="0"
+                                max="${goal.target || 0}"
+                                onchange="updateLongTermGoal('${section.type}',${index},this.value)"
+                            >
+
+                            <button class="week-step-btn" onclick="stepLongTermGoal('${section.type}',${index},1)">
+                                +
+                            </button>
+                        </div>
+
+                        <div class="week-unit">
+                            / ${goal.target || 0} ${goal.unit || ""}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    });
+}
 function render(){renderToday();renderWeekly();renderWeekChart();renderLongTerm();if(window.lucide)lucide.createIcons()}
 applyTheme();saveState();render();
 </script>
