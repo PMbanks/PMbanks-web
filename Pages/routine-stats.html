@@ -2035,6 +2035,24 @@ function allTrackableItems(){
       _type:"weekly",
       _index:index,
       _label:displayItemName(item,index,"Goal")
+    })),
+    ...state.monthly.map((item,index) => ({
+      ...item,
+      _type:"monthly",
+      _index:index,
+      _label:displayItemName(item,index,"Monthly")
+    })),
+    ...state.quarterly.map((item,index) => ({
+      ...item,
+      _type:"quarterly",
+      _index:index,
+      _label:displayItemName(item,index,"Quarterly")
+    })),
+    ...state.yearly.map((item,index) => ({
+      ...item,
+      _type:"yearly",
+      _index:index,
+      _label:displayItemName(item,index,"Yearly")
     }))
   ];
 }
@@ -2172,6 +2190,13 @@ function itemBasePercent(item){
   return getPercent(item.current,item.target);
 }
 
+
+function currentDayIndexForStats(){
+  const jsDay = new Date().getDay();
+  return jsDay === 0 ? 6 : jsDay - 1;
+}
+
+
 function syntheticValuesFromBase(base,length){
   const values = [];
 
@@ -2201,8 +2226,10 @@ function getCurrentTotalCompletion(){
 }
 
 function getRangeData(range){
+  const selectedValue = document.getElementById("habitScope")?.value || "all";
   const selected = getSelectedItem();
-  const currentTotal = selected ? itemBasePercent(selected) : getCurrentTotalCompletion();
+  const selectedPercent = selected ? itemBasePercent(selected) : null;
+  const totalPercent = getCurrentTotalCompletion();
   const hasAnyRoutine =
     state.today.length ||
     state.weekly.length ||
@@ -2215,11 +2242,47 @@ function getRangeData(range){
       key:range,
       labels:[],
       values:[],
-      description:"No routine data yet. Create habits first."
+      description:"No routine data yet. Create habits first.",
+      summaryPercent:0,
+      consistencyPercent:0,
+      selectedLabel:""
     };
   }
 
+  function selectedName(){
+    if(!selected || selectedValue === "all"){
+      return "";
+    }
+
+    const [type,index] = selectedValue.split(":");
+    const prefixMap = {
+      today:"Habit",
+      weekly:"Goal",
+      monthly:"Monthly",
+      quarterly:"Quarterly",
+      yearly:"Yearly"
+    };
+
+    return displayItemName(selected,Number(index),prefixMap[type] || "Item");
+  }
+
   if(range === "thisWeek"){
+    if(selected){
+      const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+      const todayIndex = currentDayIndexForStats();
+      const values = labels.map((label,index) => index === todayIndex ? selectedPercent : 0);
+
+      return {
+        key:"thisWeek",
+        labels,
+        values,
+        description:`This week: ${selectedName()} current saved progress`,
+        summaryPercent:selectedPercent,
+        consistencyPercent:selectedPercent,
+        selectedLabel:selectedName()
+      };
+    }
+
     const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
     let values = [];
 
@@ -2230,16 +2293,33 @@ function getRangeData(range){
         values.push(0);
       }
     }else{
-      values = [0,0,0,0,0,0,currentTotal];
+      values = [0,0,0,0,0,0,totalPercent];
     }
+
+    const average = values.length
+      ? Math.round(values.reduce((sum,value) => sum + value,0) / values.length)
+      : totalPercent;
 
     return {
       key:"thisWeek",
       labels,
       values,
-      description:selected
-        ? `This week: current saved progress only • ${displayItemName(selected,0,"Habit")}`
-        : "This week: current saved progress only"
+      description:"This week: all routine habits together",
+      summaryPercent:average,
+      consistencyPercent:null,
+      selectedLabel:"All routine habits together"
+    };
+  }
+
+  if(selected){
+    return {
+      key:range,
+      labels:[],
+      values:[],
+      description:`${selectedName()}: no saved history for this range yet`,
+      summaryPercent:selectedPercent,
+      consistencyPercent:selectedPercent,
+      selectedLabel:selectedName()
     };
   }
 
@@ -2248,7 +2328,10 @@ function getRangeData(range){
       key:"lastWeek",
       labels:[],
       values:[],
-      description:"Last week: no saved data yet"
+      description:"Last week: no saved data yet",
+      summaryPercent:0,
+      consistencyPercent:0,
+      selectedLabel:"All routine habits together"
     };
   }
 
@@ -2257,7 +2340,10 @@ function getRangeData(range){
       key:"lastMonth",
       labels:[],
       values:[],
-      description:"Last month: no saved data yet"
+      description:"Last month: no saved data yet",
+      summaryPercent:0,
+      consistencyPercent:0,
+      selectedLabel:"All routine habits together"
     };
   }
 
@@ -2266,7 +2352,10 @@ function getRangeData(range){
       key:"year",
       labels:[],
       values:[],
-      description:"Year view: no saved monthly data yet"
+      description:"Year view: no saved monthly data yet",
+      summaryPercent:0,
+      consistencyPercent:0,
+      selectedLabel:"All routine habits together"
     };
   }
 
@@ -2275,7 +2364,10 @@ function getRangeData(range){
       key:"all",
       labels:[],
       values:[],
-      description:"All time view: no saved quarterly data yet"
+      description:"All time view: no saved quarterly data yet",
+      summaryPercent:0,
+      consistencyPercent:0,
+      selectedLabel:"All routine habits together"
     };
   }
 
@@ -2283,7 +2375,10 @@ function getRangeData(range){
     key:range,
     labels:[],
     values:[],
-    description:"No saved data yet"
+    description:"No saved data yet",
+    summaryPercent:0,
+    consistencyPercent:0,
+    selectedLabel:""
   };
 }
 
@@ -2334,29 +2429,37 @@ function renderStats(){
   const values = data.values;
   const labels = data.labels;
   const hasData = values.length > 0;
+  const isSingleScope = (document.getElementById("habitScope").value || "all") !== "all";
 
   updateCompareOptions(data);
 
-  const totalCompletion = hasData
+  const rangeAverage = hasData
     ? Math.round(values.reduce((sum,value) => sum + value,0) / values.length)
     : 0;
+
+  const totalCompletion = typeof data.summaryPercent === "number"
+    ? data.summaryPercent
+    : rangeAverage;
+
   const bestWorst = getBestWorst(values);
   const differenceData = getDifferenceData(values,labels);
-  const consistency = hasData ? getConsistencyScore(values) : 0;
+  const consistency = typeof data.consistencyPercent === "number"
+    ? data.consistencyPercent
+    : hasData
+      ? getConsistencyScore(values)
+      : 0;
 
   document.getElementById("rangeDescription").innerText = data.description;
 
   document.getElementById("totalCompletion").innerText = totalCompletion + "%";
-  document.getElementById("totalSub").innerText = hasData
-    ? (
-        document.getElementById("habitScope").value === "all"
-          ? "Average completion for selected range"
-          : "Selected habit completion for range"
-      )
-    : "No saved progress yet";
+  document.getElementById("totalSub").innerText = isSingleScope
+    ? `${data.selectedLabel || "Selected routine"} current completion`
+    : hasData
+      ? "Average completion for selected range"
+      : "No saved progress yet";
   document.getElementById("totalCompletionMeter").style.width = totalCompletion + "%";
 
-  document.getElementById("consistencyMain").innerText = hasData ? consistency + "%" : "—";
+  document.getElementById("consistencyMain").innerText = (hasData || isSingleScope) ? consistency + "%" : "—";
   document.getElementById("consistencyMeter").style.width = consistency + "%";
 
   document.getElementById("bestPoint").innerText = hasData ? bestWorst.best + "%" : "—";
