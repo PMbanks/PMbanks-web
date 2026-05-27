@@ -11,6 +11,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
 * { margin:0; padding:0; box-sizing:border-box; }
+
+body{
+    font-family:'Inter', sans-serif;
+    background:var(--bg-primary);
+    color:var(--text-primary);
+    min-height:100vh;
+    padding:20px 20px 20px 260px;
+    transition:all .3s ease;
+    position:relative;
+    overflow-x:hidden;
+}
+
 :root{
     --bg-primary:#0d1117;
     --bg-secondary:#111827;
@@ -330,10 +342,6 @@ var(--bg-secondary)
 text-align:center;
 
 margin-bottom:24px;
-}
-
-body{
-padding-left:260px;
 }
 body::after{
 content:'';
@@ -721,7 +729,7 @@ a {
         @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } .hero-stats { grid-template-columns: 1fr; } .market-grid { grid-template-columns: 1fr; } .header { flex-direction: column; text-align: center; } .logo { justify-content: center; } body { padding-left: 240px !important; } .sidebar { display: none; } }
     </style>
 </head>
-<script type="module" src="../Scripts/trades.js"></script>
+<script type="module" src="Scripts/trades.js"></script>
 <script src="../scripts/app.js"></script>
 <body>
     <div class="sidebar">
