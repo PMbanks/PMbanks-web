@@ -1146,6 +1146,106 @@ textarea{
     margin-top:2px;
 }
 
+
+
+/* ===== DAY SELECTOR ===== */
+.day-schedule-card,
+.edit-day-schedule-card{
+    margin-top:12px;
+    border:1px solid rgba(139,92,246,.22);
+    border-radius:18px;
+    padding:14px;
+    background:rgba(139,92,246,.065);
+}
+
+.day-schedule-card.hidden,
+.edit-day-schedule-card.hidden{
+    display:none;
+}
+
+.day-schedule-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:12px;
+}
+
+.day-schedule-head label{
+    margin-bottom:3px;
+}
+
+.day-schedule-actions{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+}
+
+.day-mini-btn{
+    border:1px solid rgba(139,92,246,.24);
+    background:rgba(139,92,246,.12);
+    color:#c4b5fd;
+    border-radius:999px;
+    padding:6px 9px;
+    font-size:.68rem;
+    font-weight:900;
+    cursor:pointer;
+    font-family:inherit;
+}
+
+.day-mini-btn:hover{
+    background:rgba(139,92,246,.22);
+}
+
+.day-chip-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+}
+
+.day-chip{
+    min-height:38px;
+    border-radius:13px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.045);
+    color:var(--text-secondary);
+    font-family:inherit;
+    font-size:.72rem;
+    font-weight:950;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.day-chip:hover{
+    border-color:rgba(139,92,246,.40);
+    transform:translateY(-1px);
+}
+
+.day-chip.active{
+    color:white;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border-color:transparent;
+    box-shadow:0 0 18px rgba(139,92,246,.18);
+}
+
+.day-chip.disabled{
+    opacity:.35;
+}
+
+.day-schedule-summary{
+    margin-top:10px;
+    color:#c4b5fd;
+    font-size:.76rem;
+    font-weight:850;
+}
+
+@media(max-width:900px){
+    .day-chip-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
+}
+
 @media(max-width:1180px){
     .creator-layout{
         grid-template-columns:1fr;
@@ -1351,6 +1451,26 @@ textarea{
                         <textarea id="criteriaInput" oninput="updateCreatePreview()" placeholder="Example: Workout must be at least 30 min. Deep work block must be 90 min."></textarea>
                     </div>
 
+
+                    <div class="day-schedule-card" id="dayScheduleCard">
+                        <div class="day-schedule-head">
+                            <div>
+                                <label>Active days</label>
+                                <div class="hint">
+                                    Choose which days this daily habit should appear in Routine.
+                                </div>
+                            </div>
+
+                            <div class="day-schedule-actions">
+                                <button class="day-mini-btn" type="button" onclick="setCreateDaysPreset('weekdays')">Mon-Fri</button>
+                                <button class="day-mini-btn" type="button" onclick="setCreateDaysPreset('all')">All</button>
+                            </div>
+                        </div>
+
+                        <div class="day-chip-grid" id="createDayChips"></div>
+                        <div class="day-schedule-summary" id="createDaySummary">Every day</div>
+                    </div>
+
                     <div class="hidden-mini-card" id="privateCard">
                         <div class="hidden-toggle-line">
                             <div>
@@ -1506,6 +1626,26 @@ textarea{
             <textarea id="editCriteriaInput"></textarea>
         </div>
 
+        <div class="edit-day-schedule-card" id="editDayScheduleCard">
+            <div class="day-schedule-head">
+                <div>
+                    <label>Active days</label>
+                    <div class="hint">
+                        Choose which days this daily habit should appear in Routine.
+                    </div>
+                </div>
+
+                <div class="day-schedule-actions">
+                    <button class="day-mini-btn" type="button" onclick="setEditDaysPreset('weekdays')">Mon-Fri</button>
+                    <button class="day-mini-btn" type="button" onclick="setEditDaysPreset('all')">All</button>
+                </div>
+            </div>
+
+            <div class="day-chip-grid" id="editDayChips"></div>
+            <div class="day-schedule-summary" id="editDaySummary">Every day</div>
+        </div>
+
+
         <div class="modal-switch-card">
             <div class="hidden-toggle-line">
                 <div>
@@ -1620,6 +1760,19 @@ let pendingDelete = null;
 let pendingEdit = null;
 let toastTimer = null;
 
+const dayLabels = [
+    { short:"Mon", long:"Monday" },
+    { short:"Tue", long:"Tuesday" },
+    { short:"Wed", long:"Wednesday" },
+    { short:"Thu", long:"Thursday" },
+    { short:"Fri", long:"Friday" },
+    { short:"Sat", long:"Saturday" },
+    { short:"Sun", long:"Sunday" }
+];
+
+let createSelectedDays = [0,1,2,3,4,5,6];
+let editSelectedDays = [0,1,2,3,4,5,6];
+
 function clone(data){
     return JSON.parse(JSON.stringify(data));
 }
@@ -1677,6 +1830,19 @@ function hydrateExistingItems(data){
             if(typeof item.icon !== "string") item.icon = "";
             if(typeof item.current !== "number") item.current = 0;
             if(group === "today" && typeof item.done !== "boolean") item.done = false;
+            if(group === "today"){
+                if(!Array.isArray(item.days) || !item.days.length){
+                    item.days = [0,1,2,3,4,5,6];
+                }
+
+                item.days = item.days
+                    .map(day => Number(day))
+                    .filter(day => day >= 0 && day <= 6);
+
+                if(!item.days.length){
+                    item.days = [0,1,2,3,4,5,6];
+                }
+            }
         });
     });
 }
@@ -1752,10 +1918,123 @@ function getPrivateStats(){
     };
 }
 
+
+function normalizeDays(days){
+    if(!Array.isArray(days) || !days.length){
+        return [0,1,2,3,4,5,6];
+    }
+
+    const unique = [...new Set(days.map(day => Number(day)).filter(day => day >= 0 && day <= 6))];
+
+    return unique.length ? unique.sort((a,b) => a - b) : [0,1,2,3,4,5,6];
+}
+
+function formatDays(days){
+    const selected = normalizeDays(days);
+    const joined = selected.join(",");
+
+    if(joined === "0,1,2,3,4,5,6") return "Every day";
+    if(joined === "0,1,2,3,4") return "Monday to Friday";
+    if(joined === "5,6") return "Weekend only";
+
+    return selected.map(day => dayLabels[day].short).join(", ");
+}
+
+function renderDayChips(containerId,selectedDays,onClickName){
+    const container = document.getElementById(containerId);
+
+    if(!container) return;
+
+    const selected = normalizeDays(selectedDays);
+
+    container.innerHTML = dayLabels.map((day,index) => `
+        <button
+            type="button"
+            class="day-chip ${selected.includes(index) ? "active" : ""}"
+            onclick="${onClickName}(${index})"
+            title="${day.long}">
+            ${day.short}
+        </button>
+    `).join("");
+}
+
+function updateCreateDayUI(){
+    const card = document.getElementById("dayScheduleCard");
+    const summary = document.getElementById("createDaySummary");
+
+    if(card){
+        card.classList.toggle("hidden", activeTab !== "today");
+    }
+
+    createSelectedDays = normalizeDays(createSelectedDays);
+    renderDayChips("createDayChips", createSelectedDays, "toggleCreateDay");
+
+    if(summary){
+        summary.innerText = formatDays(createSelectedDays);
+    }
+}
+
+function toggleCreateDay(day){
+    const current = new Set(createSelectedDays);
+
+    if(current.has(day) && current.size > 1){
+        current.delete(day);
+    }else{
+        current.add(day);
+    }
+
+    createSelectedDays = normalizeDays([...current]);
+    updateCreateDayUI();
+    updateCreatePreview();
+}
+
+function setCreateDaysPreset(preset){
+    createSelectedDays = preset === "weekdays" ? [0,1,2,3,4] : [0,1,2,3,4,5,6];
+    updateCreateDayUI();
+    updateCreatePreview();
+}
+
+function updateEditDayUI(){
+    const card = document.getElementById("editDayScheduleCard");
+    const summary = document.getElementById("editDaySummary");
+    const isDaily = pendingEdit && pendingEdit.tab === "today";
+
+    if(card){
+        card.classList.toggle("hidden", !isDaily);
+    }
+
+    editSelectedDays = normalizeDays(editSelectedDays);
+    renderDayChips("editDayChips", editSelectedDays, "toggleEditDay");
+
+    if(summary){
+        summary.innerText = formatDays(editSelectedDays);
+    }
+}
+
+function toggleEditDay(day){
+    const current = new Set(editSelectedDays);
+
+    if(current.has(day) && current.size > 1){
+        current.delete(day);
+    }else{
+        current.add(day);
+    }
+
+    editSelectedDays = normalizeDays([...current]);
+    updateEditDayUI();
+}
+
+function setEditDaysPreset(preset){
+    editSelectedDays = preset === "weekdays" ? [0,1,2,3,4] : [0,1,2,3,4,5,6];
+    updateEditDayUI();
+}
+
 function init(){
     applyTheme();
     renderEmojiOptions("emojiOptions", "main");
     renderEmojiOptions("editEmojiOptions", "edit");
+    updateCreateDayUI();
+    updateEditDayUI();
     renderHiddenMode();
     renderList();
     refreshPrivateCard();
@@ -1767,6 +2046,7 @@ function toggleGlobalHiddenMode(){
     state.hiddenModeEnabled = document.getElementById("globalHiddenToggle").checked;
     saveState();
     renderHiddenMode();
+    updateCreateDayUI();
     updateCreatePreview();
     renderList();
 }
@@ -1844,9 +2124,12 @@ function updateCreatePreview(){
     const criteriaText = criteria
         ? `<br><span class="criteria-line">Success: ${criteria}</span>`
         : "";
+    const daysText = activeTab === "today"
+        ? `<br><span class="criteria-line">Active: ${formatDays(createSelectedDays)}</span>`
+        : "";
 
     document.getElementById("createPreviewName").innerHTML = `${iconHTML}<span>${previewName}</span>`;
-    document.getElementById("createPreviewDetail").innerHTML = `Target: ${target} ${unit}${criteriaText}`.trim();
+    document.getElementById("createPreviewDetail").innerHTML = `Target: ${target} ${unit}${daysText}${criteriaText}`.trim();
     document.getElementById("createPreviewPrivate").classList.toggle("active", hidden);
 }
 
@@ -1942,6 +2225,8 @@ function clearCreateForm(){
     });
 
     document.getElementById("hiddenInput").checked = false;
+    createSelectedDays = [0,1,2,3,4,5,6];
+    updateCreateDayUI();
     syncEmojiActive("emojiOptions", "");
     refreshPrivateCard();
     updateCreatePreview();
@@ -1997,6 +2282,7 @@ function addItem(){
     if(activeTab === "today"){
         item.done = false;
         item.type = "daily";
+        item.days = normalizeDays(createSelectedDays);
     }
 
     state[activeTab].push(item);
@@ -2032,6 +2318,9 @@ function renderList(){
             ? `<span class="row-icon">${item.icon}</span>`
             : "";
         const targetLine = `Target: ${item.target || 1} ${item.unit || ""}`;
+        const daysLine = activeTab === "today"
+            ? ` • Days: ${formatDays(item.days)}`
+            : "";
         const realLine = hiddenDetails
             ? "Private real name hidden"
             : `Real: ${item.name}`;
@@ -2052,7 +2341,7 @@ function renderList(){
                         </div>
 
                         <small>
-                            ${realLine} • ${targetLine}${criteriaLine}
+                            ${realLine} • ${targetLine}${daysLine}${criteriaLine}
                         </small>
                     </div>
                 </div>
@@ -2141,7 +2430,11 @@ function openEditModal(index){
     document.getElementById("editHiddenInput").checked = item.hidden === true;
     document.getElementById("editHiddenLabelInput").value = item.hiddenLabel || "";
     document.getElementById("editIconInput").value = item.icon || "";
+    editSelectedDays = activeTab === "today"
+        ? normalizeDays(item.days)
+        : [0,1,2,3,4,5,6];
 
+    updateEditDayUI();
     syncEmojiActive("editEmojiOptions", item.icon || "");
     document.getElementById("editModalBackdrop").classList.add("show");
     lucideRefresh();
@@ -2172,6 +2465,10 @@ function saveEditedItem(){
     item.hidden = document.getElementById("editHiddenInput").checked;
     item.hiddenLabel = document.getElementById("editHiddenLabelInput").value.trim();
     item.icon = document.getElementById("editIconInput").value.trim();
+
+    if(group === "today"){
+        item.days = normalizeDays(editSelectedDays);
+    }
 
     saveState();
     renderHiddenMode();

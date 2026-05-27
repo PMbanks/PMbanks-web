@@ -1600,7 +1600,7 @@ body{
             <span class="tool-label">Range</span>
             <button id="thisWeekBtn" class="tool-btn active" onclick="setRange('thisWeek')">This Week</button>
             <button id="lastWeekBtn" class="tool-btn" onclick="setRange('lastWeek')">Last Week</button>
-            <button id="lastMonthBtn" class="tool-btn" onclick="setRange('lastMonth')">Last Month</button>
+            <button id="lastMonthBtn" class="tool-btn" onclick="setRange('lastMonth')">This Month</button>
             <button id="yearBtn" class="tool-btn" onclick="setRange('year')">Year</button>
             <button id="allBtn" class="tool-btn" onclick="setRange('all')">All</button>
           </div>
@@ -2191,10 +2191,120 @@ function itemBasePercent(item){
 }
 
 
+
 function currentDayIndexForStats(){
   const jsDay = new Date().getDay();
   return jsDay === 0 ? 6 : jsDay - 1;
 }
+
+const WEEK_LABELS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const DAY_NAME_TO_INDEX = {
+  mon:0,monday:0,
+  tue:1,tues:1,tuesday:1,
+  wed:2,wednesday:2,
+  thu:3,thur:3,thurs:3,thursday:3,
+  fri:4,friday:4,
+  sat:5,saturday:5,
+  sun:6,sunday:6
+};
+
+function normalizeDayValue(value){
+  if(typeof value === "number"){
+    if(value >= 0 && value <= 6) return value;
+    if(value >= 1 && value <= 7) return value - 1;
+  }
+
+  if(typeof value === "string"){
+    const clean = value.trim().toLowerCase();
+
+    if(clean in DAY_NAME_TO_INDEX){
+      return DAY_NAME_TO_INDEX[clean];
+    }
+
+    const asNumber = Number(clean);
+    if(!Number.isNaN(asNumber)){
+      return normalizeDayValue(asNumber);
+    }
+  }
+
+  return null;
+}
+
+function getItemActiveDays(item){
+  const raw =
+    item?.activeDays ??
+    item?.days ??
+    item?.weekDays ??
+    item?.weekdays ??
+    item?.selectedDays ??
+    item?.routineDays ??
+    item?.schedule?.days ??
+    item?.schedule?.activeDays ??
+    null;
+
+  if(Array.isArray(raw) && raw.length){
+    const normalized = raw
+      .map(normalizeDayValue)
+      .filter(value => value !== null);
+
+    return [...new Set(normalized)].sort((a,b) => a - b);
+  }
+
+  if(raw && typeof raw === "object"){
+    const normalized = Object.keys(raw)
+      .filter(key => raw[key])
+      .map(normalizeDayValue)
+      .filter(value => value !== null);
+
+    if(normalized.length){
+      return [...new Set(normalized)].sort((a,b) => a - b);
+    }
+  }
+
+  return [0,1,2,3,4,5,6];
+}
+
+function isItemActiveOnDay(item,dayIndex){
+  return getItemActiveDays(item).includes(dayIndex);
+}
+
+function activeDailyItemsForDay(dayIndex){
+  return (state.today || []).filter(item => isItemActiveOnDay(item,dayIndex));
+}
+
+function activeDayIndexesForSelectedRange(selected){
+  if(selected && selected._type === "today"){
+    return getItemActiveDays(selected);
+  }
+
+  const indexes = new Set();
+
+  (state.today || []).forEach(item => {
+    getItemActiveDays(item).forEach(day => indexes.add(day));
+  });
+
+  if(indexes.size){
+    return [...indexes].sort((a,b) => a - b);
+  }
+
+  return [0,1,2,3,4,5,6];
+}
+
+function completionForActiveDay(dayIndex,historyDay){
+  if(historyDay && Number(historyDay.total || 0) > 0){
+    return getPercent(historyDay.done,historyDay.total);
+  }
+
+  const activeItems = activeDailyItemsForDay(dayIndex);
+
+  if(!activeItems.length){
+    return null;
+  }
+
+  const done = activeItems.filter(item => item.done).length;
+  return Math.round((done / activeItems.length) * 100);
+}
+
 
 
 function syntheticValuesFromBase(base,length){
@@ -2211,8 +2321,18 @@ function syntheticValuesFromBase(base,length){
   return values;
 }
 
+
 function getCurrentTotalCompletion(){
-  const items = [...state.today, ...state.weekly];
+  const todayIndex = currentDayIndexForStats();
+  const dailyItems = activeDailyItemsForDay(todayIndex);
+  const otherItems = [
+    ...(state.weekly || []),
+    ...(state.monthly || []),
+    ...(state.quarterly || []),
+    ...(state.yearly || [])
+  ];
+
+  const items = [...dailyItems, ...otherItems];
 
   if(!items.length){
     return 0;
@@ -2225,11 +2345,17 @@ function getCurrentTotalCompletion(){
   return Math.round(average);
 }
 
+
+
 function getRangeData(range){
   const selectedValue = document.getElementById("habitScope")?.value || "all";
   const selected = getSelectedItem();
-  const selectedPercent = selected ? itemBasePercent(selected) : null;
+  const selectedMeta = allTrackableItems().find(item => `${item._type}:${item._index}` === selectedValue) || null;
+  const selectedItem = selectedMeta || selected;
+  const selectedPercent = selectedItem ? itemBasePercent(selectedItem) : null;
   const totalPercent = getCurrentTotalCompletion();
+  const todayIndex = currentDayIndexForStats();
+
   const hasAnyRoutine =
     state.today.length ||
     state.weekly.length ||
@@ -2250,77 +2376,151 @@ function getRangeData(range){
   }
 
   function selectedName(){
-    if(!selected || selectedValue === "all"){
+    if(!selectedItem || selectedValue === "all"){
       return "";
     }
 
-    const [type,index] = selectedValue.split(":");
-    const prefixMap = {
-      today:"Habit",
-      weekly:"Goal",
-      monthly:"Monthly",
-      quarterly:"Quarterly",
-      yearly:"Yearly"
-    };
+    return selectedItem._label || selectedItem.name || "Selected routine";
+  }
 
-    return displayItemName(selected,Number(index),prefixMap[type] || "Item");
+  function dailyValueForChart(dayIndex,historyDay){
+    // Future days still appear visually, but stay at 0 because they have not started yet.
+    if(dayIndex > todayIndex){
+      return 0;
+    }
+
+    if(historyDay && Number(historyDay.total || 0) > 0){
+      return getPercent(historyDay.done,historyDay.total);
+    }
+
+    if(dayIndex === todayIndex){
+      const activeItems = activeDailyItemsForDay(dayIndex);
+
+      if(!activeItems.length){
+        return null;
+      }
+
+      const done = activeItems.filter(item => item.done).length;
+      return Math.round((done / activeItems.length) * 100);
+    }
+
+    return 0;
+  }
+
+  function summaryForDays(values,indexes){
+    // Summary cards should not punish days that have not happened yet.
+    const startedValues = values.filter((value,index) => indexes[index] <= todayIndex);
+
+    if(!startedValues.length){
+      return 0;
+    }
+
+    return Math.round(startedValues.reduce((sum,value) => sum + value,0) / startedValues.length);
   }
 
   if(range === "thisWeek"){
-    if(selected){
-      const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-      const todayIndex = currentDayIndexForStats();
-      const values = labels.map((label,index) => index === todayIndex ? selectedPercent : 0);
+    if(selectedItem){
+      if(selectedItem._type === "today"){
+        const activeIndexes = activeDayIndexesForSelectedRange(selectedItem);
+        const labels = activeIndexes.map(index => WEEK_LABELS[index]);
+        const history = Array.isArray(state.history) ? state.history.slice(0,7) : [];
+
+        const values = activeIndexes.map(index => {
+          if(index > todayIndex){
+            return 0;
+          }
+
+          if(index === todayIndex){
+            return selectedItem.done ? 100 : 0;
+          }
+
+          const historyDay = history[index];
+
+          if(historyDay && Number(historyDay.total || 0) > 0){
+            return getPercent(historyDay.done,historyDay.total);
+          }
+
+          return 0;
+        });
+
+        const summary = summaryForDays(values,activeIndexes);
+
+        return {
+          key:"thisWeek",
+          labels,
+          values,
+          description:`This week: ${selectedName()} active days, future days shown as 0`,
+          summaryPercent:summary,
+          consistencyPercent:values.length ? getConsistencyScore(values) : selectedPercent,
+          selectedLabel:selectedName()
+        };
+      }
+
+      const labels = WEEK_LABELS.slice();
+      const indexes = [0,1,2,3,4,5,6];
+      const values = indexes.map(index => {
+        if(index === todayIndex){
+          return selectedPercent;
+        }
+
+        return 0;
+      });
 
       return {
         key:"thisWeek",
         labels,
         values,
-        description:`This week: ${selectedName()} current saved progress`,
+        description:`This week: ${selectedName()} shown across the full week`,
         summaryPercent:selectedPercent,
-        consistencyPercent:selectedPercent,
+        consistencyPercent:values.length ? getConsistencyScore(values) : selectedPercent,
         selectedLabel:selectedName()
       };
     }
 
-    const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-    let values = [];
+    const activeIndexes = activeDayIndexesForSelectedRange(null);
+    const labels = activeIndexes.map(index => WEEK_LABELS[index]);
+    const history = Array.isArray(state.history) ? state.history.slice(0,7) : [];
 
-    if(Array.isArray(state.history) && state.history.length){
-      values = state.history.slice(0,7).map(day => getPercent(day.done,day.total));
+    const values = activeIndexes.map(index => dailyValueForChart(index,history[index]));
+    const dayPoints = activeIndexes
+      .map((index,position) => ({
+        label:WEEK_LABELS[index],
+        index,
+        value:values[position]
+      }))
+      .filter(point => point.value !== null);
 
-      while(values.length < 7){
-        values.push(0);
-      }
-    }else{
-      values = [0,0,0,0,0,0,totalPercent];
-    }
+    const finalLabels = dayPoints.map(point => point.label);
+    const finalValues = dayPoints.map(point => point.value);
+    const finalIndexes = dayPoints.map(point => point.index);
 
-    const average = values.length
-      ? Math.round(values.reduce((sum,value) => sum + value,0) / values.length)
+    const average = finalValues.length
+      ? summaryForDays(finalValues,finalIndexes)
       : totalPercent;
 
     return {
       key:"thisWeek",
-      labels,
-      values,
-      description:"This week: all routine habits together",
+      labels:finalLabels,
+      values:finalValues,
+      description:"This week: full active week, future days shown as 0",
       summaryPercent:average,
       consistencyPercent:null,
       selectedLabel:"All routine habits together"
     };
   }
 
-  if(selected){
-    return {
-      key:range,
-      labels:[],
-      values:[],
-      description:`${selectedName()}: no saved history for this range yet`,
-      summaryPercent:selectedPercent,
-      consistencyPercent:selectedPercent,
-      selectedLabel:selectedName()
-    };
+  function currentSelectedPercent(){
+    if(!selectedItem){
+      return totalPercent;
+    }
+
+    if(selectedItem._type === "today"){
+      return isItemActiveOnDay(selectedItem,todayIndex)
+        ? (selectedItem.done ? 100 : 0)
+        : 0;
+    }
+
+    return selectedPercent;
   }
 
   if(range === "lastWeek"){
@@ -2331,43 +2531,224 @@ function getRangeData(range){
       description:"Last week: no saved data yet",
       summaryPercent:0,
       consistencyPercent:0,
-      selectedLabel:"All routine habits together"
+      selectedLabel:selectedItem ? selectedName() : "All routine habits together"
     };
   }
 
   if(range === "lastMonth"){
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const todayDate = now.getDate();
+    const daysInMonth = new Date(year,month + 1,0).getDate();
+    const monthIndexes = Array.from({length:daysInMonth},(_,index) => index + 1);
+
+    const points = monthIndexes.map(dayNumber => {
+      const date = new Date(year,month,dayNumber);
+      const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
+      const isFuture = dayNumber > todayDate;
+
+      if(selectedItem){
+        if(selectedItem._type === "today"){
+          if(!isItemActiveOnDay(selectedItem,dayIndex)){
+            return null;
+          }
+
+          let value = 0;
+
+          if(!isFuture && dayNumber === todayDate){
+            value = selectedItem.done ? 100 : 0;
+          }
+
+          return {
+            label:String(dayNumber),
+            dayNumber,
+            value
+          };
+        }
+
+        return {
+          label:String(dayNumber),
+          dayNumber,
+          value:dayNumber === todayDate ? selectedPercent : 0
+        };
+      }
+
+      const activeItems = activeDailyItemsForDay(dayIndex);
+
+      if(!activeItems.length){
+        return null;
+      }
+
+      let value = 0;
+
+      if(!isFuture && dayNumber === todayDate){
+        const done = activeItems.filter(item => item.done).length;
+        value = Math.round((done / activeItems.length) * 100);
+      }
+
+      return {
+        label:String(dayNumber),
+        dayNumber,
+        value
+      };
+    }).filter(point => point !== null);
+
+    const labels = points.map(point => point.label);
+    const values = points.map(point => point.value);
+    const startedValues = points
+      .filter(point => point.dayNumber <= todayDate)
+      .map(point => point.value);
+
+    const summary = startedValues.length
+      ? Math.round(startedValues.reduce((sum,value) => sum + value,0) / startedValues.length)
+      : 0;
+
     return {
       key:"lastMonth",
-      labels:[],
-      values:[],
-      description:"Last month: no saved data yet",
-      summaryPercent:0,
-      consistencyPercent:0,
-      selectedLabel:"All routine habits together"
+      labels,
+      values,
+      description:selectedItem
+        ? `This month: ${selectedName()} progress so far, future active days shown as 0`
+        : "This month: active routine days, future days shown as 0",
+      summaryPercent:summary,
+      consistencyPercent:startedValues.length ? getConsistencyScore(startedValues) : 0,
+      selectedLabel:selectedItem ? selectedName() : "All routine habits together"
     };
   }
 
   if(range === "year"){
+    const monthLabels = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const currentMonth = new Date().getMonth();
+    const currentValue = currentSelectedPercent();
+
+    const values = monthLabels.map((label,index) => {
+      if(index === currentMonth){
+        return currentValue;
+      }
+
+      return 0;
+    });
+
+    const startedValues = values.filter((value,index) => index <= currentMonth);
+    const summary = startedValues.length
+      ? Math.round(startedValues.reduce((sum,value) => sum + value,0) / startedValues.length)
+      : currentValue;
+
     return {
       key:"year",
-      labels:[],
-      values:[],
-      description:"Year view: no saved monthly data yet",
-      summaryPercent:0,
-      consistencyPercent:0,
-      selectedLabel:"All routine habits together"
+      labels:monthLabels,
+      values,
+      description:selectedItem
+        ? `Year view: ${selectedName()} current month progress shown in ${monthLabels[currentMonth]}`
+        : `Year view: current month progress shown in ${monthLabels[currentMonth]}`,
+      summaryPercent:summary,
+      consistencyPercent:startedValues.length ? getConsistencyScore(startedValues) : currentValue,
+      selectedLabel:selectedItem ? selectedName() : "All routine habits together"
     };
   }
 
   if(range === "all"){
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
+
+    function maybeDate(value){
+      if(!value) return null;
+
+      if(typeof value === "number"){
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      if(typeof value === "string"){
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      return null;
+    }
+
+    function itemCreatedDate(item){
+      return (
+        maybeDate(item.createdAt) ||
+        maybeDate(item.created) ||
+        maybeDate(item.timestamp) ||
+        maybeDate(item.date) ||
+        maybeDate(item.time) ||
+        null
+      );
+    }
+
+    const sourceItems = selectedItem ? [selectedItem] : allTrackableItems();
+
+    const createdDates = sourceItems
+      .map(itemCreatedDate)
+      .filter(Boolean);
+
+    const firstYear = createdDates.length
+      ? Math.min(...createdDates.map(date => date.getFullYear()))
+      : currentYear;
+
+    const labels = [];
+    const quarterMeta = [];
+
+    for(let year = firstYear; year <= currentYear; year++){
+      const maxQuarter = year === currentYear ? 4 : 4;
+
+      for(let quarter = 1; quarter <= maxQuarter; quarter++){
+        labels.push(`Q${quarter} ${year}`);
+        quarterMeta.push({year,quarter});
+      }
+    }
+
+    const currentValue = selectedItem ? currentSelectedPercent() : totalPercent;
+
+    const values = quarterMeta.map(point => {
+      if(point.year === currentYear && point.quarter === currentQuarter){
+        return currentValue;
+      }
+
+      return 0;
+    });
+
+    const startedValues = quarterMeta
+      .map((point,index) => ({...point,value:values[index]}))
+      .filter(point => {
+        if(point.year < currentYear) return true;
+        if(point.year === currentYear && point.quarter <= currentQuarter) return true;
+        return false;
+      })
+      .map(point => point.value);
+
+    const summary = startedValues.length
+      ? Math.round(startedValues.reduce((sum,value) => sum + value,0) / startedValues.length)
+      : currentValue;
+
     return {
       key:"all",
-      labels:[],
-      values:[],
-      description:"All time view: no saved quarterly data yet",
-      summaryPercent:0,
-      consistencyPercent:0,
-      selectedLabel:"All routine habits together"
+      labels,
+      values,
+      description:selectedItem
+        ? `All time: ${selectedName()} by quarter, future quarters shown as 0`
+        : "All time: routine progress by quarter, future quarters shown as 0",
+      summaryPercent:summary,
+      consistencyPercent:startedValues.length ? getConsistencyScore(startedValues) : currentValue,
+      selectedLabel:selectedItem ? selectedName() : "All routine habits together"
+    };
+  }
+
+  if(selectedItem){
+    const currentValue = currentSelectedPercent();
+
+    return {
+      key:range,
+      labels:["Current"],
+      values:[currentValue],
+      description:`${selectedName()}: current saved progress only`,
+      summaryPercent:currentValue,
+      consistencyPercent:currentValue,
+      selectedLabel:selectedName()
     };
   }
 
@@ -3104,26 +3485,38 @@ function rankingLengthForRange(range){
   return 18;
 }
 
+
 function rankingValuesForItem(item,range){
   const base = getPercent(item.current,item.target);
   const length = rankingLengthForRange(range);
-  const seedText = item._label || item.name || "habit";
-  const seed = seedText.split("").reduce((sum,char) => sum + char.charCodeAt(0),0);
 
-  return Array.from({length},(_,index) => {
-    const wave = Math.sin((index + 1 + seed % 9) * 1.17) * 8;
-    const rangeDrift =
-      range === "week" ? index * .35 :
-      range === "month" ? index * .18 :
-      range === "year" ? index * .75 :
-      index * .55;
+  if(item._type === "today"){
+    const activeDays = getItemActiveDays(item);
 
-    const personalBias = (seed % 17) - 8;
-    const value = Math.round(base + wave + rangeDrift + personalBias);
+    if(range === "week"){
+      return activeDays.map(dayIndex => {
+        if(dayIndex === currentDayIndexForStats()){
+          return item.done ? 100 : 0;
+        }
 
-    return Math.max(0,Math.min(100,value));
-  });
+        return 0;
+      });
+    }
+
+    return Array.from({length},(_,index) => {
+      const dayIndex = index % 7;
+
+      if(!activeDays.includes(dayIndex)){
+        return null;
+      }
+
+      return base;
+    }).filter(value => value !== null);
+  }
+
+  return Array.from({length},() => base);
 }
+
 
 function average(values){
   if(!values.length){

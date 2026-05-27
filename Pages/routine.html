@@ -32,194 +32,13 @@ body::after{content:"";position:fixed;inset:0;background-image:linear-gradient(r
 .empty{color:var(--text-secondary);font-size:.85rem;padding:20px;text-align:center;border:1px dashed var(--border-color);border-radius:18px;background:rgba(0,0,0,.12)}.empty strong{display:block;color:var(--text-primary);font-size:.95rem;margin-bottom:6px}.empty a{color:#c4b5fd;text-decoration:none;font-weight:900}.empty a:hover{text-decoration:underline}.chart-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text-secondary);text-align:center}.chart-empty i{color:var(--accent);width:34px;height:34px}.chart-empty strong{color:var(--text-primary);font-size:.98rem}
 @media(max-width:1350px){.hero{grid-template-columns:1fr 1fr 1fr}.dashboard-grid{grid-template-columns:1fr}.today-card,.week-card,.chart-card{min-height:auto}}@media(max-width:900px){.goal-sections{grid-template-columns:1fr}}@media(max-width:768px){body{padding-left:0}.sidebar{display:none}.main{padding:24px 16px}.header{flex-direction:column}.hero{grid-template-columns:1fr}}
 
-/* ===== FINAL WEEK CHART FIX - NO DUPLICATE LABELS ===== */
-.chart-wrap{
-  height:330px !important;
-  padding:18px 18px 14px !important;
-  overflow:hidden !important;
-}
-
-.week-bars{
-  height:100% !important;
-  gap:10px !important;
-  align-items:stretch !important;
-}
-
-.day-bar-wrap{
-  height:100% !important;
-  justify-content:flex-end !important;
-  padding:10px 6px 8px !important;
-  border-radius:18px !important;
-  background:rgba(0,0,0,.14) !important;
-  border:1px solid rgba(255,255,255,.055) !important;
-  transition:.25s !important;
-  position:relative !important;
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  gap:0 !important;
-}
-
-.day-bar-wrap:hover,
-.day-bar-wrap.today{
-  border-color:rgba(139,92,246,.38) !important;
-  background:rgba(139,92,246,.075) !important;
-  transform:translateY(-2px);
-}
-
-/* IMPORTANT: removes the extra TODAY/percentage label created by old CSS */
-.day-bar-wrap.today::before{
-  content:none !important;
-  display:none !important;
-}
-
-.bar-top{
-  height:46px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  gap:5px;
-  width:100%;
-  flex:0 0 46px;
-}
-
-.bar-percent{
-  min-height:20px;
-  padding:4px 8px;
-  border-radius:999px;
-  background:rgba(0,0,0,.34);
-  border:1px solid rgba(255,255,255,.08);
-  text-align:center;
-  font-size:.78rem;
-  font-weight:950;
-  line-height:1;
-  color:#fca5a5;
-  text-shadow:0 0 12px rgba(239,68,68,.22);
-  white-space:nowrap;
-}
-
-.bar-percent.good{
-  color:#86efac;
-  background:rgba(34,197,94,.12);
-  border-color:rgba(34,197,94,.25);
-  text-shadow:0 0 12px rgba(34,197,94,.24);
-}
-
-.bar-percent.mid{
-  color:#fde68a;
-  background:rgba(245,158,11,.10);
-  border-color:rgba(245,158,11,.22);
-  text-shadow:0 0 12px rgba(245,158,11,.20);
-}
-
-.today-chip{
-  padding:4px 8px;
-  border-radius:999px;
-  background:rgba(139,92,246,.22);
-  border:1px solid rgba(139,92,246,.42);
-  color:#c4b5fd;
-  font-size:.55rem;
-  font-weight:950;
-  line-height:1;
-  letter-spacing:.8px;
-  text-transform:uppercase;
-  white-space:nowrap;
-}
-
-.today-chip-placeholder{
-  height:18px;
-}
-
-.day-bar-shell{
-  width:100%;
-  height:176px;
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  padding:0 0 4px;
-  flex:1 1 auto;
-  min-height:0;
-}
-
-.day-bar{
-  width:100%;
-  max-width:42px !important;
-  min-height:10px !important;
-  border-radius:16px 16px 9px 9px !important;
-  background:linear-gradient(180deg,var(--accent),var(--accent2)) !important;
-  box-shadow:0 0 18px rgba(139,92,246,.20) !important;
-  transition:.35s !important;
-}
-
-.day-bar.zero{
-  background:rgba(255,255,255,.10) !important;
-  box-shadow:none !important;
-}
-
-.day-label{
-  width:100%;
-  text-align:center;
-  margin-top:7px;
-  font-size:.74rem !important;
-  color:var(--text-primary) !important;
-  font-weight:950 !important;
-}
-
-.day-count{
-  color:var(--text-secondary);
-  font-size:.62rem;
-  font-weight:900;
-  text-align:center;
-  margin-top:4px;
-  white-space:nowrap;
-}
-
-.day-status{
-  color:#c4b5fd;
-  font-size:.56rem;
-  font-weight:950;
-  text-align:center;
-  margin-top:4px;
-  text-transform:uppercase;
-  letter-spacing:.6px;
-  min-height:12px;
-  line-height:1.1;
-}
-
-@media(max-width:768px){
-  .chart-wrap{
-    height:360px !important;
-    padding:12px !important;
-  }
-
-  .week-bars{
-    gap:6px !important;
-  }
-
-  .day-bar-wrap{
-    padding:8px 3px 7px !important;
-  }
-
-  .bar-percent{
-    font-size:.66rem;
-    padding:4px 5px;
-  }
-
-  .today-chip{
-    font-size:.48rem;
-    padding:3px 5px;
-  }
-
-  .day-bar-shell{
-    height:190px;
-  }
-
-  .day-count,
-  .day-status{
-    display:none;
-  }
-}
+/* ===== ACTIVE DAYS + CLEAN WEEK CHART ===== */
+.schedule-badge{display:inline-flex;margin-left:6px;padding:3px 7px;border-radius:999px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.20);color:#c4b5fd;font-size:.60rem;font-weight:950;text-transform:uppercase;letter-spacing:.4px}
+.chart-wrap{height:330px !important;padding:18px 18px 14px !important;overflow:hidden !important}
+.week-bars{height:100% !important;gap:10px !important;align-items:stretch !important}
+.day-bar-wrap{height:100% !important;justify-content:flex-end !important;padding:10px 6px 8px !important;border-radius:18px !important;background:rgba(0,0,0,.14) !important;border:1px solid rgba(255,255,255,.055) !important;transition:.25s !important;position:relative !important;display:flex !important;flex-direction:column !important;align-items:center !important;gap:0 !important}
+.day-bar-wrap:hover,.day-bar-wrap.today{border-color:rgba(139,92,246,.38) !important;background:rgba(139,92,246,.075) !important;transform:translateY(-2px)}
+.day-bar-wrap.today::before{content:none !important;display:none !important}.bar-top{height:46px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;width:100%;flex:0 0 46px}.bar-percent{min-height:20px;padding:4px 8px;border-radius:999px;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.08);text-align:center;font-size:.78rem;font-weight:950;line-height:1;color:#fca5a5;text-shadow:0 0 12px rgba(239,68,68,.22);white-space:nowrap}.bar-percent.good{color:#86efac;background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.25);text-shadow:0 0 12px rgba(34,197,94,.24)}.bar-percent.mid{color:#fde68a;background:rgba(245,158,11,.10);border-color:rgba(245,158,11,.22);text-shadow:0 0 12px rgba(245,158,11,.20)}.today-chip{padding:4px 8px;border-radius:999px;background:rgba(139,92,246,.22);border:1px solid rgba(139,92,246,.42);color:#c4b5fd;font-size:.55rem;font-weight:950;line-height:1;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap}.today-chip-placeholder{height:18px}.day-bar-shell{width:100%;height:176px;display:flex;align-items:flex-end;justify-content:center;padding:0 0 4px;flex:1 1 auto;min-height:0}.day-bar{width:100%;max-width:42px !important;min-height:10px !important;border-radius:16px 16px 9px 9px !important;background:linear-gradient(180deg,var(--accent),var(--accent2)) !important;box-shadow:0 0 18px rgba(139,92,246,.20) !important;transition:.35s !important}.day-bar.zero{background:rgba(255,255,255,.10) !important;box-shadow:none !important}.day-label{width:100%;text-align:center;margin-top:7px;font-size:.74rem !important;color:var(--text-primary) !important;font-weight:950 !important}.day-count{color:var(--text-secondary);font-size:.62rem;font-weight:900;text-align:center;margin-top:4px;white-space:nowrap}.day-status{color:#c4b5fd;font-size:.56rem;font-weight:950;text-align:center;margin-top:4px;text-transform:uppercase;letter-spacing:.6px;min-height:12px;line-height:1.1}@media(max-width:768px){.chart-wrap{height:360px !important;padding:12px !important}.week-bars{gap:6px !important}.day-bar-wrap{padding:8px 3px 7px !important}.bar-percent{font-size:.66rem;padding:4px 5px}.today-chip{font-size:.48rem;padding:3px 5px}.day-bar-shell{height:190px}.day-count,.day-status{display:none}}
 
 </style>
 </head>
@@ -253,17 +72,23 @@ function getPercent(current,target){if(!target)return 0;return Math.min(100,Math
 function getFallbackName(type,index){const labels={today:"Habit",weekly:"Goal",monthly:"Monthly",quarterly:"Quarterly",yearly:"Yearly"};return `${labels[type]||"Item"} ${index+1}`}
 function displayItemName(item,index,type="today"){if(state.hiddenModeEnabled&&item.hidden)return item.hiddenLabel&&item.hiddenLabel.trim()?item.hiddenLabel.trim():getFallbackName(type,index);return item.name}
 function emptyMessage(title="No habits created yet",subtitle="Create your first habit to start tracking progress."){return `<div class="empty"><strong>${title}</strong><span>${subtitle}</span><br><br><a href="create-habits.html">Create Habits</a></div>`}
-function routineCompletion(){const total=state.today.length;const done=state.today.filter(h=>h.done).length;return{done,total,percent:total?Math.round(done/total*100):0}}
-function cleanHistory(){if(!Array.isArray(state.history)||!state.history.length)return[];return state.history.slice(0,7).map((day,index)=>({date:day.date||["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][index],done:Number(day.done||0),total:Number(day.total||state.today.length||0)}))}
-function weeklyAverage(){const history=cleanHistory();if(!history.length)return 0;const valid=history.filter(day=>day.total>0);if(!valid.length)return 0;return Math.round(valid.reduce((sum,day)=>sum+getPercent(day.done,day.total),0)/valid.length)}
+function routineCompletion(){const items=getTodayItems();const total=items.length;const done=items.filter(entry=>entry.item.done).length;return{done,total,percent:total?Math.round(done/total*100):0}}
+function cleanHistory(){const labels=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];return labels.map((label,index)=>{const day=completionForDayIndex(index);return{date:label,done:day.done,total:day.total,active:day.total>0}})}
+function weeklyAverage(){const history=cleanHistory();const valid=history.filter(day=>day.active&&day.total>0);if(!valid.length)return 0;return Math.round(valid.reduce((sum,day)=>sum+getPercent(day.done,day.total),0)/valid.length)}
 function currentDayIndex(){const jsDay=new Date().getDay();return jsDay===0?6:jsDay-1}
-function currentStreak(){const history=cleanHistory();if(!history.length)return 0;let streak=0;for(let i=history.length-1;i>=0;i--){const percent=getPercent(history[i].done,history[i].total);if(percent>=80)streak++;else if(history[i].done===0)continue;else break}return streak}
-function markAllToday(){if(!state.today.length)return;state.today=state.today.map(h=>({...h,done:true,current:h.target||h.current||1}));syncTodayIntoHistory();saveState();render()}
+
+function normalizeDays(days){if(!Array.isArray(days)||!days.length)return[0,1,2,3,4,5,6];const clean=[...new Set(days.map(day=>Number(day)).filter(day=>day>=0&&day<=6))].sort((a,b)=>a-b);return clean.length?clean:[0,1,2,3,4,5,6]}
+function isScheduledForDay(item,dayIndex=currentDayIndex()){return normalizeDays(item.days).includes(dayIndex)}
+function getTodayItems(){return (state.today||[]).map((item,index)=>({item,index})).filter(entry=>isScheduledForDay(entry.item))}
+function formatDays(days){const clean=normalizeDays(days).join(",");if(clean==="0,1,2,3,4,5,6")return"Every day";if(clean==="0,1,2,3,4")return"Mon-Fri";if(clean==="5,6")return"Weekend";const labels=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];return normalizeDays(days).map(day=>labels[day]).join(", ")}
+function completionForDayIndex(dayIndex){const active=(state.today||[]).filter(item=>isScheduledForDay(item,dayIndex));const total=active.length;if(!total)return{done:0,total:0,percent:0};if(dayIndex===currentDayIndex()){const done=active.filter(item=>item.done).length;return{done,total,percent:getPercent(done,total)}}const saved=Array.isArray(state.history)?state.history[dayIndex]:null;const done=saved?Math.min(Number(saved.done||0),total):0;return{done,total,percent:getPercent(done,total)}}
+
+function currentStreak(){const history=cleanHistory();if(!history.length)return 0;let streak=0;for(let i=history.length-1;i>=0;i--){if(!history[i].active)continue;const percent=getPercent(history[i].done,history[i].total);if(percent>=80)streak++;else break}return streak}
+function markAllToday(){const items=getTodayItems();if(!items.length)return;items.forEach(entry=>{entry.item.done=true;entry.item.current=entry.item.target||entry.item.current||1});syncTodayIntoHistory();saveState();render()}
 function toggleHabit(index){const habit=state.today[index];habit.done=!habit.done;if(habit.done&&habit.target)habit.current=habit.target;if(!habit.done)habit.current=0;syncTodayIntoHistory();saveState();render()}
-function syncTodayIntoHistory(){const completion=routineCompletion();if(!completion.total)return;const index=currentDayIndex();if(!Array.isArray(state.history))state.history=[];const labels=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];while(state.history.length<7)state.history.push({date:labels[state.history.length],done:0,total:completion.total});state.history[index].done=completion.done;state.history[index].total=completion.total}
+function syncTodayIntoHistory(){const completion=routineCompletion();const index=currentDayIndex();if(!Array.isArray(state.history))state.history=[];const labels=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];while(state.history.length<7)state.history.push({date:labels[state.history.length],done:0,total:0});state.history[index].done=completion.done;state.history[index].total=completion.total}
 function updateWeeklyGoal(index,value){const goal=state.weekly[index];let next=Number(value);if(Number.isNaN(next))next=0;if(next<0)next=0;if(next>Number(goal.target))next=Number(goal.target);goal.current=next;saveState();render()}
 function stepWeeklyGoal(index,amount){const goal=state.weekly[index];let next=Number(goal.current||0)+amount;const target=Number(goal.target||0);if(next<0)next=0;if(next>target)next=target;goal.current=next;saveState();render()}
-
 function updateLongTermGoal(type,index,value){
     const goal = state[type][index];
 
@@ -306,79 +131,50 @@ function stepLongTermGoal(type,index,amount){
     saveState();
     render();
 }
-function renderToday(){const list=document.getElementById("todayList");list.innerHTML="";if(!state.today.length){list.innerHTML=emptyMessage("No habits created yet","Your daily habits will show here once you create them.")}else{state.today.forEach((habit,index)=>{const row=document.createElement("div");row.className="item-row"+(habit.done?" done":"");row.innerHTML=`<div class="checkbox ${habit.done?"done":""}" onclick="toggleHabit(${index})">${habit.done?"✓":""}</div><div><div class="item-name">${displayItemName(habit,index,"today")}</div><div class="item-sub">${habit.done?"Completed":"Pending"}${habit.hidden?" • Hidden mode":""}</div></div><div class="item-value">${habit.current||0} / ${habit.target||0} ${habit.unit||""}</div>`;list.appendChild(row)})}const c=routineCompletion();document.getElementById("completedTop").innerText=c.done;document.getElementById("totalTop").innerText=c.total;document.getElementById("todayDoneText").innerText=`${c.done} / ${c.total} completed`;document.getElementById("todayPercent").innerText=`${c.percent}%`;document.getElementById("todayProgress").style.width=c.percent+"%"}
+function renderToday(){const list=document.getElementById("todayList");list.innerHTML="";const items=getTodayItems();if(!state.today.length){list.innerHTML=emptyMessage("No habits created yet","Your daily habits will show here once you create them.")}else if(!items.length){list.innerHTML=emptyMessage("No habits scheduled today","Your habits exist, but none are active for today. Edit active days in Create Habits.")}else{items.forEach(entry=>{const habit=entry.item;const index=entry.index;const row=document.createElement("div");row.className="item-row"+(habit.done?" done":"");row.innerHTML=`<div class="checkbox ${habit.done?"done":""}" onclick="toggleHabit(${index})">${habit.done?"✓":""}</div><div><div class="item-name">${displayItemName(habit,index,"today")}</div><div class="item-sub">${habit.done?"Completed":"Pending"}${habit.hidden?" • Hidden mode":""}<span class="schedule-badge">${formatDays(habit.days)}</span></div></div><div class="item-value">${habit.current||0} / ${habit.target||0} ${habit.unit||""}</div>`;list.appendChild(row)})}const c=routineCompletion();document.getElementById("completedTop").innerText=c.done;document.getElementById("totalTop").innerText=c.total;document.getElementById("todayDoneText").innerText=`${c.done} / ${c.total} completed`;document.getElementById("todayPercent").innerText=`${c.percent}%`;document.getElementById("todayProgress").style.width=c.percent+"%"}
 function renderWeekly(){const list=document.getElementById("weeklyList");list.innerHTML="";if(!state.weekly.length){list.innerHTML=emptyMessage("No habits created yet","Your weekly goals will show here once you create them.");return}state.weekly.forEach((goal,index)=>{const percent=getPercent(goal.current,goal.target);const done=percent>=100;const row=document.createElement("div");row.className="week-goal"+(done?" done":"");row.innerHTML=`<div class="week-circle"></div><div><div class="item-name">${displayItemName(goal,index,"weekly")}</div><div class="goal-progress"><span style="width:${percent}%"></span></div></div><div><div class="week-actions"><button class="week-step-btn" onclick="stepWeeklyGoal(${index},-1)">−</button><input class="week-input" type="number" value="${goal.current||0}" min="0" max="${goal.target||0}" onchange="updateWeeklyGoal(${index},this.value)"><button class="week-step-btn" onclick="stepWeeklyGoal(${index},1)">+</button></div><div class="week-unit">/ ${goal.target||0} ${goal.unit||""}</div></div>`;list.appendChild(row)})}
 function renderWeekChart(){
-    const bars = document.getElementById("weekBars");
-    bars.innerHTML = "";
-
-    if(!state.today.length && !state.history.length){
-        bars.innerHTML = `
-            <div class="chart-empty" style="grid-column:1 / -1;">
-                <i data-lucide="bar-chart-3"></i>
-                <strong>No habits created yet</strong>
-                <span>Your week chart will start once you create and complete habits.</span>
-            </div>
-        `;
-    } else {
-        const history = cleanHistory();
-        const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-        const todayIndex = currentDayIndex();
-
-        for(let index = 0; index < 7; index++){
-            const day = history[index] || {
-                date: labels[index],
-                done: 0,
-                total: state.today.length || 0
-            };
-
-            const percent = getPercent(day.done, day.total);
-            const height = day.total ? Math.max(percent, 8) : 8;
-            const isToday = index === todayIndex;
-
-            let percentClass = "low";
-            if(percent >= 80) percentClass = "good";
-            else if(percent >= 40) percentClass = "mid";
-
-            const statusText = day.total
-                ? (percent >= 100 ? "Complete" : "Needs work")
-                : "No habits";
-
-            const barWrap = document.createElement("div");
-            barWrap.className = "day-bar-wrap" + (isToday ? " today" : "");
-
-            barWrap.innerHTML = `
+    const bars=document.getElementById("weekBars");
+    bars.innerHTML="";
+    const history=cleanHistory();
+    const activeDays=history.filter(day=>day.active);
+    bars.style.gridTemplateColumns = activeDays.length ? `repeat(${activeDays.length},1fr)` : "1fr";
+    if(!state.today.length){
+        bars.innerHTML=`<div class="chart-empty" style="grid-column:1 / -1;"><i data-lucide="bar-chart-3"></i><strong>No habits created yet</strong><span>Your week chart will start once you create and complete habits.</span></div>`;
+    }else if(!activeDays.length){
+        bars.innerHTML=`<div class="chart-empty" style="grid-column:1 / -1;"><i data-lucide="calendar-x"></i><strong>No active days this week</strong><span>Edit your daily habit active days in Create Habits.</span></div>`;
+    }else{
+        const todayIndex=currentDayIndex();
+        history.forEach((day,index)=>{
+            if(!day.active)return;
+            const percent=getPercent(day.done,day.total);
+            const height=day.total?Math.max(percent,8):8;
+            const isToday=index===todayIndex;
+            let percentClass="low";
+            if(percent>=80)percentClass="good";else if(percent>=40)percentClass="mid";
+            const statusText=day.total?(percent>=100?"Complete":"Needs work"):"Off";
+            const barWrap=document.createElement("div");
+            barWrap.className="day-bar-wrap"+(isToday?" today":"");
+            barWrap.innerHTML=`
                 <div class="bar-top">
                     <div class="bar-percent ${percentClass}">${percent}%</div>
-                    ${isToday ? `<div class="today-chip">Today</div>` : `<div class="today-chip-placeholder"></div>`}
+                    ${isToday?`<div class="today-chip">Today</div>`:`<div class="today-chip-placeholder"></div>`}
                 </div>
-
                 <div class="day-bar-shell">
-                    <div
-                        class="day-bar ${day.total ? "" : "zero"}"
-                        title="${day.date}: ${percent}%"
-                        style="height:${height}%;opacity:${day.total ? "1" : ".25"}"
-                    ></div>
+                    <div class="day-bar ${day.total?"":"zero"}" title="${day.date}: ${percent}%" style="height:${height}%;opacity:${day.total?"1":".25"}"></div>
                 </div>
-
                 <div class="day-label">${day.date}</div>
-                <div class="day-count">${day.done || 0}/${day.total || 0}</div>
-                <div class="day-status">${statusText}</div>
-            `;
-
+                <div class="day-count">${day.done||0}/${day.total||0}</div>
+                <div class="day-status">${statusText}</div>`;
             bars.appendChild(barWrap);
-        }
+        });
     }
-
-    const avg = weeklyAverage();
-
-    document.getElementById("weekCompletionTotal").innerText = avg + "%";
-    document.getElementById("weekRingText").innerText = avg + "%";
-    document.getElementById("weekTotalRing").style.background =
-        `conic-gradient(var(--accent) ${avg}%, rgba(255,255,255,.10) 0)`;
-
-    document.getElementById("weeklyTop").innerText = avg + "%";
-    document.getElementById("streakTop").innerText = currentStreak();
+    const avg=weeklyAverage();
+    document.getElementById("weekCompletionTotal").innerText=avg+"%";
+    document.getElementById("weekRingText").innerText=avg+"%";
+    document.getElementById("weekTotalRing").style.background=`conic-gradient(var(--accent) ${avg}%, rgba(255,255,255,.10) 0)`;
+    document.getElementById("weeklyTop").innerText=avg+"%";
+    document.getElementById("streakTop").innerText=currentStreak();
 }
 
 function renderLongTerm(){
@@ -454,7 +250,6 @@ function renderLongTerm(){
         }).join("");
     });
 }
-
 function render(){renderToday();renderWeekly();renderWeekChart();renderLongTerm();if(window.lucide)lucide.createIcons()}
 applyTheme();saveState();render();
 </script>
